@@ -1,9 +1,10 @@
 import { v4 as uuid } from "uuid";
 import { z } from "zod";
 import { Roles, UserEntity } from "./user.entity";
-import { createUserValidation } from "./user.validations";
+import { createRequestSchema } from "./user.validations";
 
-export type CreateUserDTO = z.infer<typeof createUserValidation>;
+export type RegisterRequestDTO = z.infer<typeof createRequestSchema>;
+export type LoginRequestDTO = Pick<RegisterRequestDTO, "email" | "password">;
 
 export class UserValue implements UserEntity {
   uuid: string;
@@ -12,7 +13,7 @@ export class UserValue implements UserEntity {
   role: Roles;
   createdAt: Date;
 
-  constructor(user: CreateUserDTO) {
+  constructor(user: RegisterRequestDTO) {
     this.uuid = uuid();
     this.email = user.email;
     this.password = user.password;

@@ -6,7 +6,8 @@ export class MongoRepository implements UserRepository {
   constructor() {}
 
   async createUser(user: UserEntity): Promise<UserEntity> {
-    const savedUser = await UserModel.create(user);
+    const newUser = new UserModel(user);
+    const savedUser = await newUser.save();
     return savedUser;
   }
 

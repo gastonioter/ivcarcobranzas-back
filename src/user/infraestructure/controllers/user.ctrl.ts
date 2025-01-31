@@ -12,5 +12,9 @@ export class UserController {
 
   public listUsers = async (req: Request, res: Response) => {};
 
-  public findUserByEmail = async (req: Request, res: Response) => {};
+  public login = async (req: Request, res: Response) => {
+    const { email = "", password = "" } = req.body;
+    const token = await this.userUseCase.login({ email, password });
+    res.status(200).json({ token });
+  };
 }
