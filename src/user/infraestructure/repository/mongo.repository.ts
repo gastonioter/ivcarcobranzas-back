@@ -1,6 +1,7 @@
 import { UserEntity } from "user/domain/user.entity";
 import { UserRepository } from "user/domain/user.repository";
 import { UserModel } from "../models/user.schema";
+import { UserValue } from "@/user/domain/user.value";
 
 export class MongoRepository implements UserRepository {
   constructor() {}
@@ -8,7 +9,7 @@ export class MongoRepository implements UserRepository {
   async createUser(user: UserEntity): Promise<UserEntity> {
     const newUser = new UserModel(user);
     const savedUser = await newUser.save();
-    return savedUser;
+    return new UserValue(savedUser);
   }
 
   async findUserByEmail(email: string): Promise<UserEntity | null> {
