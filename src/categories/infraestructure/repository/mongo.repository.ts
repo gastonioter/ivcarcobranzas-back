@@ -12,7 +12,7 @@ export class CategoryMongoRepository implements CategoryRepository {
     };
   }
   async findAll(): Promise<Category[]> {
-    throw new Error("Method not implemented.");
+    return await CategoryModel.find({});
   }
   async findByName(name: string): Promise<Category | null> {
     return await CategoryModel.findOne({ name });
