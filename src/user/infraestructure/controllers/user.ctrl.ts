@@ -1,13 +1,25 @@
-import { Request, Response } from "express";
+import { UserAlreadyExistsError } from "../../domain/user.exceptions";
+import { NextFunction, Request, Response } from "express";
 import { UserUseCase } from "user/application/userUseCase";
 
 export class UserController {
   constructor(private userUseCase: UserUseCase) {}
 
-  public createUser = async (req: Request, res: Response) => {
-    const user = req.body;
-    const createdUser = await this.userUseCase.createUser(user);
-    res.status(201).json(createdUser);
+  public createUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const user = req.body;
+      const createdUser = await this.userUseCase.createUser(user);
+      res.status(201).json(createdUser);
+    } catch (e) {
+      if (e instanceof UserAlreadyExistsError) {
+        res.status(409).json({ error: e.message });
+      }
+      next(e);
+    }
   };
 
   public listUsers = async (req: Request, res: Response) => {};

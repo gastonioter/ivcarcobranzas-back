@@ -16,8 +16,8 @@ export class MongoDB {
 
   private static async connect(): Promise<void> {
     try {
-      const MONGO_URI = `mongodb://${process.env.MONTO_HOST}:${process.env.MONTO_PORT}/${process.env.MONGO_DB}`;
-
+      const MONGO_URI = `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
+      
       const db = await mongoose.connect(MONGO_URI);
 
       MongoDB.connection = db.connection;

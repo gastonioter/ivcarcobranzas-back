@@ -1,6 +1,6 @@
-import { Document, model, Schema, InferSchemaType } from "mongoose";
-import { Roles } from "user/domain/user.entity";
 import bcrypt from "bcrypt";
+import { InferSchemaType, model, Schema } from "mongoose";
+import { Roles } from "../../domain/user.entity";
 
 const userSchema = new Schema({
   password: { type: String, required: true },

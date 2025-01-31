@@ -1,18 +1,27 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { UserEntity } from "user/domain/user.entity";
-import { UserRepository } from "user/domain/user.repository";
+import { UserEntity } from "../domain/user.entity";
+import { UserRepository } from "../domain/user.repository";
 import {
   LoginRequestDTO,
   RegisterRequestDTO,
   UserValue,
-} from "user/domain/user.value";
+} from "../domain/user.value";
+import { LoginError, UserAlreadyExistsError } from "../domain/user.exceptions";
 
 export class UserUseCase {
   constructor(private readonly userRepository: UserRepository) {}
 
   public async createUser(userData: RegisterRequestDTO): Promise<UserEntity> {
     const userValue = new UserValue(userData);
+
+    const userAlreadyExists = await this.userRepository.findUserByEmail(
+      userValue.email
+    );
+
+    if (userAlreadyExists) {
+      throw new UserAlreadyExistsError();
+    }
 
     const newUser = await this.userRepository.createUser(userValue);
 
@@ -23,13 +32,13 @@ export class UserUseCase {
     const user = await this.userRepository.findUserByEmail(email);
 
     if (!user) {
-      throw new Error("Usuario no encontrado");
+      throw new LoginError();
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      throw new Error("Contraseña incorrecta");
+      throw new LoginError();
     }
 
     const token = jwt.sign(
