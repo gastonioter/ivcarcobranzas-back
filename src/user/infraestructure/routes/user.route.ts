@@ -1,24 +1,26 @@
 import { Router } from "express";
+import { LoginUseCase } from "../../application/login.usecase";
 import { MongoRepository } from "../repository/mongo.repository";
-import { UserUseCase } from "../../application/userUseCase";
-import { UserController } from "../controllers/user.ctrl";
+
+import { CreateUserUseCase } from "../../application/createUser.usecase";
+import { loginRequestSchema } from "../../domain/user.validations";
 import { zodValidator } from "../middlewares/zodValidator";
-import {
-  createRequestSchema,
-  loginRequestSchema,
-} from "../../domain/user.validations";
+import { CreateUserController } from "../controllers/createUser.ctrl";
+import { LoginController } from "../controllers/login.ctrl";
 
 export const route = Router();
 
 const mongoRepository = new MongoRepository();
 
-const userUserCase = new UserUseCase(mongoRepository);
+const loginUserCase = new LoginUseCase(mongoRepository);
+const createUserUseCase = new CreateUserUseCase(mongoRepository);
 
-const userController = new UserController(userUserCase);
+const createUserController = new CreateUserController(createUserUseCase);
+const loginController = new LoginController(loginUserCase);
 
-route.post("/login", zodValidator(loginRequestSchema), userController.login);
+route.post("/login", zodValidator(loginRequestSchema), loginController.login);
 route.post(
   "/register",
   zodValidator(loginRequestSchema),
-  userController.createUser
+  createUserController.createUser
 );

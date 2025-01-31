@@ -12,6 +12,9 @@ app.use(express.json());
 const API_PORT = process.env.API_PORT || 3000;
 
 app.use("/api/users", userRoutes);
+// app.use("/api/categories");
+// app.use("/api/products");
+
 app.use(errorHandler);
 
 MongoDB.getInstance().then(() => {
