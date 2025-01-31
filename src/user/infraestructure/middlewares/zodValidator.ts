@@ -8,7 +8,7 @@ export function zodValidator(zodSchema: z.ZodObject<any, any>) {
       next();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        res.status(400).json({ error: error.errors });
+        res.status(400).json({ error: error.flatten().fieldErrors });
       }
     }
   };
