@@ -3,7 +3,7 @@ import "./config/env";
 import { userRoutes } from "./user";
 
 import { MongoDB } from "./config/db";
-import errorHandler from "./errorHandlerMiddleware";
+import errorHandler from "./middlewares/errorHandlerMiddleware";
 import { categoriesRoutes } from "./categories";
 import { productRoutes } from "./products";
 

@@ -4,7 +4,7 @@ import { MongoRepository } from "../repository/mongo.repository";
 
 import { CreateUserUseCase } from "../../application/createUser.usecase";
 import { loginRequestSchema } from "../../domain/user.validations";
-import { zodValidator } from "../middlewares/zodValidator";
+import { zodValidator } from "../../../middlewares/zodValidator";
 import { CreateUserController } from "../controllers/createUser.ctrl";
 import { LoginController } from "../controllers/login.ctrl";
 

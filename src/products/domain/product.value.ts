@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
-import { CreateProductDTO } from "./dto";
 import { ProductEntity } from "./product.entity";
+import { CreateProductSchemaType } from "./product.validations";
 
 export class ProductValue implements ProductEntity {
   uuid: string;
@@ -11,7 +11,7 @@ export class ProductValue implements ProductEntity {
 
   private static counter = 6;
 
-  constructor({ name, price, categoryId }: CreateProductDTO) {
+  constructor({ name, price, categoryId }: CreateProductSchemaType) {
     this.uuid = uuid();
     this.name = name;
     this.price = price;
