@@ -4,8 +4,8 @@ import { userRoutes } from "./user";
 
 import { MongoDB } from "./config/db";
 import errorHandler from "./middlewares/errorHandlerMiddleware";
-import { categoriesRoutes } from "./categories";
-import { productRoutes } from "./products";
+import { categoriesRoutes } from "./category";
+import { productRoutes } from "./product";
 
 const app = express();
 

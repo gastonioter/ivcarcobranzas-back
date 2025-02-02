@@ -1,4 +1,4 @@
-import { ProductUseCases } from "@/products/application/product.usecase";
+import { ProductUseCases } from "@/product/application/product.usecase";
 import { Request, Response } from "express";
 
 export class ProductController {

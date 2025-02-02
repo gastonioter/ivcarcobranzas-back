@@ -10,9 +10,13 @@ export const createRequestSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
   role: z.nativeEnum(Roles),
+  fullname: z.string().nonempty(),
 });
 
 export const loginRequestSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
 });
+
+export type RegisterRequestDTO = z.infer<typeof createRequestSchema>;
+export type LoginRequestDTO = Pick<RegisterRequestDTO, "email" | "password">;

@@ -1,13 +1,15 @@
-import { ProductEntity } from "@/products/domain/product.entity";
-import { ProductRepository } from "@/products/domain/product.repository";
-import { Document } from "mongoose";
-import { ReadProductDTO } from "@/products/domain/dto/read.dto";
+import { categoryDTO } from "@/category/domain/category.dto";
+import { CategoryDoc } from "@/category/infraestructure/model/category.schema";
+import {
+  ProducEntityWithCategories,
+  ProductEntity,
+} from "@/product/domain/product.entity";
+import { ProductRepository } from "@/product/domain/product.repository";
 import {
   ProductDoc,
   ProductModel,
   ProductWithCategoryDoc,
 } from "../model/product.schema";
-import { CategoryDoc } from "@/categories/infraestructure/model/category.schema";
 
 export class ProductMongoRepository implements ProductRepository {
   /* Create Use Case */
@@ -41,7 +43,7 @@ export class ProductMongoRepository implements ProductRepository {
   };
 
   /* List All Use Case */
-  public list = async (): Promise<ReadProductDTO[]> => {
+  public list = async (): Promise<ProducEntityWithCategories[]> => {
     const products = await ProductModel.find()
       .populate<{ categoryData: CategoryDoc }>("categoryData")
       .exec();
@@ -67,9 +69,7 @@ export class ProductMongoRepository implements ProductRepository {
     return {
       ...this._productDTO(mongooseDoc),
       category: {
-        uuid: mongooseDoc.categoryData.uuid,
-        name: mongooseDoc.categoryData.name,
-        description: mongooseDoc.categoryData.description,
+        ...categoryDTO(mongooseDoc.categoryData),
       },
     };
   };

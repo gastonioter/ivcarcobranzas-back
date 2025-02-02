@@ -4,6 +4,7 @@ const CategorySchema = new Schema({
   uuid: { type: String, required: true, unique: true },
   name: { type: String, required: true, unique: true },
   description: { type: String },
+  createdAt: { type: Date, required: true },
 });
 
 export type CategoryDoc = InferSchemaType<typeof CategorySchema>;

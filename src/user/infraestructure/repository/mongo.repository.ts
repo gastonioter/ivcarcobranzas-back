@@ -9,7 +9,7 @@ export class MongoRepository implements UserRepository {
   async createUser(user: UserEntity): Promise<UserEntity> {
     const newUser = new UserModel(user);
     const savedUser = await newUser.save();
-    return new UserValue(savedUser);
+    return savedUser;
   }
 
   async findUserByEmail(email: string): Promise<UserEntity | null> {

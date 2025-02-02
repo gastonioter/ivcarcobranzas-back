@@ -1,4 +1,4 @@
-import { CategoryUseCases } from "@/categories/application/categoryUseCases";
+import { CategoryUseCases } from "@/category/application/categoryUseCases";
 import { CategoryAlreadyExists } from "../../domain/categories.exceptions";
 import { NextFunction, Request, Response } from "express";
 

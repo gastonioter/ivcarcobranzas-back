@@ -1,13 +1,12 @@
 import { Router } from "express";
-
+import { ProductMongoRepository } from "../repository/mongo.repository";
+import { ProductUseCases } from "../../application/product.usecase";
+import { ProductController } from "../controller/product.ctrl";
 import { zodValidator } from "@/middlewares/zodValidator";
 import {
   CreateProductSchema,
   EditProductSchema,
 } from "@/product/domain/product.validations";
-import { ProductUseCases } from "@/product/application/product.usecase";
-import { ProductMongoRepository } from "@/product/infraestructure/repository/mongo.repository";
-import { ProductController } from "@/product/infraestructure/controller/product.ctrl";
 
 export const router = Router();
 

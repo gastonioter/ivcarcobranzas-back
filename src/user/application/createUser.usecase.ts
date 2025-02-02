@@ -1,7 +1,8 @@
 import { UserEntity } from "../domain/user.entity";
 import { UserAlreadyExistsError } from "../domain/user.exceptions";
 import { UserRepository } from "../domain/user.repository";
-import { RegisterRequestDTO, UserValue } from "../domain/user.value";
+import { RegisterRequestDTO } from "../domain/user.validations";
+import { UserValue } from "../domain/user.value";
 
 export class CreateUserUseCase {
   constructor(private readonly userRepository: UserRepository) {}

@@ -1,6 +1,7 @@
 export interface UserEntity {
   uuid: string;
   email: string;
+  fullname:string
   password: string;
   role: Roles;
   createdAt: Date;

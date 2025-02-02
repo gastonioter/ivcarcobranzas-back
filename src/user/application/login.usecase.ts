@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { LoginError } from "../domain/user.exceptions";
 import { UserRepository } from "../domain/user.repository";
-import { LoginRequestDTO } from "../domain/user.value";
+import { LoginRequestDTO } from "../domain/user.validations";
 
 export class LoginUseCase {
   constructor(private readonly userRepository: UserRepository) {}
