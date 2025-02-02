@@ -40,7 +40,7 @@ export class CustomerValue implements CustomerEntity {
       throw new Error("El monto mensual es requerido para los clientes cloud");
     }
 
-    if (montoMes <= 0) {
+    if (montoMes <= 0 && type === CustomerType.CLOUD) {
       throw new Error("El monto mensual debe ser mayor a 0");
     }
 

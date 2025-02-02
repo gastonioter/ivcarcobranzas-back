@@ -1,7 +1,7 @@
-import { Category } from "./category.entity";
+import { CategoryEntity } from "./category.entity";
 
 export interface CategoryRepository {
-  create(category: Category): Promise<Category | null>;
-  findAll(): Promise<Category[]>;
-  findByName(uuid: string): Promise<Category | null>;
+  create(category: CategoryEntity): Promise<CategoryEntity | null>;
+  findAll(): Promise<CategoryEntity[]>;
+  findByName(uuid: string): Promise<CategoryEntity | null>;
 }

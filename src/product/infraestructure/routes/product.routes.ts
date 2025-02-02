@@ -2,11 +2,11 @@ import { Router } from "express";
 import { ProductMongoRepository } from "../repository/mongo.repository";
 import { ProductUseCases } from "../../application/product.usecase";
 import { ProductController } from "../controller/product.ctrl";
-import { zodValidator } from "@/middlewares/zodValidator";
+import { zodValidator } from "../../../middlewares/zodValidator";
 import {
   CreateProductSchema,
   EditProductSchema,
-} from "@/product/domain/product.validations";
+} from "../../domain/product.validations";
 
 export const router = Router();
 

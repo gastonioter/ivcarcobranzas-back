@@ -1,12 +1,11 @@
 import { CategoryRepository } from "@/category/domain/category.repository";
 import { CategoryModel } from "../model/category.schema";
 import { CategoryEntity } from "@/category/domain/category.entity";
-import { categoryDTO } from "@/category/domain/category.dto";
+import { categoryDTO } from "../../domain/category.dto";
 
 export class CategoryMongoRepository implements CategoryRepository {
   async create(category: CategoryEntity): Promise<CategoryEntity | null> {
     const categoryDoc = await CategoryModel.create(category);
-
     return categoryDTO(categoryDoc);
   }
 
@@ -19,6 +18,9 @@ export class CategoryMongoRepository implements CategoryRepository {
   }
   async findByName(name: string): Promise<CategoryEntity | null> {
     const categoryDoc = await CategoryModel.findOne({ name });
+    if (!categoryDoc) {
+      return null;
+    }
     return categoryDTO(categoryDoc);
   }
 }

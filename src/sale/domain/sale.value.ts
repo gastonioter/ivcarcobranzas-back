@@ -17,12 +17,7 @@ export class SaleValue implements SaleEntity {
   createdAt: Date;
   updatedAt: Date;
 
-  constructor({
-    seller,
-    customer,
-    items,
-    serie,
-  }: CreateSaleDTO & { serie: string }) {
+  constructor({ seller, customer, items }: CreateSaleDTO & { serie: string }) {
     this.seller = seller;
     this.customer = customer;
     this.items = items;

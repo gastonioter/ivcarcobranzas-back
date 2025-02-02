@@ -11,6 +11,7 @@ export class CategoryController {
     next: NextFunction
   ) => {
     try {
+      
       const category = await this.categoryUserCase.createCategory(req.body);
       res.status(201).json(category);
     } catch (e) {

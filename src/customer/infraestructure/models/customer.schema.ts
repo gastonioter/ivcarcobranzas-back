@@ -1,7 +1,4 @@
-import {
-  CustomerStatus,
-  CustomerType,
-} from "@/customer/domain/customer.entity";
+import { CustomerStatus, CustomerType } from "../../domain/customer.entity";
 import { InferSchemaType, model, Schema } from "mongoose";
 
 const CustomerSchema = new Schema(

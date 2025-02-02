@@ -1,4 +1,4 @@
-import { SaleStatuses } from "@/sale/domain/sale.entity";
+import { SaleStatuses } from "../../domain/sale.entity";
 import { InferSchemaType, model, Schema } from "mongoose";
 
 const SaleDetailItemSchema = new Schema({

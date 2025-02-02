@@ -2,8 +2,8 @@ import { Router } from "express";
 import { CategoryController } from "../controllers/category.ctrl";
 import { CategoryMongoRepository } from "../repository/mongo.repository";
 import { CategoryUseCases } from "../../application/categoryUseCases";
-import { zodValidator } from "@/middlewares/zodValidator";
-import { CreateCategorySchema } from "@/categories/domain/categories.validations";
+import { zodValidator } from "../../../middlewares/zodValidator";
+import { CreateCategorySchema } from "../../domain/categories.validations";
 
 export const router = Router();
 

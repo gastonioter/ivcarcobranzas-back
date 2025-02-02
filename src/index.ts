@@ -6,6 +6,8 @@ import { MongoDB } from "./config/db";
 import errorHandler from "./middlewares/errorHandlerMiddleware";
 import { categoriesRoutes } from "./category";
 import { productRoutes } from "./product";
+import { customerRoutes } from "./customer";
+import { salesRoutes } from "./sale";
 
 const app = express();
 
@@ -16,7 +18,8 @@ const API_PORT = process.env.API_PORT || 3000;
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/products", productRoutes);
-
+app.use("/api/customers", customerRoutes);
+app.use("/api/sales", salesRoutes);
 app.use(errorHandler);
 
 MongoDB.getInstance().then(() => {

@@ -1,4 +1,4 @@
-import { categoryDTO } from "@/category/domain/category.dto";
+import { categoryDTO } from "../../../category/domain/category.dto";
 import { CategoryDoc } from "@/category/infraestructure/model/category.schema";
 import {
   ProducEntityWithCategories,
