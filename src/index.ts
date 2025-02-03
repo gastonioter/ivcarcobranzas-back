@@ -9,6 +9,7 @@ import { productRoutes } from "./product";
 import { customerRoutes } from "./customer";
 import { salesRoutes } from "./sale";
 import { monthlyFeeRoutes } from "./monthlyFee";
+import { paymentRoutes } from "./payments";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/sales", salesRoutes);
 app.use("/api/monthlyfees", monthlyFeeRoutes);
+app.use("/api/payments", paymentRoutes);
 
 app.use(errorHandler);
 
