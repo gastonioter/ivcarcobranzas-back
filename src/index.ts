@@ -8,6 +8,7 @@ import { categoriesRoutes } from "./category";
 import { productRoutes } from "./product";
 import { customerRoutes } from "./customer";
 import { salesRoutes } from "./sale";
+import { monthlyFeeRoutes } from "./monthlyFee";
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.use("/api/categories", categoriesRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/sales", salesRoutes);
+app.use("/api/monthlyfees", monthlyFeeRoutes);
+
 app.use(errorHandler);
 
 MongoDB.getInstance().then(() => {
