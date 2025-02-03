@@ -6,13 +6,16 @@ export interface SaleEntity {
   seller: string;
   customer: string;
   items: SaleDetailEntity[];
-
+  tipoComprobante: ComprobanteTypes;
   createdAt: Date;
   updatedAt: Date;
 }
 
+export enum ComprobanteTypes {
+  RECIBO = "RECIBO",
+  PRESUPUESTO = "PRESUPUESTO",
+}
 export interface SaleDetailEntity {
-  uuid: string;
   product: string;
   quantity: number;
   price: number;
@@ -23,10 +26,14 @@ export enum SaleStatuses {
   PAID = "PAID",
   CANCELLED = "CANCELLED",
 }
+export enum PaymentMethods {
+  CASH = "CASH",
+  CARD = "CARD",
+  TRANSFER = "TRANSFER",
+}
 
 export interface PaymentEntity {
-  uuid: string;
   amount: number;
-  paymentMethod: string;
+  paymentMethod: PaymentMethods;
   createdAt: Date;
 }

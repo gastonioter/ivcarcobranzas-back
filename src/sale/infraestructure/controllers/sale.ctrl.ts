@@ -10,12 +10,30 @@ export class SaleController {
     res.status(201).json(createdSale);
   };
 
-  async showDetails(req: Request, res: Response) {
+  public addPayment = async (req: Request, res: Response) => {
+    const { uuid } = req.params;
+    const payment = req.body;
+
+    const updatedSale = await this.saleUseCases.addPayment(uuid, payment);
+
+    res.status(200).json(updatedSale);
+  };
+
+  public addPaymeny = async (req: Request, res: Response) => {
+    const { uuid } = req.params;
+    const newPayment = req.body;
+
+    const updatedSale = await this.saleUseCases.addPayment(uuid, newPayment);
+
+    res.status(200).json(updatedSale);
+  };
+
+  public showDetails = async (req: Request, res: Response) => {
     const { uuid } = req.params;
     const sales = await this.saleUseCases.findSale(uuid);
 
     res.status(200).json(sales);
-  }
+  };
 
   public list = async (req: Request, res: Response) => {
     const sales = await this.saleUseCases.listSales();

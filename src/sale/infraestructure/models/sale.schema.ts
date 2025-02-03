@@ -1,19 +1,26 @@
-import { SaleStatuses } from "../../domain/sale.entity";
 import { InferSchemaType, model, Schema } from "mongoose";
+import {
+  ComprobanteTypes,
+  PaymentMethods,
+  SaleStatuses,
+} from "../../domain/sale.entity";
 
 const SaleDetailItemSchema = new Schema({
-  uuid: { type: String, required: true },
   product: { type: String, required: true },
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
 });
 
 const PaymentSchema = new Schema({
-  uuid: { type: String, required: true },
   amount: { type: Number, required: true },
-  paymentMethod: { type: String, required: true },
-  createdAt: { type: Date, required: true },
+  paymentMethod: {
+    type: String,
+    required: true,
+    enum: Object.values(PaymentMethods),
+  },
+  createdAt: { type: Date, required: true, default: Date.now },
 });
+
 const SaleSchema = new Schema(
   {
     uuid: { type: String, required: true },
@@ -23,6 +30,11 @@ const SaleSchema = new Schema(
     status: { type: String, required: true, enum: Object.values(SaleStatuses) },
     items: [SaleDetailItemSchema],
     payments: [PaymentSchema],
+    tipoComprobante: {
+      type: String,
+      required: true,
+      enum: Object.values(ComprobanteTypes),
+    },
   },
   { timestamps: true }
 );
@@ -40,9 +52,6 @@ SaleSchema.virtual("customerData", {
   foreignField: "uuid",
   justOne: true,
 });
-
-SaleSchema.set("toObject", { virtuals: true });
-SaleSchema.set("toJSON", { virtuals: true });
 
 export type SaleDoc = InferSchemaType<typeof SaleSchema>;
 

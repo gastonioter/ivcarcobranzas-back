@@ -1,5 +1,5 @@
 import { SaleRepository } from "../domain/sale.repository";
-import { CreateSaleDTO } from "../domain/sale.validations";
+import { AddPaymentSchema, CreateSaleDTO } from "../domain/sale.validations";
 import { SaleValue } from "../domain/sale.value";
 
 export class saleUseCases {
@@ -14,6 +14,13 @@ export class saleUseCases {
     });
 
     return this.saleRepository.save(saleEntity);
+  }
+
+  async addPayment(uuid: string, payment: AddPaymentSchema) {
+    return this.saleRepository.addPayment(uuid, {
+      ...payment,
+      createdAt: new Date(),
+    });
   }
 
   async findSale(uuid: string) {

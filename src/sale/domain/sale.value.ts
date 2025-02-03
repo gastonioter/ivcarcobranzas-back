@@ -1,4 +1,5 @@
 import {
+  ComprobanteTypes,
   PaymentEntity,
   SaleDetailEntity,
   SaleEntity,
@@ -9,6 +10,7 @@ import { CreateSaleDTO } from "./sale.validations";
 export class SaleValue implements SaleEntity {
   uuid: string;
   serie: string;
+  tipoComprobante: ComprobanteTypes;
   payments: PaymentEntity[];
   status: SaleStatuses;
   seller: string;
@@ -17,12 +19,19 @@ export class SaleValue implements SaleEntity {
   createdAt: Date;
   updatedAt: Date;
 
-  constructor({ seller, customer, items }: CreateSaleDTO & { serie: string }) {
+  constructor({
+    seller,
+    customer,
+    items,
+    serie,
+    tipoComprobante,
+  }: CreateSaleDTO & { serie: string }) {
     this.seller = seller;
     this.customer = customer;
     this.items = items;
+    this.tipoComprobante = tipoComprobante;
     this.uuid = uuid();
-    this.serie = SaleValue.generateSerie();
+    this.serie = serie;
     this.payments = [];
     this.status = SaleStatuses.PENDING;
     this.createdAt = new Date();
