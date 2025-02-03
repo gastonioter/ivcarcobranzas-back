@@ -1,4 +1,6 @@
 import express from "express";
+import cors from "cors";
+
 import "./config/env";
 import { userRoutes } from "./user";
 
@@ -10,14 +12,17 @@ import { customerRoutes } from "./customer";
 import { salesRoutes } from "./sale";
 import { monthlyFeeRoutes } from "./monthlyFee";
 import { paymentRoutes } from "./payments";
+import morgan from "morgan";
 
 const app = express();
 
 app.use(express.json());
+app.use(morgan("dev"));
+app.use(cors());
 
 const API_PORT = process.env.API_PORT || 3000;
 
-app.use("/api/users", userRoutes);
+app.use("/api/auth", userRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/customers", customerRoutes);
