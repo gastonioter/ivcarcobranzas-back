@@ -10,6 +10,8 @@ import {
   ProductModel,
   ProductWithCategoryDoc,
 } from "../model/product.schema";
+import { EditProductSchemaType } from "@/product/domain/product.validations";
+import { ProductNotFoundError } from "../../domain/product.exceptions";
 
 export class ProductMongoRepository implements ProductRepository {
   /* Create Use Case */
@@ -23,20 +25,24 @@ export class ProductMongoRepository implements ProductRepository {
 
   /* Edit Use Case */
 
-  public edit = async ({
-    uuid,
-    ...newData
-  }: ProductEntity): Promise<ProductEntity | null> => {
-    const editedProduct = await ProductModel.findByIdAndUpdate(
-      uuid,
-      { ...newData, category: newData.categoryId },
+  public edit = async (
+    uuid: string,
+    newData: EditProductSchemaType
+  ): Promise<ProductEntity | null> => {
+    const editedProduct = await ProductModel.findOneAndUpdate(
+      {
+        uuid,
+      },
+      {
+        ...newData,
+      },
       {
         new: true,
       }
     );
 
     if (!editedProduct) {
-      return null;
+      throw new ProductNotFoundError();
     }
 
     return this._productDTO(editedProduct);

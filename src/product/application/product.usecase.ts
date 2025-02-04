@@ -30,8 +30,8 @@ export class ProductUseCases {
     return newProduct;
   };
 
-  public editProduct = async (product: EditProductSchemaType) => {
-    return await this.productRepository.edit(product);
+  public editProduct = async (uuid: string, product: EditProductSchemaType) => {
+    return await this.productRepository.edit(uuid, product);
   };
 
   public listProducts = async () => {

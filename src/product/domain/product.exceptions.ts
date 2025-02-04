@@ -6,3 +6,10 @@ export class ProducAlreadyExistsError extends CustomError {
     this.name = "ProducAlreadyExistsError";
   }
 }
+
+export class ProductNotFoundError extends CustomError {
+  constructor() {
+    super("Producto no encontrado", 404);
+    this.name = "ProductNotFoundError";
+  }
+}
