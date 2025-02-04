@@ -1,9 +1,5 @@
 import { InferSchemaType, model, Schema } from "mongoose";
-import {
-  ComprobanteTypes,
-  PaymentMethods,
-  SaleStatuses,
-} from "../../domain/sale.entity";
+import { PaymentMethods, SaleStatuses } from "../../domain/sale.entity";
 
 const SaleDetailItemSchema = new Schema({
   product: { type: String, required: true },
@@ -30,11 +26,6 @@ const SaleSchema = new Schema(
     status: { type: String, required: true, enum: Object.values(SaleStatuses) },
     items: [SaleDetailItemSchema],
     payments: [PaymentSchema],
-    tipoComprobante: {
-      type: String,
-      required: true,
-      enum: Object.values(ComprobanteTypes),
-    },
   },
   { timestamps: true }
 );

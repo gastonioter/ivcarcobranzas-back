@@ -1,16 +1,14 @@
+import { v4 as uuid } from "uuid";
 import {
-  ComprobanteTypes,
   PaymentEntity,
   SaleDetailEntity,
   SaleEntity,
-  SaleStatuses,
+  SaleStatuses
 } from "./sale.entity";
-import { v4 as uuid } from "uuid";
 import { CreateSaleDTO } from "./sale.validations";
 export class SaleValue implements SaleEntity {
   uuid: string;
   serie: string;
-  tipoComprobante: ComprobanteTypes;
   payments: PaymentEntity[];
   status: SaleStatuses;
   seller: string;
@@ -24,12 +22,10 @@ export class SaleValue implements SaleEntity {
     customer,
     items,
     serie,
-    tipoComprobante,
   }: CreateSaleDTO & { serie: string }) {
     this.seller = seller;
     this.customer = customer;
     this.items = items;
-    this.tipoComprobante = tipoComprobante;
     this.uuid = uuid();
     this.serie = serie;
     this.payments = [];

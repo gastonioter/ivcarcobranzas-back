@@ -1,3 +1,4 @@
+import { CustomerAlreadyExistsError } from "../domain/customer.exceptions";
 import { CustomerRepository } from "../domain/customer.repository";
 import {
   CreateCustomerRequest,
@@ -25,7 +26,6 @@ export class CustomerUseCases {
   };
 
   createCustomer = async (customer: CreateCustomerRequest) => {
-
     const customerValue = new CustomerValue(customer);
 
     return await this.customerRepository.createCustomer(customerValue);

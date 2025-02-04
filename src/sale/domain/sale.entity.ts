@@ -6,15 +6,10 @@ export interface SaleEntity {
   seller: string;
   customer: string;
   items: SaleDetailEntity[];
-  tipoComprobante: ComprobanteTypes;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export enum ComprobanteTypes {
-  RECIBO = "RECIBO",
-  PRESUPUESTO = "PRESUPUESTO",
-}
 export interface SaleDetailEntity {
   product: string;
   quantity: number;

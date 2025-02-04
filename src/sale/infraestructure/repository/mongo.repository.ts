@@ -53,7 +53,6 @@ export class SalesMongoRepository implements SaleRepository {
       status: mongooseDoc.status,
       items: mongooseDoc.items,
       payments: mongooseDoc.payments,
-      tipoComprobante: mongooseDoc.tipoComprobante,
       createdAt: mongooseDoc.createdAt,
       updatedAt: mongooseDoc.updatedAt,
     };

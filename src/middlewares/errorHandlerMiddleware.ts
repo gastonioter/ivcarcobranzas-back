@@ -1,3 +1,4 @@
+import { CustomerAlreadyExistsError } from "@/customer/domain/customer.exceptions";
 import { CustomError } from "@/types";
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 

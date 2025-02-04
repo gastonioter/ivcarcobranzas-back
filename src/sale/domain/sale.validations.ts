@@ -1,10 +1,9 @@
 import { z } from "zod";
-import { ComprobanteTypes, PaymentMethods } from "./sale.entity";
+import { PaymentMethods } from "./sale.entity";
 
 export const createSaleSchema = z.object({
   seller: z.string(),
   customer: z.string(),
-  tipoComprobante: z.nativeEnum(ComprobanteTypes),
   items: z.array(
     z.object({
       product: z.string(),
