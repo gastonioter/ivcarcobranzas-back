@@ -72,6 +72,7 @@ export class ProductMongoRepository implements ProductRepository {
   };
 
   private _productWithCategoryDTO = (mongooseDoc: ProductWithCategoryDoc) => {
+    console.log(mongooseDoc);
     // Mapea el documento de Mongoose a la entidad de dominio
 
     return {

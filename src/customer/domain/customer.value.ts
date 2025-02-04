@@ -4,6 +4,11 @@ import {
   CustomerType,
 } from "./customer.entity";
 import { v4 as uuid } from "uuid";
+import {
+  InvalidCustomerDataError,
+  InvalidCustomerTypeError,
+  InvalidMontoMensualError,
+} from "./customer.exceptions";
 
 export class CustomerValue implements CustomerEntity {
   uuid: string;
@@ -33,15 +38,15 @@ export class CustomerValue implements CustomerEntity {
     montoMes?: number;
   }) {
     if (!firstName || !lastName || !phone) {
-      throw new Error("El nombre, apellido y teléfono son requeridos");
+      throw new InvalidCustomerDataError();
     }
 
     if (!montoMes && type === CustomerType.CLOUD) {
-      throw new Error("El monto mensual es requerido para los clientes cloud");
+      throw new InvalidCustomerTypeError();
     }
 
     if (montoMes <= 0 && type === CustomerType.CLOUD) {
-      throw new Error("El monto mensual debe ser mayor a 0");
+      throw new InvalidMontoMensualError();
     }
 
     this.uuid = uuid();
