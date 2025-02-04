@@ -2,7 +2,7 @@ export interface CustomerEntity {
   uuid: string;
   firstName: string;
   lastName: string;
-  email?: string;
+  email: string;
   type: CustomerType;
   phone: string;
   status: string;

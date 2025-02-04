@@ -1,9 +1,16 @@
-import { CustomerEntity } from "@/customer/domain/customer.entity";
+import {
+  CustomerEntity,
+  CustomerStatus,
+} from "@/customer/domain/customer.entity";
 import { CustomerRepository } from "@/customer/domain/customer.repository";
 import { EditCustomerRequest } from "@/customer/domain/customer.validations";
 import { MongoServerError } from "mongodb";
-import { CustomerAlreadyExistsError } from "../../domain/customer.exceptions";
+import {
+  CustomerAlreadyExistsError,
+  CustomerNotFoundError,
+} from "../../domain/customer.exceptions";
 import { CustomerModel } from "../models/customer.schema";
+import mongoose from "mongoose";
 
 export class CustomerMongoRepository implements CustomerRepository {
   async createCustomer(
@@ -20,8 +27,57 @@ export class CustomerMongoRepository implements CustomerRepository {
       return null;
     }
   }
-  editCustomer(customer: EditCustomerRequest): Promise<CustomerEntity> {
-    throw new Error("Method not implemented.");
+  async editCustomer({
+    uuid,
+    ...customer
+  }: EditCustomerRequest): Promise<CustomerEntity | null> {
+    try {
+      const editedCustomer = CustomerModel.findOneAndUpdate(
+        { uuid },
+        customer,
+        {
+          new: true,
+        }
+      );
+      return editedCustomer;
+    } catch (e) {
+      if (
+        (e instanceof MongoServerError && e.code === 11000) ||
+        e instanceof mongoose.Error
+      ) {
+        throw new CustomerAlreadyExistsError();
+      }
+      if (e instanceof mongoose.Error.DocumentNotFoundError) {
+        throw new CustomerNotFoundError();
+      }
+
+      return null;
+    }
+  }
+
+  async updateStatus(
+    uuid: string,
+    status: CustomerStatus
+  ): Promise<CustomerEntity | null> {
+    try {
+      const customer = await CustomerModel.findOneAndUpdate(
+        {
+          uuid,
+        },
+        {
+          status,
+        },
+        {
+          new: true,
+        }
+      );
+      return customer;
+    } catch (e) {
+      if (e instanceof mongoose.Error.DocumentNotFoundError) {
+        throw new CustomerNotFoundError();
+      }
+      return null;
+    }
   }
   deleteCustomer(uuid: string): Promise<CustomerEntity> {
     throw new Error("Method not implemented.");

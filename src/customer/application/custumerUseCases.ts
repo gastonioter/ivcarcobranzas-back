@@ -1,3 +1,4 @@
+import { CustomerStatus } from "../domain/customer.entity";
 import { CustomerAlreadyExistsError } from "../domain/customer.exceptions";
 import { CustomerRepository } from "../domain/customer.repository";
 import {
@@ -26,8 +27,15 @@ export class CustomerUseCases {
   };
 
   createCustomer = async (customer: CreateCustomerRequest) => {
-    const customerValue = new CustomerValue(customer);
+    const customerValue = new CustomerValue({
+      ...customer,
+      montoMes: customer.montoMes || 0,
+    });
 
     return await this.customerRepository.createCustomer(customerValue);
+  };
+
+  updateStatus = async (uuid: string, status: CustomerStatus) => {
+    return await this.customerRepository.updateStatus(uuid, status);
   };
 }

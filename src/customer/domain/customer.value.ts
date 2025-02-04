@@ -14,7 +14,7 @@ export class CustomerValue implements CustomerEntity {
   uuid: string;
   firstName: string;
   lastName: string;
-  email?: string;
+  email: string;
   type: CustomerType;
   status: string;
   phone: string;
@@ -25,14 +25,14 @@ export class CustomerValue implements CustomerEntity {
   constructor({
     firstName,
     lastName,
-    email = "",
+    email,
     type,
     phone,
     montoMes = 0,
   }: {
     firstName: string;
     lastName: string;
-    email?: string;
+    email: string;
     type: CustomerType;
     phone: string;
     montoMes?: number;
@@ -41,12 +41,12 @@ export class CustomerValue implements CustomerEntity {
       throw new InvalidCustomerDataError();
     }
 
-    if (!montoMes && type === CustomerType.CLOUD) {
-      throw new InvalidCustomerTypeError();
-    }
-
     if (montoMes <= 0 && type === CustomerType.CLOUD) {
       throw new InvalidMontoMensualError();
+    }
+
+    if (!montoMes && type === CustomerType.CLOUD) {
+      throw new InvalidCustomerTypeError();
     }
 
     this.uuid = uuid();
