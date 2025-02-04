@@ -9,19 +9,16 @@ export class ProductValue implements ProductEntity {
   code: string;
   categoryId: string;
 
-  private static counter = 6;
-
-  constructor({ name, price, categoryId }: CreateProductSchemaType) {
+  constructor({
+    name,
+    price,
+    categoryId,
+    code,
+  }: CreateProductSchemaType & { code: string }) {
     this.uuid = uuid();
     this.name = name;
     this.price = price;
-    this.code = ProductValue.generateCode();
+    this.code = code;
     this.categoryId = categoryId;
-
-    ProductValue.counter++;
-  }
-
-  private static generateCode(): string {
-    return String(this.counter).padStart(5, "0");
   }
 }

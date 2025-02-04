@@ -1,6 +1,6 @@
 export class CategoryAlreadyExists extends Error {
   constructor() {
-    super("Category already exists");
+    super("La categoría ya existe");
     this.name = "CategoryAlreadyExists";
   }
 }

@@ -63,6 +63,14 @@ export class ProductMongoRepository implements ProductRepository {
     };
   };
 
+  getTotalSalesNumber = async (): Promise<number> => {
+    return await ProductModel.countDocuments().exec();
+  };
+
+  findByName = async (name: string): Promise<ProductEntity | null> => {
+    return await ProductModel.findOne({ name });
+  };
+
   private _productWithCategoryDTO = (mongooseDoc: ProductWithCategoryDoc) => {
     // Mapea el documento de Mongoose a la entidad de dominio
 

@@ -1,3 +1,4 @@
+import { generateSecuence } from "../../shared/utils/generateSecuence";
 import { SaleRepository } from "../domain/sale.repository";
 import { AddPaymentSchema, CreateSaleDTO } from "../domain/sale.validations";
 import { SaleValue } from "../domain/sale.value";
@@ -10,7 +11,7 @@ export class saleUseCases {
 
     const saleEntity = new SaleValue({
       ...sale,
-      serie: `${String(totalSales).padStart(4, "0")}`,
+      serie: generateSecuence(totalSales),
     });
 
     return this.saleRepository.save(saleEntity);
