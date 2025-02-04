@@ -27,10 +27,10 @@ export class CustomerMongoRepository implements CustomerRepository {
       return null;
     }
   }
-  async editCustomer({
-    uuid,
-    ...customer
-  }: EditCustomerRequest): Promise<CustomerEntity | null> {
+  async editCustomer(
+    uuid: string,
+    customer: EditCustomerRequest
+  ): Promise<CustomerEntity | null> {
     try {
       const editedCustomer = CustomerModel.findOneAndUpdate(
         { uuid },

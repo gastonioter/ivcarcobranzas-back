@@ -3,7 +3,10 @@ import { EditCustomerRequest } from "./customer.validations";
 
 export interface CustomerRepository {
   createCustomer(customer: CustomerEntity): Promise<CustomerEntity | null>;
-  editCustomer(customer: EditCustomerRequest): Promise<CustomerEntity | null>;
+  editCustomer(
+    uuid: string,
+    customer: EditCustomerRequest
+  ): Promise<CustomerEntity | null>;
   deleteCustomer(uuid: string): Promise<CustomerEntity>;
   getCustomer(uuid: string): Promise<CustomerEntity>;
 

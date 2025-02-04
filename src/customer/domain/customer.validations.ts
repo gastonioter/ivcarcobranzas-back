@@ -14,9 +14,7 @@ export const CreateCustomerSchema = z.object({
   montoMes: z.number().nullable(),
 });
 
-export const EditCustumerSchema = CreateCustomerSchema.extend({
-  uuid: z.string(),
-});
+export const EditCustumerSchema = CreateCustomerSchema.extend({});
 
 export const BajaCustumerSchema = z.object({
   uuid: z.string(),

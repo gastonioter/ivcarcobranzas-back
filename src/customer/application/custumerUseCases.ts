@@ -14,8 +14,8 @@ export class CustomerUseCases {
     return await this.customerRepository.deleteCustomer(uuid);
   };
 
-  editCustomer = async (customer: EditCustomerRequest) => {
-    return await this.customerRepository.editCustomer(customer);
+  editCustomer = async (uuid: string, customer: EditCustomerRequest) => {
+    return await this.customerRepository.editCustomer(uuid, customer);
   };
 
   getCustomer = async (uuid: string) => {
