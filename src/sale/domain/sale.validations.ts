@@ -1,7 +1,12 @@
 import { z } from "zod";
-import { PaymentMethods, SaleStatuses } from "./sale.entity";
+import {
+  PaymentMethods,
+  SalePaymentStatuses,
+  SaleStatuses,
+} from "./sale.entity";
 
-export const createSaleSchema = z.object({
+/* REQUEST'S PAYLOAD VALIDATION SCHEMAS */
+export const createSaleRequestSchema = z.object({
   seller: z.string(),
   customer: z.string(),
   iva: z.number().nonnegative(),
@@ -14,18 +19,29 @@ export const createSaleSchema = z.object({
   ),
 });
 
-export const updateSaleStatusSchema = z.object({
+export const updateSaleStatusRequestSchema = z.object({
   uuid: z.string(),
   status: z.nativeEnum(SaleStatuses),
 });
 
-export type UpdateSaleStatusRequest = z.infer<typeof updateSaleStatusSchema>;
-
-export const paymentSchema = z.object({
+export const addPaymentRequestSchema = z.object({
   amount: z.number(),
   paymentMethod: z.nativeEnum(PaymentMethods),
 });
 
-export type CreateSaleDTO = z.infer<typeof createSaleSchema>;
+export const updateSalePaymentStatusRequestSchema = z.object({
+  status: z.nativeEnum(SalePaymentStatuses),
+});
 
-export type AddPaymentSchema = z.infer<typeof paymentSchema>;
+/* TYPES */
+export type UpdateSaleStatusRequestType = z.infer<
+  typeof updateSaleStatusRequestSchema
+>;
+
+export type UpdateSalePaymentStatusRequestType = z.infer<
+  typeof updateSalePaymentStatusRequestSchema
+>;
+
+export type CreateSaleRequestType = z.infer<typeof createSaleRequestSchema>;
+
+export type AddPaymentRequestType = z.infer<typeof addPaymentRequestSchema>;

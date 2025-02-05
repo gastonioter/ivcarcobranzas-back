@@ -1,4 +1,4 @@
-import { PaymentEntity, SaleEntity } from "@/sale/domain/sale.entity";
+import { SalePaymentEntity, SaleEntity } from "@/sale/domain/sale.entity";
 import { SaleRepository } from "@/sale/domain/sale.repository";
 import { SaleDoc, SaleModel } from "../models/sale.schema";
 import {
@@ -10,9 +10,54 @@ import {
 import { UserEntity } from "@/user/domain/user.entity";
 import { CustomerEntity } from "@/customer/domain/customer.entity";
 import { SaleNotFoundError } from "../../domain/sale.exceptions";
-import { UpdateSaleStatusRequest } from "@/sale/domain/sale.validations";
+import { UpdateSaleStatusRequestType } from "../../domain/sale.validations";
 
 export class SalesMongoRepository implements SaleRepository {
+  updatePaymentStatus({
+    saleID,
+    paymentID,
+    status,
+  }: {
+    saleID: string;
+    paymentID: string;
+    status: string;
+  }): Promise<SaleEntity | null> {
+    const updatedSale = SaleModel.findOneAndUpdate(
+      {
+        uuid: saleID,
+        // "payments.uuid": paymentID,
+      },
+      {
+        $set: {
+          "payments.$[elem].status": status,
+        },
+      },
+      {
+        arrayFilters: [{ "elem.uuid": paymentID }],
+        new: true,
+      }
+    );
+
+    return updatedSale;
+  }
+
+  async addPayment(
+    uuid: string,
+    newPayment: SalePaymentEntity
+  ): Promise<SaleEntity | null> {
+    const updatedSale = await SaleModel.findOneAndUpdate(
+      { uuid },
+      { $push: { payments: newPayment } },
+      {
+        new: true,
+      }
+    );
+    if (!updatedSale) {
+      return null;
+    }
+
+    return this._saleDTO(updatedSale);
+  }
   async save(sale: SaleEntity): Promise<SaleEntity | null> {
     const saleDoc = await SaleModel.create(sale);
     return saleDoc;
@@ -28,23 +73,14 @@ export class SalesMongoRepository implements SaleRepository {
     return mapSaleDetailDTO(sale);
   }
 
-  async addPayment(
-    uuid: string,
-    newPayment: PaymentEntity
-  ): Promise<SaleEntity | null> {
-    const updatedSale = await SaleModel.findOneAndUpdate(
-      { uuid },
-      { $push: { payments: newPayment } },
-      {
-        new: true,
-      }
-    );
-    if (!updatedSale) {
-      return null;
+  async getPayments(saleID: string): Promise<SalePaymentEntity[]> {
+    const sale = await SaleModel.findOne({ uuid: saleID });
+    if (!sale) {
+      throw new SaleNotFoundError(saleID);
     }
-
-    return this._saleDTO(updatedSale);
+    return sale.payments;
   }
+
   async getTotalSalesNumber(): Promise<number> {
     return SaleModel.countDocuments();
   }
@@ -52,7 +88,7 @@ export class SalesMongoRepository implements SaleRepository {
   async changeStatus({
     uuid,
     status,
-  }: UpdateSaleStatusRequest): Promise<SaleEntity | null> {
+  }: UpdateSaleStatusRequestType): Promise<SaleEntity | null> {
     const updatedSale = await SaleModel.findOneAndUpdate(
       { uuid },
       { status },
@@ -66,6 +102,7 @@ export class SalesMongoRepository implements SaleRepository {
 
     return this._saleDTO(updatedSale);
   }
+
   async findAll(): Promise<SaleDTO[]> {
     const sales = await SaleModel.find({})
       .populate<{ sellerData: UserEntity }>("sellerData")

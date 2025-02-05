@@ -1,6 +1,6 @@
 import { SaleDetailsDTO, SaleDTO } from "./sale.dto";
-import { PaymentEntity, SaleEntity } from "./sale.entity";
-import { UpdateSaleStatusRequest } from "./sale.validations";
+import { SalePaymentEntity, SaleEntity } from "./sale.entity";
+import { UpdateSaleStatusRequestType } from "./sale.validations";
 
 export interface SaleRepository {
   save(sale: SaleEntity): Promise<SaleEntity | null>;
@@ -10,6 +10,18 @@ export interface SaleRepository {
   changeStatus({
     uuid,
     status,
-  }: UpdateSaleStatusRequest): Promise<SaleEntity | null>;
-  addPayment(uuid: string, data: PaymentEntity): Promise<SaleEntity | null>;
+  }: UpdateSaleStatusRequestType): Promise<SaleEntity | null>;
+  addPayment(uuid: string, data: SalePaymentEntity): Promise<SaleEntity | null>;
+
+  updatePaymentStatus({
+    saleID,
+    paymentID,
+    status,
+  }: {
+    saleID: string;
+    paymentID: string;
+    status: string;
+  }): Promise<SaleEntity | null>;
+
+  getPayments(saleID: string): Promise<SalePaymentEntity[]>;
 }

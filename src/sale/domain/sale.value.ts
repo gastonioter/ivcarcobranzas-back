@@ -1,15 +1,16 @@
 import { v4 as uuid } from "uuid";
 import {
-  PaymentEntity,
+  SalePaymentEntity,
   SaleDetailEntity,
   SaleEntity,
   SaleStatuses,
 } from "./sale.entity";
-import { CreateSaleDTO } from "./sale.validations";
+import { CreateSaleRequestType } from "./sale.validations";
+
 export class SaleValue implements SaleEntity {
   uuid: string;
   serie: string;
-  payments: PaymentEntity[];
+  payments: SalePaymentEntity[];
   status: SaleStatuses;
   seller: string;
   customer: string;
@@ -25,7 +26,7 @@ export class SaleValue implements SaleEntity {
     items,
     serie,
     iva,
-  }: CreateSaleDTO & { serie: string }) {
+  }: CreateSaleRequestType & { serie: string }) {
     this.seller = seller;
     this.customer = customer;
     this.items = items;

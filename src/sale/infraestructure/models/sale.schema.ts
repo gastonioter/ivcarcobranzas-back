@@ -1,5 +1,9 @@
 import { InferSchemaType, model, Schema } from "mongoose";
-import { PaymentMethods, SaleStatuses } from "../../domain/sale.entity";
+import {
+  PaymentMethods,
+  SalePaymentStatuses,
+  SaleStatuses,
+} from "../../domain/sale.entity";
 
 const SaleDetailItemSchema = new Schema({
   uuid: { type: String, required: true },
@@ -10,7 +14,13 @@ const SaleDetailItemSchema = new Schema({
 });
 
 const PaymentSchema = new Schema({
+  uuid: { type: String, required: true },
   amount: { type: Number, required: true },
+  status: {
+    type: String,
+    required: true,
+    enum: Object.values(SalePaymentStatuses),
+  },
   paymentMethod: {
     type: String,
     required: true,

@@ -1,16 +1,22 @@
 import { generateSecuence } from "../../shared/utils/generateSecuence";
 import { SaleRepository } from "../domain/sale.repository";
 import {
-  AddPaymentSchema,
-  CreateSaleDTO,
-  UpdateSaleStatusRequest,
+  AddPaymentRequestType,
+  CreateSaleRequestType,
+  UpdateSalePaymentStatusRequestType,
+  UpdateSaleStatusRequestType,
 } from "../domain/sale.validations";
 import { SaleValue } from "../domain/sale.value";
-
-export class saleUseCases {
+import { SalePaymentValue } from "../domain/salePayment.value";
+interface UpdateSalePaymentStatusArgs {
+  saleID: string;
+  paymentID: string;
+  status: string;
+}
+export class SaleUseCases {
   constructor(private readonly saleRepository: SaleRepository) {}
 
-  async createSale(sale: CreateSaleDTO) {
+  async createSale(sale: CreateSaleRequestType) {
     const totalSales = await this.saleRepository.getTotalSalesNumber();
 
     const saleEntity = new SaleValue({
@@ -21,14 +27,29 @@ export class saleUseCases {
     return this.saleRepository.save(saleEntity);
   }
 
-  async addPayment(uuid: string, payment: AddPaymentSchema) {
-    return this.saleRepository.addPayment(uuid, {
-      ...payment,
-      createdAt: new Date(),
+  async addPayment(saleID: string, payment: AddPaymentRequestType) {
+    const paymentValue = new SalePaymentValue(payment);
+
+    return this.saleRepository.addPayment(saleID, paymentValue);
+  }
+
+  async getPayments(saleID: string) {
+    return this.saleRepository.getPayments(saleID);
+  }
+
+  async updatePaymentStatus({
+    saleID,
+    paymentID,
+    status,
+  }: UpdateSalePaymentStatusArgs) {
+    return this.saleRepository.updatePaymentStatus({
+      saleID,
+      paymentID,
+      status,
     });
   }
 
-  async changeStatus({ uuid, status }: UpdateSaleStatusRequest) {
+  async changeStatus({ uuid, status }: UpdateSaleStatusRequestType) {
     return this.saleRepository.changeStatus({ uuid, status });
   }
 

@@ -1,13 +1,31 @@
-import { saleUseCases } from "@/sale/application/saleUseCases";
+import { SaleUseCases } from "@/sale/application/saleUseCases";
 import { Response, Request } from "express";
 
 export class SaleController {
-  constructor(private saleUseCases: saleUseCases) {}
+  constructor(private saleUseCases: SaleUseCases) {}
 
   public create = async (req: Request, res: Response) => {
     const createdSale = await this.saleUseCases.createSale(req.body);
 
     res.status(201).json(createdSale);
+  };
+
+  public showDetails = async (req: Request, res: Response) => {
+    const { uuid } = req.params;
+    const sale = await this.saleUseCases.findSale(uuid);
+
+    res.status(200).json(sale);
+  };
+
+  public changeStatus = async (req: Request, res: Response) => {
+    const updatedSale = await this.saleUseCases.changeStatus(req.body);
+    res.status(200).json(updatedSale);
+  };
+
+  public list = async (req: Request, res: Response) => {
+    const sales = await this.saleUseCases.listSales();
+
+    res.status(200).json(sales);
   };
 
   public addPayment = async (req: Request, res: Response) => {
@@ -19,31 +37,25 @@ export class SaleController {
     res.status(200).json(updatedSale);
   };
 
-  public addPaymeny = async (req: Request, res: Response) => {
+  public getPayments = async (req: Request, res: Response) => {
     const { uuid } = req.params;
-    const newPayment = req.body;
+    const payments = await this.saleUseCases.getPayments(uuid);
 
-    const updatedSale = await this.saleUseCases.addPayment(uuid, newPayment);
-
-    res.status(200).json(updatedSale);
+    res.status(200).json(payments);
   };
 
-  public showDetails = async (req: Request, res: Response) => {
-    const { uuid } = req.params;
-    const sale = await this.saleUseCases.findSale(uuid);
+  public updatePaymentStatus = async (req: Request, res: Response) => {
+    const { saleID, paymentID } = req.params;
+    const { status } = req.body;
 
-    res.status(200).json(sale);
-  };
+    console.log(saleID, paymentID, status);
 
-  public changeStatus = async (req: Request, res: Response) => {
-    console.log("update status endpoint");
-    const updatedSale = await this.saleUseCases.changeStatus(req.body);
-    res.status(200).json(updatedSale);
-  };
+    const payment = await this.saleUseCases.updatePaymentStatus({
+      saleID,
+      paymentID,
+      status,
+    });
 
-  public list = async (req: Request, res: Response) => {
-    const sales = await this.saleUseCases.listSales();
-
-    res.status(200).json(sales);
+    res.status(200).json(payment);
   };
 }
