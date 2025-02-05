@@ -30,9 +30,9 @@ export class SaleController {
 
   public showDetails = async (req: Request, res: Response) => {
     const { uuid } = req.params;
-    const sales = await this.saleUseCases.findSale(uuid);
+    const sale = await this.saleUseCases.findSale(uuid);
 
-    res.status(200).json(sales);
+    res.status(200).json(sale);
   };
 
   public list = async (req: Request, res: Response) => {

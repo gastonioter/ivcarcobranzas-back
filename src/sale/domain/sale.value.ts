@@ -3,7 +3,7 @@ import {
   PaymentEntity,
   SaleDetailEntity,
   SaleEntity,
-  SaleStatuses
+  SaleStatuses,
 } from "./sale.entity";
 import { CreateSaleDTO } from "./sale.validations";
 export class SaleValue implements SaleEntity {
@@ -14,28 +14,29 @@ export class SaleValue implements SaleEntity {
   seller: string;
   customer: string;
   items: SaleDetailEntity[];
+  iva: number;
   createdAt: Date;
   updatedAt: Date;
+  totalAmount: number;
 
   constructor({
     seller,
     customer,
     items,
     serie,
+    iva,
   }: CreateSaleDTO & { serie: string }) {
     this.seller = seller;
     this.customer = customer;
     this.items = items;
     this.uuid = uuid();
     this.serie = serie;
+    this.iva = iva;
     this.payments = [];
     this.status = SaleStatuses.PENDING;
     this.createdAt = new Date();
     this.updatedAt = new Date();
-  }
-
-  private static generateSerie() {
-    return Math.random().toString(36).substring(2, 15);
+    this.totalAmount = this.calculateTotal();
   }
 
   public calculateTotal() {

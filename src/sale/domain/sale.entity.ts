@@ -5,8 +5,10 @@ export interface SaleEntity {
   status: SaleStatuses;
   seller: string;
   customer: string;
+  totalAmount: number;
   items: SaleDetailEntity[];
   createdAt: Date;
+  iva: number;
   updatedAt: Date;
 }
 
@@ -17,9 +19,9 @@ export interface SaleDetailEntity {
 }
 
 export enum SaleStatuses {
-  PENDING = "PENDING",
-  PAID = "PAID",
-  CANCELLED = "CANCELLED",
+  PENDING = "PENDIENTE",
+  PAID = "PAGO",
+  CANCELLED = "CANCELADA",
 }
 export enum PaymentMethods {
   CASH = "CASH",

@@ -2,9 +2,11 @@ import { InferSchemaType, model, Schema } from "mongoose";
 import { PaymentMethods, SaleStatuses } from "../../domain/sale.entity";
 
 const SaleDetailItemSchema = new Schema({
+  uuid: { type: String, required: true },
   product: { type: String, required: true },
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
+  total: { type: Number, required: true },
 });
 
 const PaymentSchema = new Schema({
@@ -22,7 +24,9 @@ const SaleSchema = new Schema(
     uuid: { type: String, required: true },
     seller: { type: String, required: true },
     customer: { type: String, required: true },
+    totalAmount: { type: Number, required: true },
     serie: { type: String, required: true },
+    iva: { type: Number, required: true, default: 0 },
     status: { type: String, required: true, enum: Object.values(SaleStatuses) },
     items: [SaleDetailItemSchema],
     payments: [PaymentSchema],
@@ -43,6 +47,9 @@ SaleSchema.virtual("customerData", {
   foreignField: "uuid",
   justOne: true,
 });
+
+SaleSchema.set("toObject", { virtuals: true });
+SaleSchema.set("toJSON", { virtuals: true });
 
 export type SaleDoc = InferSchemaType<typeof SaleSchema>;
 

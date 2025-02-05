@@ -1,21 +1,30 @@
 import { PaymentEntity, SaleEntity } from "@/sale/domain/sale.entity";
 import { SaleRepository } from "@/sale/domain/sale.repository";
 import { SaleDoc, SaleModel } from "../models/sale.schema";
+import {
+  mapSaleDetailDTO,
+  SaleDetailsDTO,
+  saleDTO,
+  SaleDTO,
+} from "../../domain/sale.dto";
+import { UserEntity } from "@/user/domain/user.entity";
+import { CustomerEntity } from "@/customer/domain/customer.entity";
+import { SaleNotFoundError } from "../../domain/sale.exceptions";
 
 export class SalesMongoRepository implements SaleRepository {
   async save(sale: SaleEntity): Promise<SaleEntity | null> {
     const saleDoc = await SaleModel.create(sale);
-
-    return this._saleDTO(saleDoc);
+    return saleDoc;
   }
 
-  async findById(uuid: string): Promise<SaleEntity | null> {
-    const sale = await SaleModel.findOne({ uuid });
+  async findById(uuid: string): Promise<SaleDetailsDTO | null> {
+    const sale = await SaleModel.findOne({ uuid }).populate<{
+      customer: CustomerEntity;
+    }>("customerData");
     if (!sale) {
-      return null;
+      throw new SaleNotFoundError(uuid);
     }
-
-    return this._saleDTO(sale);
+    return mapSaleDetailDTO(sale);
   }
 
   async addPayment(
@@ -38,10 +47,12 @@ export class SalesMongoRepository implements SaleRepository {
   async getTotalSalesNumber(): Promise<number> {
     return SaleModel.countDocuments();
   }
-  async findAll(): Promise<SaleEntity[]> {
-    const sales = await SaleModel.find({});
+  async findAll(): Promise<SaleDTO[]> {
+    const sales = await SaleModel.find({})
+      .populate<{ sellerData: UserEntity }>("sellerData")
+      .populate<{ customerData: CustomerEntity }>("customerData");
 
-    return sales;
+    return sales.map(saleDTO);
   }
 
   private _saleDTO = (mongooseDoc: SaleDoc) => {
@@ -52,9 +63,11 @@ export class SalesMongoRepository implements SaleRepository {
       serie: mongooseDoc.serie,
       status: mongooseDoc.status,
       items: mongooseDoc.items,
+      totalAmount: mongooseDoc.totalAmount,
       payments: mongooseDoc.payments,
       createdAt: mongooseDoc.createdAt,
       updatedAt: mongooseDoc.updatedAt,
+      iva: mongooseDoc.iva,
     };
   };
 }
