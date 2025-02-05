@@ -35,6 +35,12 @@ export class SaleController {
     res.status(200).json(sale);
   };
 
+  public changeStatus = async (req: Request, res: Response) => {
+    console.log("update status endpoint");
+    const updatedSale = await this.saleUseCases.changeStatus(req.body);
+    res.status(200).json(updatedSale);
+  };
+
   public list = async (req: Request, res: Response) => {
     const sales = await this.saleUseCases.listSales();
 

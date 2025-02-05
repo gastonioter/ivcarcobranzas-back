@@ -21,7 +21,7 @@ export interface SaleDetailEntity {
 export enum SaleStatuses {
   PENDING = "PENDIENTE",
   PAID = "PAGO",
-  CANCELLED = "CANCELADA",
+  CANCELLED = "ANULADA",
 }
 export enum PaymentMethods {
   CASH = "CASH",

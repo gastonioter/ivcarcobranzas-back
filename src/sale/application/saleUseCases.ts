@@ -1,6 +1,10 @@
 import { generateSecuence } from "../../shared/utils/generateSecuence";
 import { SaleRepository } from "../domain/sale.repository";
-import { AddPaymentSchema, CreateSaleDTO } from "../domain/sale.validations";
+import {
+  AddPaymentSchema,
+  CreateSaleDTO,
+  UpdateSaleStatusRequest,
+} from "../domain/sale.validations";
 import { SaleValue } from "../domain/sale.value";
 
 export class saleUseCases {
@@ -22,6 +26,10 @@ export class saleUseCases {
       ...payment,
       createdAt: new Date(),
     });
+  }
+
+  async changeStatus({ uuid, status }: UpdateSaleStatusRequest) {
+    return this.saleRepository.changeStatus({ uuid, status });
   }
 
   async findSale(uuid: string) {

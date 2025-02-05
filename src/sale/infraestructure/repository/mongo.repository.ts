@@ -10,6 +10,7 @@ import {
 import { UserEntity } from "@/user/domain/user.entity";
 import { CustomerEntity } from "@/customer/domain/customer.entity";
 import { SaleNotFoundError } from "../../domain/sale.exceptions";
+import { UpdateSaleStatusRequest } from "@/sale/domain/sale.validations";
 
 export class SalesMongoRepository implements SaleRepository {
   async save(sale: SaleEntity): Promise<SaleEntity | null> {
@@ -46,6 +47,24 @@ export class SalesMongoRepository implements SaleRepository {
   }
   async getTotalSalesNumber(): Promise<number> {
     return SaleModel.countDocuments();
+  }
+
+  async changeStatus({
+    uuid,
+    status,
+  }: UpdateSaleStatusRequest): Promise<SaleEntity | null> {
+    const updatedSale = await SaleModel.findOneAndUpdate(
+      { uuid },
+      { status },
+      {
+        new: true,
+      }
+    );
+    if (!updatedSale) {
+      return null;
+    }
+
+    return this._saleDTO(updatedSale);
   }
   async findAll(): Promise<SaleDTO[]> {
     const sales = await SaleModel.find({})
