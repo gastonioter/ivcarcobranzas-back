@@ -13,7 +13,7 @@ import { SaleNotFoundError } from "../../domain/sale.exceptions";
 import { UpdateSaleStatusRequestType } from "../../domain/sale.validations";
 
 export class SalesMongoRepository implements SaleRepository {
-  updatePaymentStatus({
+  async updatePaymentStatus({
     saleID,
     paymentID,
     status,
@@ -21,8 +21,8 @@ export class SalesMongoRepository implements SaleRepository {
     saleID: string;
     paymentID: string;
     status: string;
-  }): Promise<SaleEntity | null> {
-    const updatedSale = SaleModel.findOneAndUpdate(
+  }): Promise<SaleEntity> {
+    const updatedSale = await SaleModel.findOneAndUpdate(
       {
         uuid: saleID,
         // "payments.uuid": paymentID,
@@ -38,13 +38,17 @@ export class SalesMongoRepository implements SaleRepository {
       }
     );
 
-    return updatedSale;
+    if (!updatedSale) {
+      throw new SaleNotFoundError(saleID);
+    }
+
+    return this._saleDTO(updatedSale);
   }
 
   async addPayment(
     uuid: string,
     newPayment: SalePaymentEntity
-  ): Promise<SaleEntity | null> {
+  ): Promise<SaleEntity> {
     const updatedSale = await SaleModel.findOneAndUpdate(
       { uuid },
       { $push: { payments: newPayment } },
@@ -53,7 +57,7 @@ export class SalesMongoRepository implements SaleRepository {
       }
     );
     if (!updatedSale) {
-      return null;
+      throw new SaleNotFoundError(uuid);
     }
 
     return this._saleDTO(updatedSale);

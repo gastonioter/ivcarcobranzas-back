@@ -1,4 +1,10 @@
+import { InvalidOperationError } from "../../shared/domain/exceptions";
 import { generateSecuence } from "../../shared/utils/generateSecuence";
+import {
+  SaleEntity,
+  SalePaymentStatuses,
+  SaleStatuses,
+} from "../domain/sale.entity";
 import { SaleRepository } from "../domain/sale.repository";
 import {
   AddPaymentRequestType,
@@ -28,9 +34,20 @@ export class SaleUseCases {
   }
 
   async addPayment(saleID: string, payment: AddPaymentRequestType) {
+    const sale = await this.saleRepository.findById(saleID);
+    if (sale?.status == SaleStatuses.CANCELLED) {
+      throw new InvalidOperationError(
+        "No puedes agregar pagos a una venta cancelada"
+      );
+    }
     const paymentValue = new SalePaymentValue(payment);
 
-    return this.saleRepository.addPayment(saleID, paymentValue);
+    const updatedPayment = await this.saleRepository.addPayment(
+      saleID,
+      paymentValue
+    );
+
+    return this._updateSaleStatus(updatedPayment);
   }
 
   async getPayments(saleID: string) {
@@ -42,11 +59,13 @@ export class SaleUseCases {
     paymentID,
     status,
   }: UpdateSalePaymentStatusArgs) {
-    return this.saleRepository.updatePaymentStatus({
+    const payment = await this.saleRepository.updatePaymentStatus({
       saleID,
       paymentID,
       status,
     });
+
+    return this._updateSaleStatus(payment);
   }
 
   async changeStatus({ uuid, status }: UpdateSaleStatusRequestType) {
@@ -59,5 +78,37 @@ export class SaleUseCases {
 
   async listSales() {
     return this.saleRepository.findAll();
+  }
+
+  /* PRIVATE METHODS */
+  private async _updateSaleStatus(sale: SaleEntity) {
+    if (sale.status == SaleStatuses.CANCELLED) {
+      return sale;
+    }
+    const saldo = this.computeSaleSummary(sale);
+    const isPaid = saldo <= 0;
+
+    if (isPaid) {
+      return await this.saleRepository.changeStatus({
+        uuid: sale.uuid,
+        status: SaleStatuses.PAID,
+      });
+    }
+
+    return sale;
+  }
+
+  private computeSaleSummary(sale: SaleEntity) {
+    const debe = sale.totalAmount;
+    const haber = sale.payments.reduce(
+      (acc, payment) =>
+        payment.status == SalePaymentStatuses.ACTIVE
+          ? acc + payment.amount
+          : acc,
+      0
+    );
+
+    const saldo = debe - haber;
+    return saldo;
   }
 }

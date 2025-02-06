@@ -21,6 +21,7 @@ export interface SaleDTO {
 
 export interface SaleDetailsDTO {
   payments: SalePaymentEntity[];
+  serie: string;
   uuid: string;
   customer: {
     firstName: string;
@@ -29,6 +30,7 @@ export interface SaleDetailsDTO {
   iva: number;
   items: SaleDetailEntity[];
   totalAmount: number;
+  status: SaleStatuses;
 }
 
 export const saleDTO = (obj: any): SaleDTO => {
@@ -59,5 +61,7 @@ export const mapSaleDetailDTO = (obj: any): SaleDetailsDTO => {
     items: obj.items,
     payments: obj.payments,
     totalAmount: obj.totalAmount,
+    status: obj.status,
+    serie: obj.serie,
   };
 };

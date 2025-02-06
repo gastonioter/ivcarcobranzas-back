@@ -11,7 +11,7 @@ export interface SaleRepository {
     uuid,
     status,
   }: UpdateSaleStatusRequestType): Promise<SaleEntity | null>;
-  addPayment(uuid: string, data: SalePaymentEntity): Promise<SaleEntity | null>;
+  addPayment(uuid: string, data: SalePaymentEntity): Promise<SaleEntity>;
 
   updatePaymentStatus({
     saleID,
@@ -21,7 +21,7 @@ export interface SaleRepository {
     saleID: string;
     paymentID: string;
     status: string;
-  }): Promise<SaleEntity | null>;
+  }): Promise<SaleEntity>;
 
   getPayments(saleID: string): Promise<SalePaymentEntity[]>;
 }
