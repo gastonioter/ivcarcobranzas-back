@@ -1,16 +1,19 @@
-import { SalePaymentEntity, SaleEntity } from "@/sale/domain/sale.entity";
+import { CustomerEntity } from "@/customer/domain/customer.entity";
+import {
+  SalePaymentEntity,
+  TransactionEntity,
+  TransactionStatus,
+} from "@/sale/domain/sale.entity";
 import { SaleRepository } from "@/sale/domain/sale.repository";
-import { SaleDoc, SaleModel } from "../models/sale.schema";
+import { UserEntity } from "@/user/domain/user.entity";
 import {
   mapSaleDetailDTO,
   SaleDetailsDTO,
   saleDTO,
   SaleDTO,
 } from "../../domain/sale.dto";
-import { UserEntity } from "@/user/domain/user.entity";
-import { CustomerEntity } from "@/customer/domain/customer.entity";
 import { SaleNotFoundError } from "../../domain/sale.exceptions";
-import { UpdateSaleStatusRequestType } from "../../domain/sale.validations";
+import { SaleDoc, SaleModel } from "../models/sale.schema";
 
 export class SalesMongoRepository implements SaleRepository {
   async updatePaymentStatus({
@@ -21,7 +24,7 @@ export class SalesMongoRepository implements SaleRepository {
     saleID: string;
     paymentID: string;
     status: string;
-  }): Promise<SaleEntity> {
+  }): Promise<TransactionEntity> {
     const updatedSale = await SaleModel.findOneAndUpdate(
       {
         uuid: saleID,
@@ -48,7 +51,7 @@ export class SalesMongoRepository implements SaleRepository {
   async addPayment(
     uuid: string,
     newPayment: SalePaymentEntity
-  ): Promise<SaleEntity> {
+  ): Promise<TransactionEntity> {
     const updatedSale = await SaleModel.findOneAndUpdate(
       { uuid },
       { $push: { payments: newPayment } },
@@ -62,8 +65,9 @@ export class SalesMongoRepository implements SaleRepository {
 
     return this._saleDTO(updatedSale);
   }
-  async save(sale: SaleEntity): Promise<SaleEntity | null> {
+  async save(sale: TransactionEntity): Promise<TransactionEntity | null> {
     const saleDoc = await SaleModel.create(sale);
+
     return saleDoc;
   }
 
@@ -92,7 +96,11 @@ export class SalesMongoRepository implements SaleRepository {
   async changeStatus({
     uuid,
     status,
-  }: UpdateSaleStatusRequestType): Promise<SaleEntity | null> {
+  }: {
+    uuid: string;
+    status: TransactionStatus;
+  }): Promise<TransactionEntity | null> {
+    console.log(status);
     const updatedSale = await SaleModel.findOneAndUpdate(
       { uuid },
       { status },

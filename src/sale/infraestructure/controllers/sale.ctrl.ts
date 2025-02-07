@@ -5,7 +5,7 @@ export class SaleController {
   constructor(private saleUseCases: SaleUseCases) {}
 
   public create = async (req: Request, res: Response) => {
-    const createdSale = await this.saleUseCases.createSale(req.body);
+    const createdSale = await this.saleUseCases.createTransaction(req.body);
 
     res.status(201).json(createdSale);
   };
@@ -31,7 +31,6 @@ export class SaleController {
   public addPayment = async (req: Request, res: Response) => {
     const { uuid } = req.params;
     const payment = req.body;
-
     const updatedSale = await this.saleUseCases.addPayment(uuid, payment);
 
     res.status(200).json(updatedSale);

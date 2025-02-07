@@ -1,15 +1,20 @@
 import { InvalidOperationError } from "../../shared/domain/exceptions";
 import { generateSecuence } from "../../shared/utils/generateSecuence";
+import { PaidStatus } from "../../transactionStatus/PaidStatus";
+import { PaymentPendingStatus } from "../../transactionStatus/PaymentPendingStatus";
 import {
-  SaleEntity,
+  BudgetStatus,
   SalePaymentStatuses,
-  SaleStatuses,
+  SaleStatus,
+  TransactionEntity,
+  TransactionStatus,
+  TransactionType,
 } from "../domain/sale.entity";
+import { SaleNotFoundError } from "../domain/sale.exceptions";
 import { SaleRepository } from "../domain/sale.repository";
 import {
   AddPaymentRequestType,
   CreateSaleRequestType,
-  UpdateSalePaymentStatusRequestType,
   UpdateSaleStatusRequestType,
 } from "../domain/sale.validations";
 import { SaleValue } from "../domain/sale.value";
@@ -22,22 +27,34 @@ interface UpdateSalePaymentStatusArgs {
 export class SaleUseCases {
   constructor(private readonly saleRepository: SaleRepository) {}
 
-  async createSale(sale: CreateSaleRequestType) {
+  async createTransaction(sale: CreateSaleRequestType) {
     const totalSales = await this.saleRepository.getTotalSalesNumber();
 
-    const saleEntity = new SaleValue({
+    const TransactionEntity = new SaleValue({
       ...sale,
       serie: generateSecuence(totalSales),
     });
 
-    return this.saleRepository.save(saleEntity);
+    return this.saleRepository.save(TransactionEntity);
   }
 
   async addPayment(saleID: string, payment: AddPaymentRequestType) {
     const sale = await this.saleRepository.findById(saleID);
-    if (sale?.status == SaleStatuses.CANCELLED) {
+    if (
+      sale?.status.type == TransactionType.SALE &&
+      sale?.status.status == SaleStatus.CANCELLED
+    ) {
       throw new InvalidOperationError(
         "No puedes agregar pagos a una venta cancelada"
+      );
+    }
+
+    if (
+      sale?.status.type == TransactionType.BUDGET &&
+      sale?.status.status !== BudgetStatus.APPROVED
+    ) {
+      throw new InvalidOperationError(
+        "No puedes agregar pagos a un presupuesto sin aprobar"
       );
     }
     const paymentValue = new SalePaymentValue(payment);
@@ -69,7 +86,64 @@ export class SaleUseCases {
   }
 
   async changeStatus({ uuid, status }: UpdateSaleStatusRequestType) {
-    return this.saleRepository.changeStatus({ uuid, status });
+    const sale = await this.saleRepository.findById(uuid);
+
+    if (!sale) {
+      throw new SaleNotFoundError(uuid);
+    }
+
+    /* TRANSICIONES ENTRE ESTADOS NO VALIDAS */
+
+    if (
+      sale.status.type == TransactionType.SALE &&
+      Object.values(BudgetStatus).includes(status as BudgetStatus)
+    ) {
+      throw new InvalidOperationError(
+        `Una venta no puede cambiar su estado a ${status}`
+      );
+    }
+
+    if (
+      sale.status.type == TransactionType.BUDGET &&
+      Object.values(SaleStatus).includes(status as SaleStatus)
+    ) {
+      throw new InvalidOperationError(
+        `Un presupuesto no puede cambiar su estado a ${status}`
+      );
+    }
+
+    if (
+      sale.status.type == TransactionType.BUDGET &&
+      sale.status.status == BudgetStatus.REJECTED
+    ) {
+      throw new InvalidOperationError(`El presupuesto ya fue rechazado`);
+    }
+
+    let newStatus: TransactionStatus = {} as TransactionStatus;
+
+    if (sale.status.type == TransactionType.BUDGET) {
+      newStatus = {
+        status: status as SaleStatus,
+        type: sale.status.type as TransactionType.SALE,
+      };
+    } else {
+      newStatus = {
+        status: status as BudgetStatus,
+        type: sale.status.type as TransactionType.BUDGET,
+      };
+    }
+
+    if (
+      sale.status.type == TransactionType.BUDGET &&
+      status == BudgetStatus.APPROVED
+    ) {
+      newStatus = {
+        status: SaleStatus.PENDING_PAYMENT,
+        type: TransactionType.SALE,
+      };
+    }
+
+    return await this.saleRepository.changeStatus({ uuid, status: newStatus });
   }
 
   async findSale(uuid: string) {
@@ -81,24 +155,34 @@ export class SaleUseCases {
   }
 
   /* PRIVATE METHODS */
-  private async _updateSaleStatus(sale: SaleEntity) {
-    if (sale.status == SaleStatuses.CANCELLED) {
+  private async _updateSaleStatus(sale: TransactionEntity) {
+    if (
+      sale.status.type === TransactionType.BUDGET &&
+      sale.status.status !== BudgetStatus.APPROVED
+    ) {
       return sale;
     }
+
+    console.log("Updating sale status");
     const saldo = this.computeSaleSummary(sale);
     const isPaid = saldo <= 0;
 
     if (isPaid) {
       return await this.saleRepository.changeStatus({
         uuid: sale.uuid,
-        status: SaleStatuses.PAID,
+        status: new PaidStatus(),
+      });
+    } else {
+      return await this.saleRepository.changeStatus({
+        uuid: sale.uuid,
+        status: new PaymentPendingStatus(),
       });
     }
 
     return sale;
   }
 
-  private computeSaleSummary(sale: SaleEntity) {
+  private computeSaleSummary(sale: TransactionEntity) {
     const debe = sale.totalAmount;
     const haber = sale.payments.reduce(
       (acc, payment) =>

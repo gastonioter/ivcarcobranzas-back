@@ -1,7 +1,7 @@
 import {
   SaleDetailEntity,
   SalePaymentEntity,
-  SaleStatuses,
+  TransactionStatus,
 } from "./sale.entity";
 
 export interface SaleDTO {
@@ -14,7 +14,7 @@ export interface SaleDTO {
     lastName: string;
   };
   serie: string;
-  status: SaleStatuses;
+  status: TransactionStatus;
   totalAmount: number;
   createdAt: Date;
 }
@@ -30,7 +30,7 @@ export interface SaleDetailsDTO {
   iva: number;
   items: SaleDetailEntity[];
   totalAmount: number;
-  status: SaleStatuses;
+  status: TransactionStatus;
 }
 
 export const saleDTO = (obj: any): SaleDTO => {

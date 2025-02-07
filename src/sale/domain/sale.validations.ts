@@ -1,15 +1,17 @@
 import { z } from "zod";
 import {
+  BudgetStatus,
   PaymentMethods,
   SalePaymentStatuses,
-  SaleStatuses,
+  SaleStatus,
 } from "./sale.entity";
 
 /* REQUEST'S PAYLOAD VALIDATION SCHEMAS */
-export const createSaleRequestSchema = z.object({
+export const createTransactionRequestSchema = z.object({
   seller: z.string(),
   customer: z.string(),
   iva: z.number().nonnegative(),
+  isBudget: z.boolean().optional(),
   items: z.array(
     z.object({
       product: z.string(),
@@ -21,7 +23,7 @@ export const createSaleRequestSchema = z.object({
 
 export const updateSaleStatusRequestSchema = z.object({
   uuid: z.string(),
-  status: z.nativeEnum(SaleStatuses),
+  status: z.union([z.nativeEnum(BudgetStatus), z.nativeEnum(SaleStatus)]),
 });
 
 export const addPaymentRequestSchema = z.object({
@@ -42,6 +44,8 @@ export type UpdateSalePaymentStatusRequestType = z.infer<
   typeof updateSalePaymentStatusRequestSchema
 >;
 
-export type CreateSaleRequestType = z.infer<typeof createSaleRequestSchema>;
+export type CreateSaleRequestType = z.infer<
+  typeof createTransactionRequestSchema
+>;
 
 export type AddPaymentRequestType = z.infer<typeof addPaymentRequestSchema>;

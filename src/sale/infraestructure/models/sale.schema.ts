@@ -1,8 +1,11 @@
 import { InferSchemaType, model, Schema } from "mongoose";
 import {
+  BudgetStatus,
   PaymentMethods,
   SalePaymentStatuses,
-  SaleStatuses,
+  SaleStatus,
+  TransactionStatus,
+  TransactionType,
 } from "../../domain/sale.entity";
 
 const SaleDetailItemSchema = new Schema({
@@ -29,6 +32,21 @@ const PaymentSchema = new Schema({
   createdAt: { type: Date, required: true, default: Date.now },
 });
 
+const StatusSchema = new Schema<TransactionStatus>(
+  {
+    type: {
+      type: String,
+      enum: Object.values(TransactionType),
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: [...Object.values(BudgetStatus), ...Object.values(SaleStatus)],
+      required: true,
+    },
+  },
+  { _id: false }
+);
 const SaleSchema = new Schema(
   {
     uuid: { type: String, required: true },
@@ -36,8 +54,12 @@ const SaleSchema = new Schema(
     customer: { type: String, required: true },
     totalAmount: { type: Number, required: true },
     serie: { type: String, required: true },
+    isBudget: { type: Boolean, required: true, default: false },
     iva: { type: Number, required: true, default: 0 },
-    status: { type: String, required: true, enum: Object.values(SaleStatuses) },
+    status: {
+      type: StatusSchema,
+      required: true,
+    },
     items: [SaleDetailItemSchema],
     payments: [PaymentSchema],
   },

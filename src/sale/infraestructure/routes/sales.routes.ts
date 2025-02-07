@@ -4,7 +4,7 @@ import { zodValidator } from "../../../middlewares/zodValidator";
 import { SaleUseCases } from "../../application/saleUseCases";
 import {
   addPaymentRequestSchema,
-  createSaleRequestSchema,
+  createTransactionRequestSchema,
   updateSalePaymentStatusRequestSchema,
   updateSaleStatusRequestSchema,
 } from "../../domain/sale.validations";
@@ -20,7 +20,7 @@ const salesController = new SaleController(salesUseCases);
 /* CREATE SALE */
 routes.post(
   "/",
-  zodValidator(createSaleRequestSchema),
+  zodValidator(createTransactionRequestSchema),
   asyncHandler(salesController.create)
 );
 

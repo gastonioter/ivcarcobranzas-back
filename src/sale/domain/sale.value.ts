@@ -2,16 +2,19 @@ import { v4 as uuid } from "uuid";
 import {
   SalePaymentEntity,
   SaleDetailEntity,
-  SaleEntity,
-  SaleStatuses,
+  TransactionEntity,
+  SaleStatus,
+  TransactionStatus,
+  TransactionType,
+  BudgetStatus,
 } from "./sale.entity";
 import { CreateSaleRequestType } from "./sale.validations";
 
-export class SaleValue implements SaleEntity {
+export class SaleValue implements TransactionEntity {
   uuid: string;
   serie: string;
   payments: SalePaymentEntity[];
-  status: SaleStatuses;
+  status: TransactionStatus;
   seller: string;
   customer: string;
   items: SaleDetailEntity[];
@@ -26,6 +29,7 @@ export class SaleValue implements SaleEntity {
     items,
     serie,
     iva,
+    isBudget = false,
   }: CreateSaleRequestType & { serie: string }) {
     this.seller = seller;
     this.customer = customer;
@@ -34,13 +38,26 @@ export class SaleValue implements SaleEntity {
     this.serie = serie;
     this.iva = iva;
     this.payments = [];
-    this.status = SaleStatuses.PENDING;
+    this.status = this.getStatus(isBudget);
     this.createdAt = new Date();
     this.updatedAt = new Date();
     this.totalAmount = this.calculateTotal();
   }
 
-  public calculateTotal() {
+  private getStatus(isBudget: boolean): TransactionStatus {
+    if (isBudget) {
+      return {
+        type: TransactionType.BUDGET,
+        status: BudgetStatus.PENDING_APPROVAL,
+      };
+    } else {
+      return {
+        type: TransactionType.SALE,
+        status: SaleStatus.PENDING_PAYMENT,
+      };
+    }
+  }
+  private calculateTotal() {
     return this.items.reduce(
       (acc, item) => acc + item.price * item.quantity,
       0
