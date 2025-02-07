@@ -1,8 +1,4 @@
-import {
-  SaleDetailEntity,
-  SalePaymentEntity,
-  TransactionStatus,
-} from "./sale.entity";
+import { SalePaymentEntity, TransactionStatus } from "./sale.entity";
 
 export interface SaleDTO {
   uuid: string;
@@ -17,20 +13,7 @@ export interface SaleDTO {
   status: TransactionStatus;
   totalAmount: number;
   createdAt: Date;
-}
-
-export interface SaleDetailsDTO {
   payments: SalePaymentEntity[];
-  serie: string;
-  uuid: string;
-  customer: {
-    firstName: string;
-    lastName: string;
-  };
-  iva: number;
-  items: SaleDetailEntity[];
-  totalAmount: number;
-  status: TransactionStatus;
 }
 
 export const saleDTO = (obj: any): SaleDTO => {
@@ -47,21 +30,6 @@ export const saleDTO = (obj: any): SaleDTO => {
     status: obj.status,
     totalAmount: obj.totalAmount,
     createdAt: obj.createdAt,
-  };
-};
-
-export const mapSaleDetailDTO = (obj: any): SaleDetailsDTO => {
-  return {
-    uuid: obj.uuid,
-    customer: {
-      firstName: obj.customerData.firstName,
-      lastName: obj.customerData.lastName,
-    },
-    iva: obj.iva,
-    items: obj.items,
     payments: obj.payments,
-    totalAmount: obj.totalAmount,
-    status: obj.status,
-    serie: obj.serie,
   };
 };

@@ -21,9 +21,9 @@ export class LoginUseCase {
     }
 
     const token = jwt.sign(
-      { id: user.uuid, role: user.role },
+      { userId: user.uuid, role: user.role },
       process.env.JWT_SECRET!,
-      { expiresIn: "1d" }
+      { expiresIn: "5m" }
     );
     return token;
   }

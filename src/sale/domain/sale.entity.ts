@@ -1,10 +1,3 @@
-import { ApprovalPendingState } from "@/transactionStatus/ApprovalPendingState";
-import { ApprovedStatus } from "@/transactionStatus/ApprovedStatus";
-import { CancelledSale } from "@/transactionStatus/CancelledSale";
-import { PaidStatus } from "@/transactionStatus/PaidStatus";
-import { PaymentPendingStatus } from "@/transactionStatus/PaymentPendingStatus";
-import { RejectedStatus } from "@/transactionStatus/RejectedStatus";
-
 export interface TransactionEntity {
   uuid: string;
   serie: string;

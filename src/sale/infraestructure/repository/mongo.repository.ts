@@ -6,12 +6,7 @@ import {
 } from "@/sale/domain/sale.entity";
 import { SaleRepository } from "@/sale/domain/sale.repository";
 import { UserEntity } from "@/user/domain/user.entity";
-import {
-  mapSaleDetailDTO,
-  SaleDetailsDTO,
-  saleDTO,
-  SaleDTO,
-} from "../../domain/sale.dto";
+import { saleDTO, SaleDTO } from "../../domain/sale.dto";
 import { SaleNotFoundError } from "../../domain/sale.exceptions";
 import { SaleDoc, SaleModel } from "../models/sale.schema";
 
@@ -71,14 +66,17 @@ export class SalesMongoRepository implements SaleRepository {
     return saleDoc;
   }
 
-  async findById(uuid: string): Promise<SaleDetailsDTO | null> {
-    const sale = await SaleModel.findOne({ uuid }).populate<{
-      customer: CustomerEntity;
-    }>("customerData");
+  async findById(uuid: string): Promise<SaleDTO | null> {
+    const sale = await SaleModel.findOne({ uuid })
+      .populate<{
+        customer: CustomerEntity;
+      }>("customerData")
+      .populate<{ sellerData: UserEntity }>("sellerData");
     if (!sale) {
       throw new SaleNotFoundError(uuid);
     }
-    return mapSaleDetailDTO(sale);
+    console.log(sale);
+    return saleDTO(sale);
   }
 
   async getPayments(saleID: string): Promise<SalePaymentEntity[]> {

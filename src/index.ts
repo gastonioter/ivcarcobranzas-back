@@ -13,6 +13,7 @@ import { salesRoutes } from "./sale";
 import { monthlyFeeRoutes } from "./monthlyFee";
 import { paymentRoutes } from "./payments";
 import morgan from "morgan";
+import { authorizationMiddleware } from "./middlewares/authorizationMiddleware";
 
 const app = express();
 
@@ -22,7 +23,11 @@ app.use(cors());
 
 const API_PORT = process.env.API_PORT || 3000;
 
+/* public routes */
 app.use("/api/auth", userRoutes);
+
+/* private routes */
+app.use(authorizationMiddleware);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/customers", customerRoutes);

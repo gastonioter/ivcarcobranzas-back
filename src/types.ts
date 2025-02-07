@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { JwtPayload } from "jsonwebtoken";
 
 export interface APIResponse<T> {
   data: T;
@@ -13,6 +14,12 @@ export class CustomError extends Error {
     this.statusCode = statusCode;
     Error.captureStackTrace(this, this.constructor);
   }
+}
+
+
+export interface CustomJwtPayload extends JwtPayload {
+  userId: string;
+  role: string;
 }
 
 export type AsyncExpressHandler = (

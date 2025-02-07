@@ -1,4 +1,4 @@
-import { SaleDetailsDTO, SaleDTO } from "./sale.dto";
+import { SaleDTO, SaleDTO } from "./sale.dto";
 import {
   SalePaymentEntity,
   TransactionEntity,
@@ -7,7 +7,7 @@ import {
 
 export interface SaleRepository {
   save(sale: TransactionEntity): Promise<TransactionEntity | null>;
-  findById(uuid: string): Promise<SaleDetailsDTO | null>;
+  findById(uuid: string): Promise<SaleDTO | null>;
   getTotalSalesNumber(): Promise<number>;
   findAll(): Promise<SaleDTO[]>;
   changeStatus({
