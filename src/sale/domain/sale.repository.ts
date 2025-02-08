@@ -1,4 +1,4 @@
-import { SaleDTO, SaleDTO } from "./sale.dto";
+import { SaleDTO } from "./sale.dto";
 import {
   SalePaymentEntity,
   TransactionEntity,

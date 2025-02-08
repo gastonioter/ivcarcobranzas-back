@@ -10,6 +10,9 @@ const EnvVariablesSchema = z.object({
   MONGO_PORT: z.string(),
   MONGO_DB: z.string(),
   JWT_SECRET: z.string(),
+  RESEND_API_KEY: z.string(),
+  ULTRAMSG_TOKEN: z.string(),
+  ULTRAMSG_INSTANCE_ID: z.string(),
 });
 
 EnvVariablesSchema.parse(process.env);
