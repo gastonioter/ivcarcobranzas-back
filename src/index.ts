@@ -20,10 +20,9 @@ import { sendEmail } from "./shared/infraestructure/sendEmail";
 import { sendDocument } from "./shared/infraestructure/sendDocument";
 import { generatePdf } from "./shared/utils/generatePdf";
 
-import { Invoice } from "./components/pdfs/Invoice";
-import { base64 } from "./shared/utils/base64";
-import { invoicetest, reciepttest } from "../data";
+import { reciepttest } from "../data";
 import { Reciept } from "./components/pdfs/Receipt";
+import { base64 } from "./shared/utils/base64";
 let renderToStream: any;
 
 const app = express();
@@ -132,7 +131,7 @@ app.get(
 );
 
 /* private routes */
-app.use(authorizationMiddleware);
+//app.use(authorizationMiddleware);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/customers", customerRoutes);

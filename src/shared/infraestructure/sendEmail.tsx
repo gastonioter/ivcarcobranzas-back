@@ -13,7 +13,7 @@ export const sendEmail = async ({ to, subject }: SendEmailArgs) => {
     const html = await render(<WelcomeEmail name="Juan" />);
 
     const { data, error } = await resend.emails.send({
-      from: "IVCAR <onboarding@cobranzas.ivcarcloud.com>",
+      from: "IVCAR <onboarding@ivcaralarmas.com>",
       to: to,
       subject: subject,
       html: html,

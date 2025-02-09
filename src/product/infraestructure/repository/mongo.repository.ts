@@ -1,22 +1,21 @@
-import { categoryDTO } from "../../../category/domain/category.dto";
-import { CategoryDoc } from "@/category/infraestructure/model/category.schema";
+import { CategoryEntity } from "../../../category/domain/category.entity";
 import {
   ProducEntityWithCategories,
   ProductEntity,
 } from "@/product/domain/product.entity";
 import { ProductRepository } from "@/product/domain/product.repository";
+import { EditProductSchemaType } from "@/product/domain/product.validations";
+import { ProductNotFoundError } from "../../domain/product.exceptions";
 import {
   ProductDoc,
   ProductModel,
   ProductWithCategoryDoc,
 } from "../model/product.schema";
-import { EditProductSchemaType } from "@/product/domain/product.validations";
-import { ProductNotFoundError } from "../../domain/product.exceptions";
 
 export class ProductMongoRepository implements ProductRepository {
   /* Create Use Case */
   public create = async (
-    product: ProductEntity
+    product: ProductEntity,
   ): Promise<ProductEntity | null> => {
     const productDoc = new ProductModel(product);
     const savedDoc = await productDoc.save();
@@ -27,7 +26,7 @@ export class ProductMongoRepository implements ProductRepository {
 
   public edit = async (
     uuid: string,
-    newData: EditProductSchemaType
+    newData: EditProductSchemaType,
   ): Promise<ProductEntity | null> => {
     const editedProduct = await ProductModel.findOneAndUpdate(
       {
@@ -38,7 +37,7 @@ export class ProductMongoRepository implements ProductRepository {
       },
       {
         new: true,
-      }
+      },
     );
 
     if (!editedProduct) {
@@ -50,11 +49,13 @@ export class ProductMongoRepository implements ProductRepository {
 
   /* List All Use Case */
   public list = async (): Promise<ProducEntityWithCategories[]> => {
-    const products = await ProductModel.find()
-      .populate<{ categoryData: CategoryDoc }>("categoryData")
-      .exec();
+    throw new Error("not implemented");
 
-    return products.map(this._productWithCategoryDTO);
+    // const products = await ProductModel.find()
+    //   .populate<{ categoryData: CategoryDoc }>("categoryData")
+    //   .exec();
+
+    // return products.map(this._productWithCategoryDTO);
   };
 
   private _productDTO = (mongooseDoc: ProductDoc) => {
@@ -83,7 +84,7 @@ export class ProductMongoRepository implements ProductRepository {
     return {
       ...this._productDTO(mongooseDoc),
       category: {
-        ...categoryDTO(mongooseDoc.categoryData),
+        ...CategoryEntity.fromPersistence(mongooseDoc.categoryData),
       },
     };
   };

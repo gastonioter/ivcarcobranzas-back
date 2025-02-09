@@ -17,8 +17,8 @@ export class ProductController {
     res.status(200).json(product);
   };
 
-  public list = async (req: Request, res: Response) => {
-    const produdcts = await this.productUseCases.listProducts();
-    res.status(200).json(produdcts);
-  };
+  // public list = async (req: Request, res: Response) => {
+  //   const produdcts = await this.productUseCases.listProducts();
+  //   res.status(200).json(produdcts);
+  // };
 }

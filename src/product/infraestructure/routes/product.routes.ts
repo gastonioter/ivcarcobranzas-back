@@ -14,12 +14,12 @@ const controllers = new ProductController(productUseCases);
 router.post(
   "/",
   zodValidator(CreateEditProductSchema),
-  asyncHandler(controllers.create)
+  asyncHandler(controllers.create),
 );
-router.get("/", asyncHandler(controllers.list));
+//router.get("/", asyncHandler(controllers.list));
 
 router.patch(
   "/:uuid",
   zodValidator(CreateEditProductSchema),
-  asyncHandler(controllers.edit)
+  asyncHandler(controllers.edit),
 );

@@ -34,7 +34,7 @@ export class ProductUseCases {
     return await this.productRepository.edit(uuid, product);
   };
 
-  public listProducts = async () => {
-    return await this.productRepository.list();
-  };
+  // public listProducts = async () => {
+  //   return await this.productRepository.list();
+  // };
 }
