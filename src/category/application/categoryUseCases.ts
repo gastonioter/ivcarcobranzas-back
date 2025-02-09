@@ -1,6 +1,6 @@
 import { CategoryDTO } from "../adapters/CategoryDTO";
 import { CategoryAlreadyExists } from "../domain/categories.exceptions";
-import { CreateCategoryDTO } from "../domain/categories.validations";
+import { CreateCategoryDTO } from "../infraestructure/dto/CategoryValidations";
 import { CategoryEntity } from "../domain/category.entity";
 import { CategoryRepository } from "../domain/category.repository";
 
@@ -11,6 +11,7 @@ export class CategoryUseCases {
     name,
     description,
   }: CreateCategoryDTO): Promise<CategoryDTO | null> => {
+    // Domain Logic
     const newCategroy = CategoryEntity.new({ name, description });
 
     const exists = await this.categoryRepository.findByName(

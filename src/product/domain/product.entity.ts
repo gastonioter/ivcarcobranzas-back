@@ -52,7 +52,7 @@ export class ProductEntity {
       data.name,
       data.price,
       data.code,
-      CategoryEntity.fromPersistence(data.categoryData),
+      new CategoryEntity(data.categoryData),
       new Date(data.createdAt),
     );
   }

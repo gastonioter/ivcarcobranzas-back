@@ -10,23 +10,23 @@ export class CategoryMongoRepository implements CategoryRepository {
       createdAt: category.getCreatedAt(),
       uuid: category.getId(),
     });
-    return categoryDoc ? CategoryEntity.fromPersistence(categoryDoc) : null;
+    return categoryDoc ? new CategoryEntity(categoryDoc) : null;
   }
 
   async findAll(): Promise<CategoryEntity[]> {
     const categories = await CategoryModel.find({});
 
     return categories.map((category) => {
-      return CategoryEntity.fromPersistence(category);
+      return new CategoryEntity(category);
     });
   }
   async findByName(name: string): Promise<CategoryEntity | null> {
     const categoryDoc = await CategoryModel.findOne({ name }).lean();
-    return categoryDoc ? CategoryEntity.fromPersistence(categoryDoc) : null;
+    return categoryDoc ? new CategoryEntity(categoryDoc) : null;
   }
 
   async findById(id: string): Promise<CategoryEntity | null> {
     const categoryDoc = await CategoryModel.findOne({ uuid: id }).lean();
-    return categoryDoc ? CategoryEntity.fromPersistence(categoryDoc) : null;
+    return categoryDoc ? new CategoryEntity(categoryDoc) : null;
   }
 }

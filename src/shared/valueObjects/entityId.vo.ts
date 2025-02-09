@@ -12,6 +12,10 @@ export class EntityId extends ValueObject<EntityIdProps> {
     super(props);
   }
 
+  getId(): string {
+    return this.props.uuid;
+  }
+
   public static create(): EntityId {
     return new EntityId({
       uuid: uuid(),
