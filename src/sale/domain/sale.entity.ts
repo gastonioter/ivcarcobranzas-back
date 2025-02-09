@@ -1,6 +1,7 @@
 export interface TransactionEntity {
   uuid: string;
   serie: string;
+
   payments: SalePaymentEntity[];
   status: TransactionStatus;
   seller: string;

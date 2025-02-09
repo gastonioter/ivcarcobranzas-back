@@ -1,0 +1,4 @@
+{
+  "watch": ["src/**/*.ts", "src/**/*.tsx"],
+  "ext": "ts,tsx"
+}

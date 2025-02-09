@@ -45,7 +45,7 @@ export class SaleUseCases {
       sale?.status.status == SaleStatus.CANCELLED
     ) {
       throw new InvalidOperationError(
-        "No puedes agregar pagos a una venta cancelada"
+        "No puedes agregar pagos a una venta cancelada",
       );
     }
 
@@ -54,14 +54,14 @@ export class SaleUseCases {
       sale?.status.status !== BudgetStatus.APPROVED
     ) {
       throw new InvalidOperationError(
-        "No puedes agregar pagos a un presupuesto sin aprobar"
+        "No puedes agregar pagos a un presupuesto sin aprobar",
       );
     }
     const paymentValue = new SalePaymentValue(payment);
 
     const updatedPayment = await this.saleRepository.addPayment(
       saleID,
-      paymentValue
+      paymentValue,
     );
 
     return this._updateSaleStatus(updatedPayment);
@@ -99,7 +99,7 @@ export class SaleUseCases {
       Object.values(BudgetStatus).includes(status as BudgetStatus)
     ) {
       throw new InvalidOperationError(
-        `Una venta no puede cambiar su estado a ${status}`
+        `Una venta no puede cambiar su estado a ${status}`,
       );
     }
 
@@ -108,7 +108,7 @@ export class SaleUseCases {
       Object.values(SaleStatus).includes(status as SaleStatus)
     ) {
       throw new InvalidOperationError(
-        `Un presupuesto no puede cambiar su estado a ${status}`
+        `Un presupuesto no puede cambiar su estado a ${status}`,
       );
     }
 
@@ -222,7 +222,7 @@ export class SaleUseCases {
         payment.status == SalePaymentStatuses.ACTIVE
           ? acc + payment.amount
           : acc,
-      0
+      0,
     );
 
     const saldo = debe - haber;

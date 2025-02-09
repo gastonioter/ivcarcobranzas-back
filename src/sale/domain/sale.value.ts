@@ -27,8 +27,8 @@ export class SaleValue implements TransactionEntity {
     seller,
     customer,
     items,
-    serie,
     iva,
+    serie,
     isBudget = false,
   }: CreateSaleRequestType & { serie: string }) {
     this.seller = seller;
@@ -43,6 +43,8 @@ export class SaleValue implements TransactionEntity {
     this.updatedAt = new Date();
     this.totalAmount = this.calculateTotal();
   }
+
+
 
   private getStatus(isBudget: boolean): TransactionStatus {
     if (isBudget) {
@@ -60,7 +62,7 @@ export class SaleValue implements TransactionEntity {
   private calculateTotal() {
     return this.items.reduce(
       (acc, item) => acc + item.price * item.quantity,
-      0
+      0,
     );
   }
 }

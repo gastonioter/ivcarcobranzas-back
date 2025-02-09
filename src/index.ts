@@ -6,7 +6,6 @@ import { userRoutes } from "./user";
 
 import morgan from "morgan";
 import { categoriesRoutes } from "./category";
-import { MyDocument } from "./components/pdfs/MyDocument";
 import { MongoDB } from "./config/db";
 import { customerRoutes } from "./customer";
 import { asyncHandler } from "./middlewares/asyncHandlerMiddleware";
@@ -21,8 +20,10 @@ import { sendEmail } from "./shared/infraestructure/sendEmail";
 import { sendDocument } from "./shared/infraestructure/sendDocument";
 import { generatePdf } from "./shared/utils/generatePdf";
 
-import "./config/ultramsg.js";
+import { Reciept } from "./components/pdfs/Receipt";
 import { base64 } from "./shared/utils/base64";
+import { Invoice } from "./components/pdfs/Invoice";
+import { Budget } from "./components/pdfs/Budget";
 let renderToStream: any;
 
 const app = express();
@@ -66,13 +67,105 @@ app.post(
 );
 
 app.get(
-  "/pdf-stream",
+  "/",
   asyncHandler(async (req, res) => {
     if (!renderToStream) {
       renderToStream = (await import("@react-pdf/renderer")).renderToStream;
     }
-    const pdfStream = await renderToStream(await MyDocument("Gaston"));
 
+    //
+    // const pdfStream = await renderToStream(
+    //   await NotaDeVenta({
+    //     company: {
+    //       logo: `${path.resolve(`../assets/logo.png`)}`,
+    //       name: "IVCAR ALARMAS",
+    //       iva: "I.V.A: Resp Inscripto",
+    //       razonSocial: "Razon Social: Osvaldo Norberto Castro ",
+    //       address: "Domicilio Fiscal: Laboulaye, Cordoba - España 252",
+    //       contact: {
+    //         web: "www.ivcaralarmas.com",
+    //         phone: "3385448580",
+    //         email: "alarmasivcar@hotmail.com",
+    //       },
+    //     },
+    //     balance: {
+    //       debt: 110,
+    //       credit: 0,
+    //       total: 110,
+    //     },
+    //     client: {
+    //       name: "Juan Pérez",
+    //       email: "gaston10.c@hotmail.com",
+    //       phone: "987-654-3210",
+    //     },
+    //     saleDetails: [
+    //       {
+    //         quantity: 1,
+    //         description: "Producto A",
+    //         price: 50,
+    //         total: 50,
+    //       },
+    //       {
+    //         quantity: 2,
+    //         description: "Producto B",
+    //         price: 30,
+    //         total: 60,
+    //       },
+    //     ],
+    //     receipt: {
+    //       id: "0001",
+    //       date: "04/08/2025",
+    //     },
+    //   }),
+    // );
+
+    const pdfStream = await renderToStream(
+      await Budget({
+        client: {
+          name: "Juan Pérez",
+          email: "juan@hotmail.com",
+          phone: "987-654-3210",
+        },
+        company: {
+          logo: ``,
+          name: "IVCAR ALARMAS",
+          iva: "I.V.A: Resp Inscripto",
+          razonSocial: "Razon Social: Osvaldo Norberto Castro ",
+          address: "Domicilio Fiscal: Laboulaye, Cordoba - España 252",
+          contact: {
+            web: "www.ivcaralarmas.com",
+            phone: "3385448580",
+            email: "alarmasivcar@hotmail.com",
+          },
+        },
+
+        saleDetails: [
+          {
+            quantity: 1,
+            description: "Laptop HP EliteBook",
+            price: 1200,
+            total: 1200,
+          },
+          {
+            quantity: 2,
+            description: "Mouse Inalámbrico",
+            price: 25,
+            total: 50,
+          },
+          {
+            quantity: 3,
+            description: "Teclado Mecánico",
+            price: 80,
+            total: 240,
+          },
+        ],
+        budget: {
+          id: "0001",
+          date: "04/08/2025",
+          serie: "00004",
+        },
+      }),
+    );
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `attachment; filename=documento.pdf`);
     pdfStream.pipe(res);
