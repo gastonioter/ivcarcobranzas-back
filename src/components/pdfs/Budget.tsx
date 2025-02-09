@@ -335,6 +335,13 @@ export const Budget = async ({
               </Text>
             </View>
           </View>
+
+          <View style={aclarationsStyles.box}>
+            <Text style={aclarationsStyles.title}>Contacto</Text>
+            <Text style={aclarationsStyles.text}>alarmasivcar@hotmail.com</Text>
+            <Text style={aclarationsStyles.text}>3385448583</Text>
+            <Text style={aclarationsStyles.text}>www.ivcaralarmas.com</Text>
+          </View>
         </View>
         {/* Mensaje de Agradecimiento */}
         <Text style={styles.footer}>

@@ -173,6 +173,33 @@ export const Reciept = async ({ company, client, receipt }: RecieptProps) => {
     },
   });
 
+  const aclarationsStyles = StyleSheet.create({
+    section: {
+      marginTop: 20,
+      fontSize: 8,
+      color: "#404040",
+      fontStyle: "italic",
+      display: "flex",
+      flexDirection: "column",
+      borderBottom: "1px solid #a2a2a2",
+      bordertop: "1px solid #888",
+    },
+
+    box: {
+      padding: 10,
+      display: "flex",
+      flexDirection: "column",
+    },
+    title: {
+      fontSize: 10,
+      marginBottom: 4,
+    },
+    text: {
+      fontSize: 8,
+      fontWeight: "light",
+    },
+  });
+
   return (
     <Document>
       <Page size={"A4"} style={styles.page}>
@@ -249,6 +276,15 @@ export const Reciept = async ({ company, client, receipt }: RecieptProps) => {
                 <Text style={tableStyles.tableCell}>10000</Text>
               </View>
             </View>
+          </View>
+        </View>
+
+        <View style={aclarationsStyles.section}>
+          <View style={aclarationsStyles.box}>
+            <Text style={aclarationsStyles.title}>Contacto</Text>
+            <Text style={aclarationsStyles.text}>alarmasivcar@hotmail.com</Text>
+            <Text style={aclarationsStyles.text}>3385448583</Text>
+            <Text style={aclarationsStyles.text}>www.ivcaralarmas.com</Text>
           </View>
         </View>
 
