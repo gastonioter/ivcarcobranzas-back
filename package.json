@@ -27,6 +27,7 @@
     "qs": "^6.14.0",
     "react-email": "^3.0.6",
     "resend": "^4.1.2",
+    "shallow-equal-object": "^1.1.1",
     "ts-node": "^10.9.2",
     "ultramsg-whatsapp-api": "^1.0.2",
     "uuid": "^11.0.5",

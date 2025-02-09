@@ -1,3 +1,4 @@
+import { CreateProductDTO } from "../../adapters/CreateProductDTO";
 import { ProductUseCases } from "@/product/application/product.usecase";
 import { Request, Response } from "express";
 
@@ -5,8 +6,17 @@ export class ProductController {
   constructor(private readonly productUseCases: ProductUseCases) {}
 
   public create = async (req: Request, res: Response) => {
-    const product = await this.productUseCases.createProduct(req.body);
-    res.status(201).json(product);
+    const { name, price, categoryId } = req.body;
+
+    const validatedProduct = CreateProductDTO.fromRequest({
+      name,
+      price,
+      categoryId,
+    });
+
+    const newProduct =
+      await this.productUseCases.createProduct(validatedProduct);
+    res.status(201).json(newProduct);
   };
 
   public edit = async (req: Request, res: Response) => {
@@ -17,8 +27,8 @@ export class ProductController {
     res.status(200).json(product);
   };
 
-  // public list = async (req: Request, res: Response) => {
-  //   const produdcts = await this.productUseCases.listProducts();
-  //   res.status(200).json(produdcts);
-  // };
+  public list = async (req: Request, res: Response) => {
+    const produdcts = await this.productUseCases.listProducts();
+    res.status(200).json(produdcts);
+  };
 }

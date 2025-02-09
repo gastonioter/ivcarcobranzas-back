@@ -12,5 +12,9 @@ const categoryMongoRepository = new CategoryMongoRepository();
 const categoryUseCases = new CategoryUseCases(categoryMongoRepository);
 const categoryController = new CategoryController(categoryUseCases);
 
-router.post("/", asyncHandler(categoryController.createCategory));
+router.post(
+  "/",
+  zodValidator(CreateCategorySchema),
+  asyncHandler(categoryController.createCategory),
+);
 router.get("/", asyncHandler(categoryController.findAllCategories));

@@ -1,9 +1,8 @@
+import { CategoryDTO } from "../adapters/CategoryDTO";
 import { CategoryAlreadyExists } from "../domain/categories.exceptions";
 import { CreateCategoryDTO } from "../domain/categories.validations";
 import { CategoryEntity } from "../domain/category.entity";
 import { CategoryRepository } from "../domain/category.repository";
-import { CategoryValue } from "../domain/category.value";
-import { CategoryDTO } from "../infraestructure/dto/CategoryDTO";
 
 export class CategoryUseCases {
   constructor(private readonly categoryRepository: CategoryRepository) {}
@@ -12,7 +11,7 @@ export class CategoryUseCases {
     name,
     description,
   }: CreateCategoryDTO): Promise<CategoryDTO | null> => {
-    const newCategroy = CategoryEntity.new(name, description);
+    const newCategroy = CategoryEntity.new({ name, description });
 
     const exists = await this.categoryRepository.findByName(
       newCategroy.getName(),
@@ -24,14 +23,14 @@ export class CategoryUseCases {
 
     const savedCategory = await this.categoryRepository.save(newCategroy);
 
-    return savedCategory ? CategoryDTO.fromDomain(savedCategory) : null;
+    return savedCategory ? new CategoryDTO(savedCategory) : null;
   };
 
   public findAllCategories = async (): Promise<CategoryDTO[]> => {
     const categories = await this.categoryRepository.findAll();
 
     return categories.map((category) => {
-      return CategoryDTO.fromDomain(category);
+      return new CategoryDTO(category);
     });
   };
 }

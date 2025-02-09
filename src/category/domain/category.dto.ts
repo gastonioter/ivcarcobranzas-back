@@ -1,29 +1,23 @@
+import { BaseDTO } from "@/shared/adapters/BaseDTO";
 import { CategoryEntity } from "./category.entity";
 
-export class CategoryDTO {
+export interface ICategoryDTO {
   uuid: string;
   name: string;
   description: string;
   createdAt: string;
-
-  constructor(
-    uuid: string,
-    name: string,
-    description: string,
-    createdAt: Date,
-  ) {
-    this.uuid = uuid;
-    this.name = name;
-    this.description = description;
-    this.createdAt = createdAt.toISOString();
+}
+export class CategoryDTO extends BaseDTO<ICategoryDTO> {
+  constructor(props: ICategoryDTO) {
+    super(props);
   }
 
   static fromEntity(category: CategoryEntity): CategoryDTO {
-    return new CategoryDTO(
-      category.getId(),
-      category.getName(),
-      category.getDescription(),
-      category.getCreatedAt(),
-    );
+    return new CategoryDTO({
+      uuid: category.getId(),
+      name: category.getName(),
+      description: category.getDescription(),
+      createdAt: category.getCreatedAt().toISOString(),
+    });
   }
 }

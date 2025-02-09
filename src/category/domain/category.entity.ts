@@ -1,51 +1,45 @@
-import { EntityId } from "../../shared/domain/entityId.vo";
+import { Entity } from "../../shared/domain/Entity";
+import { EntityId } from "../../shared/valueObjects/entityId.vo";
+import { CreateCategoryDTO } from "./categories.validations";
 
-// ✅ Entity
-export class CategoryEntity {
-  private uuid: string;
-  private name: string;
-  private description?: string;
-  private createdAt: Date;
-
-  constructor(
-    uuid: string,
-    name: string,
-    createdAt: Date,
-    description?: string,
-  ) {
-    this.uuid = uuid;
-    this.name = name;
-    this.createdAt = createdAt;
-    this.description = description;
+// ✅ Props
+interface CategoryProps {
+  name: string;
+  description: string;
+  createdAt: Date;
+}
+// ✅ Domain Entity
+export class CategoryEntity extends Entity<CategoryProps> {
+  constructor(props: CategoryProps) {
+    super(props, EntityId.create());
   }
 
-  static new(name: string, description?: string): CategoryEntity {
-    const uuid = EntityId.create(); // Generar UUID
-    return new CategoryEntity(uuid.toString(), name, new Date(), description);
+  public static new({
+    name,
+    description = "sin descripción",
+  }: CreateCategoryDTO): CategoryEntity {
+    const createdAt = new Date();
+
+    return new CategoryEntity({ name, description, createdAt });
   }
 
   static fromPersistence(data: any): CategoryEntity {
-    return new CategoryEntity(
-      data.uuid,
-      data.name,
-      new Date(data.createdAt),
-      data.description,
-    );
-  }
-
-  getId(): string {
-    return this.uuid;
+    return new CategoryEntity({
+      name: data.name,
+      description: data.description,
+      createdAt: new Date(data.createdAt),
+    });
   }
 
   getName(): string {
-    return this.name;
+    return this.props.name;
   }
 
   getDescription(): string {
-    return this.description ?? "no description";
+    return this.props.description;
   }
 
   getCreatedAt(): Date {
-    return this.createdAt;
+    return this.props.createdAt;
   }
 }

@@ -1,25 +1,17 @@
-import { CategoryEntity } from "../../../category/domain/category.entity";
-import {
-  ProducEntityWithCategories,
-  ProductEntity,
-} from "@/product/domain/product.entity";
 import { ProductRepository } from "@/product/domain/product.repository";
 import { EditProductSchemaType } from "@/product/domain/product.validations";
-import { ProductNotFoundError } from "../../domain/product.exceptions";
-import {
-  ProductDoc,
-  ProductModel,
-  ProductWithCategoryDoc,
-} from "../model/product.schema";
+import { CategoryDoc } from "../../../category/infraestructure/model/category.schema";
+import { ProductEntity } from "../../domain/product.entity";
+import { ProductModel } from "../model/product.schema";
+import { CategoryEntity } from "@/category/domain/category.entity";
 
 export class ProductMongoRepository implements ProductRepository {
   /* Create Use Case */
-  public create = async (
+  public save = async (
     product: ProductEntity,
   ): Promise<ProductEntity | null> => {
-    const productDoc = new ProductModel(product);
-    const savedDoc = await productDoc.save();
-    return this._productDTO(savedDoc);
+    const saved = (await ProductModel.create(product)).populate("categoryData");
+    return saved ? ProductEntity.fromPersistence(saved) : null;
   };
 
   /* Edit Use Case */
@@ -28,46 +20,36 @@ export class ProductMongoRepository implements ProductRepository {
     uuid: string,
     newData: EditProductSchemaType,
   ): Promise<ProductEntity | null> => {
-    const editedProduct = await ProductModel.findOneAndUpdate(
-      {
-        uuid,
-      },
-      {
-        ...newData,
-      },
-      {
-        new: true,
-      },
-    );
+    throw new Error("not implemented");
 
-    if (!editedProduct) {
-      throw new ProductNotFoundError();
-    }
+    // const editedProduct = await ProductModel.findOneAndUpdate(
+    //   {
+    //     uuid,
+    //   },
+    //   {
+    //     ...newData,
+    //   },
+    //   {
+    //     new: true,
+    //   },
+    // );
 
-    return this._productDTO(editedProduct);
+    // if (!editedProduct) {
+    //   throw new ProductNotFoundError();
+    // }
+
+    // return this._productDTO(editedProduct);
   };
 
   /* List All Use Case */
-  public list = async (): Promise<ProducEntityWithCategories[]> => {
-    throw new Error("not implemented");
+  public list = async (): Promise<ProductEntity[]> => {
+    //    throw new Error("not implemented");
 
-    // const products = await ProductModel.find()
-    //   .populate<{ categoryData: CategoryDoc }>("categoryData")
-    //   .exec();
+    const products = await ProductModel.find()
+      .populate<{ categoryData: CategoryDoc }>("categoryData")
+      .exec();
 
-    // return products.map(this._productWithCategoryDTO);
-  };
-
-  private _productDTO = (mongooseDoc: ProductDoc) => {
-    // Mapea el documento de Mongoose a la entidad de dominio
-
-    return {
-      uuid: mongooseDoc.uuid,
-      name: mongooseDoc.name,
-      price: mongooseDoc.price,
-      code: mongooseDoc.code,
-      categoryId: mongooseDoc.categoryId!,
-    };
+    return products.map((product) => ProductEntity.fromPersistence(product));
   };
 
   getTotalSalesNumber = async (): Promise<number> => {
@@ -75,17 +57,7 @@ export class ProductMongoRepository implements ProductRepository {
   };
 
   findByName = async (name: string): Promise<ProductEntity | null> => {
-    return await ProductModel.findOne({ name });
-  };
-
-  private _productWithCategoryDTO = (mongooseDoc: ProductWithCategoryDoc) => {
-    // Mapea el documento de Mongoose a la entidad de dominio
-
-    return {
-      ...this._productDTO(mongooseDoc),
-      category: {
-        ...CategoryEntity.fromPersistence(mongooseDoc.categoryData),
-      },
-    };
+    const product = await ProductModel.findOne({ name });
+    return product ? ProductEntity.fromPersistence(product) : null;
   };
 }
