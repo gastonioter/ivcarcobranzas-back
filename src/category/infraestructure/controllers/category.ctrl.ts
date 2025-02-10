@@ -15,6 +15,7 @@ export class CategoryController {
       name,
       description,
     });
+    
     res.status(201).json(newCategroy);
   };
 

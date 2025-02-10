@@ -3,4 +3,3 @@ export abstract class BaseDTO<T> {
     Object.assign(this, entity);
   }
 }
-  

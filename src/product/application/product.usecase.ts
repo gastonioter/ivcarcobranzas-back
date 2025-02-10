@@ -1,11 +1,10 @@
 import { CategoryRepository } from "@/category/domain/category.repository";
 import { generateSecuence } from "../../shared/utils/generateSecuence";
-import { CreateProductDTO } from "../adapters/CreateProductDTO";
+import { CreateEditProductDTO } from "../adapters/CreateProductDTO";
+import { ProductDTO } from "../adapters/productDTO";
 import { ProductEntity } from "../domain/product.entity";
 import { ProducAlreadyExistsError } from "../domain/product.exceptions";
 import { ProductRepository } from "../domain/product.repository";
-import { EditProductSchemaType } from "../domain/product.validations";
-import { ProductDTO } from "../adapters/productDTO";
 
 export class ProductUseCases {
   constructor(
@@ -13,7 +12,7 @@ export class ProductUseCases {
     private categoryRepo: CategoryRepository,
   ) {}
 
-  public createProduct = async (product: CreateProductDTO) => {
+  public createProduct = async (product: CreateEditProductDTO) => {
     const exists = await this.productRepo.findByName(product.name);
 
     if (exists) {
@@ -29,27 +28,27 @@ export class ProductUseCases {
     const totalProductsNumber = await this.productRepo.getTotalSalesNumber();
 
     const productData = {
-      ...product,
+      name: product.name,
+      price: product.price,
       category: category,
       code: generateSecuence(totalProductsNumber),
     };
 
-    const newProduct = ProductEntity.new(
-      productData.name,
-      productData.price,
-      productData.code,
-      productData.category,
-      new Date(),
-    );
+    const newProduct = ProductEntity.new(productData);
+
     return await this.productRepo.save(newProduct);
   };
 
-  public editProduct = async (uuid: string, product: EditProductSchemaType) => {
+  public editProduct = async (
+    uuid: string,
+    product: Partial<ProductEntity>,
+  ) => {
     return await this.productRepo.edit(uuid, product);
   };
 
   public listProducts = async (): Promise<ProductDTO[]> => {
     const products = await this.productRepo.list();
-    return products.map((prod) => ProductDTO.fromEntity(prod));
+    console.log(products);
+    return products.map((prod) => new ProductDTO(prod));
   };
 }

@@ -6,19 +6,4 @@ export const CreateEditProductSchema = z.object({
   categoryId: z.string().nonempty(),
 });
 
-export class CreateProductDTO {
-  name: string;
-  price: number;
-  categoryId: string;
-
-  constructor(data: { name: string; price: number; categoryId: string }) {
-    this.name = data.name;
-    this.price = data.price;
-    this.categoryId = data.categoryId;
-  }
-
-  static fromRequest(data: unknown): CreateProductDTO {
-    const parsed = CreateEditProductSchema.parse(data);
-    return new CreateProductDTO(parsed);
-  }
-}
+export type CreateEditProductDTO = z.infer<typeof CreateEditProductSchema>;

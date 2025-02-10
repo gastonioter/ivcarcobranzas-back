@@ -1,4 +1,3 @@
-import { CreateProductDTO } from "../../adapters/CreateProductDTO";
 import { ProductUseCases } from "@/product/application/product.usecase";
 import { Request, Response } from "express";
 
@@ -8,14 +7,12 @@ export class ProductController {
   public create = async (req: Request, res: Response) => {
     const { name, price, categoryId } = req.body;
 
-    const validatedProduct = CreateProductDTO.fromRequest({
+    const newProduct = await this.productUseCases.createProduct({
       name,
       price,
       categoryId,
     });
 
-    const newProduct =
-      await this.productUseCases.createProduct(validatedProduct);
     res.status(201).json(newProduct);
   };
 

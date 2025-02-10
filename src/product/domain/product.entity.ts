@@ -1,65 +1,57 @@
 import { CategoryEntity } from "../../category/domain/category.entity";
+import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 
-export type ProducEntityWithCategories = ProductEntity & {
+interface IProduct {
+  uuid: EntityId;
+  name: string;
+  price: number;
+  code: string;
   category: CategoryEntity;
-};
+  createdAt: Date;
+}
 
-export class ProductEntity {
-  private uuid: string;
+export class ProductEntity extends Entity {
   private name: string;
   private price: number;
   private code: string;
   private category: CategoryEntity;
   private createdAt: Date;
 
-  constructor(
-    uuid: string,
-    name: string,
-    price: number,
-    code: string,
-    category: CategoryEntity,
-    createdAt: Date,
-  ) {
-    this.uuid = uuid;
-    this.name = name;
-    this.price = price;
-    this.code = code;
-    this.category = category;
-    this.createdAt = createdAt;
+  constructor(product: IProduct) {
+    super(product.uuid);
+    this.name = product.name;
+    this.price = product.price;
+    this.code = product.code;
+    this.category = product.category;
+    this.createdAt = product.createdAt;
   }
 
-  static new(
-    name: string,
-    price: number,
-    code: string,
-    category: CategoryEntity,
-    createdAt: Date,
-  ): ProductEntity {
-    return new ProductEntity(
-      EntityId.create().toString(),
+  public static new({
+    category,
+    name,
+    price,
+    code,
+  }: {
+    category: CategoryEntity;
+    name: string;
+    price: number;
+    code: string;
+  }): ProductEntity {
+    return new ProductEntity({
+      uuid: EntityId.create(),
       name,
       price,
       code,
       category,
-      createdAt,
-    );
+      createdAt: new Date(),
+    });
   }
 
-  static fromPersistence(data: any): ProductEntity {
-    return new ProductEntity(
-      data.uuid,
-      data.name,
-      data.price,
-      data.code,
-      new CategoryEntity(data.categoryData),
-      new Date(data.createdAt),
-    );
+  public static fromPersistence() {
+    
   }
 
-  getId(): string {
-    return this.uuid;
-  }
   getName(): string {
     return this.name;
   }

@@ -2,38 +2,45 @@ import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { CreateCategoryDTO } from "../infraestructure/dto/CategoryValidations";
 
-// ✅ Props
 interface ICategory {
+  uuid: EntityId;
   name: string;
   description: string;
   createdAt: Date;
 }
-// ✅ Domain Entity
-export class CategoryEntity extends Entity<ICategory> {
-  
-  constructor(entity: ICategory) {
-    super(entity, EntityId.create());
+export class CategoryEntity extends Entity {
+  private name: string;
+  private description: string;
+  private createdAt: Date;
+
+  constructor(category: ICategory) {
+    super(category.uuid);
+    this.name = category.name;
+    this.description = category.description;
+    this.createdAt = category.createdAt;
   }
 
-  /* This is called by the use case */
   public static new({ name, description }: CreateCategoryDTO): CategoryEntity {
-    
-    // Logica de validaciones
     const createdAt = new Date();
     description = description || "sin descripción";
 
-    return new CategoryEntity({ name, description, createdAt });
+    return new CategoryEntity({
+      name,
+      description,
+      createdAt,
+      uuid: EntityId.create(),
+    });
   }
 
   getName(): string {
-    return this.props.name;
+    return this.name;
   }
 
   getDescription(): string {
-    return this.props.description;
+    return this.description;
   }
 
   getCreatedAt(): Date {
-    return this.props.createdAt;
+    return this.createdAt;
   }
 }

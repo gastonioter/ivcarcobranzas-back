@@ -31,6 +31,7 @@ export class CategoryUseCases {
     const categories = await this.categoryRepository.findAll();
 
     return categories.map((category) => {
+      
       return new CategoryDTO(category);
     });
   };
