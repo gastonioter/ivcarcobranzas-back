@@ -32,6 +32,15 @@ export class CategoryEntity extends Entity {
     });
   }
 
+  static fromPersistence(doc: any): CategoryEntity {
+    return new CategoryEntity({
+      name: doc.name,
+      description: doc.description,
+      createdAt: doc.createdAt,
+      uuid: EntityId.fromExisting(doc.uuid),
+    });
+  }
+
   getName(): string {
     return this.name;
   }

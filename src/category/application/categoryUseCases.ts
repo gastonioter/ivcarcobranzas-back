@@ -12,17 +12,17 @@ export class CategoryUseCases {
     description,
   }: CreateCategoryDTO): Promise<CategoryDTO | null> => {
     // Domain Logic
-    const newCategroy = CategoryEntity.new({ name, description });
+    const newCategory = CategoryEntity.new({ name, description });
 
     const exists = await this.categoryRepository.findByName(
-      newCategroy.getName(),
+      newCategory.getName(),
     );
 
     if (exists) {
       throw new CategoryAlreadyExists();
     }
 
-    const savedCategory = await this.categoryRepository.save(newCategroy);
+    const savedCategory = await this.categoryRepository.save(newCategory);
 
     return savedCategory ? new CategoryDTO(savedCategory) : null;
   };
@@ -30,9 +30,6 @@ export class CategoryUseCases {
   public findAllCategories = async (): Promise<CategoryDTO[]> => {
     const categories = await this.categoryRepository.findAll();
 
-    return categories.map((category) => {
-      
-      return new CategoryDTO(category);
-    });
+    return categories.map((category) => new CategoryDTO(category));
   };
 }

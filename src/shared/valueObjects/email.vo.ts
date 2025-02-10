@@ -16,6 +16,14 @@ export class Email extends ValueObject<EmailValueProps> {
     return new Email({ email });
   }
 
+  static fromExisting(email: string): Email {
+    return new Email({ email });
+  }
+
+  getEmail(): string {
+    return this.props.email;
+  }
+
   private static isValidEmail(email: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }

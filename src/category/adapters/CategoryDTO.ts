@@ -7,7 +7,6 @@ export class CategoryDTO {
 
   constructor(props: CategoryEntity) {
     // Here we can add some logic to transform the data
-    console.log(props);
     this.name = props.getName();
     this.description = props.getDescription();
     this.uuid = props.getId();

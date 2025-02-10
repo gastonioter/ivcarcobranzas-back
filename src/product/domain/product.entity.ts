@@ -48,8 +48,15 @@ export class ProductEntity extends Entity {
     });
   }
 
-  public static fromPersistence() {
-    
+  static fromPersistence(obj: any): ProductEntity {
+    return new ProductEntity({
+      name: obj.name,
+      price: obj.price,
+      code: obj.code,
+      createdAt: obj.createdAt,
+      uuid: EntityId.fromExisting(obj.uuid),
+      category: CategoryEntity.fromPersistence(obj.category),
+    });
   }
 
   getName(): string {

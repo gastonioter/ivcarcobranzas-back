@@ -23,7 +23,7 @@ export class LoginUseCase {
     const token = jwt.sign(
       { userId: user.uuid, role: user.role },
       process.env.JWT_SECRET!,
-      { expiresIn: "5m" }
+      { expiresIn: "30m" }
     );
     return token;
   }

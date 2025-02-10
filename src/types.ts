@@ -16,7 +16,6 @@ export class CustomError extends Error {
   }
 }
 
-
 export interface CustomJwtPayload extends JwtPayload {
   userId: string;
   role: string;
@@ -25,5 +24,5 @@ export interface CustomJwtPayload extends JwtPayload {
 export type AsyncExpressHandler = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => Promise<void>;

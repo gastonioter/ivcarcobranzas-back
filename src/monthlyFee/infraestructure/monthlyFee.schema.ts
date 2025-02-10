@@ -1,6 +1,5 @@
-import { model, Schema, InferSchemaType } from "mongoose";
+import { InferSchemaType, model, Schema } from "mongoose";
 import { MonthlyFeeStatuses } from "../domain/monthlyFee.entity";
-import { CustomerType } from "@/customer/domain/customer.entity";
 
 const MonthlyFeeSchema = new Schema(
   {

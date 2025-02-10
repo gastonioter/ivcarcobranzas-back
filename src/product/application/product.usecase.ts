@@ -48,7 +48,6 @@ export class ProductUseCases {
 
   public listProducts = async (): Promise<ProductDTO[]> => {
     const products = await this.productRepo.list();
-    console.log(products);
     return products.map((prod) => new ProductDTO(prod));
   };
 }

@@ -1,11 +1,8 @@
-import { ProductRepository } from "../../domain/product.repository";
 import { CategoryDoc } from "../../../category/infraestructure/model/category.schema";
 import { ProductEntity } from "../../domain/product.entity";
-import { ProductDoc, ProductModel } from "../model/product.schema";
-import { CategoryEntity } from "../../../category/domain/category.entity";
-import { CreateEditProductDTO } from "../../adapters/CreateProductDTO";
 import { ProductNotFoundError } from "../../domain/product.exceptions";
-import { EntityId } from "../../../shared/valueObjects/entityId.vo";
+import { ProductRepository } from "../../domain/product.repository";
+import { ProductModel } from "../model/product.schema";
 
 export class ProductMongoRepository implements ProductRepository {
   /* Create Use Case */
@@ -21,7 +18,11 @@ export class ProductMongoRepository implements ProductRepository {
       uuid: product.getId(),
     });
 
-    return saved ? this.toEntity(saved) : null;
+    if (saved) {
+      const persisted = await this.findByName(product.getName());
+      return persisted ? persisted : null;
+    }
+    return null;
   };
 
   /* Edit Use Case */
@@ -48,7 +49,7 @@ export class ProductMongoRepository implements ProductRepository {
       throw new ProductNotFoundError();
     }
 
-    return this.toEntity(editedProduct);
+    return ProductEntity.fromPersistence(editedProduct);
   };
 
   /* List All Use Case */
@@ -58,7 +59,9 @@ export class ProductMongoRepository implements ProductRepository {
       .lean()
       .exec();
 
-    return products.map((productDoc) => this.toEntity(productDoc));
+    return products.map((productDoc) =>
+      ProductEntity.fromPersistence(productDoc),
+    );
   };
 
   getTotalSalesNumber = async (): Promise<number> => {
@@ -71,22 +74,6 @@ export class ProductMongoRepository implements ProductRepository {
         category: CategoryDoc;
       }>("category")
       .lean();
-    return product ? this.toEntity(product) : null;
+    return product ? ProductEntity.fromPersistence(product) : null;
   };
-
-  private toEntity(productDoc: any): ProductEntity {
-    return new ProductEntity({
-      name: productDoc.name,
-      price: productDoc.price,
-      code: productDoc.code,
-      createdAt: productDoc.createdAt,
-      uuid: EntityId.fromExisting(productDoc.uuid),
-      category: new CategoryEntity({
-        uuid: EntityId.fromExisting(productDoc.category.uuid),
-        name: productDoc.category.name,
-        description: productDoc.category.description,
-        createdAt: productDoc.category.createdAt,
-      }),
-    });
-  }
 }

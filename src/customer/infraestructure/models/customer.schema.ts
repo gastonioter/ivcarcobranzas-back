@@ -1,5 +1,8 @@
-import { CustomerStatus, CustomerType } from "../../domain/customer.entity";
 import { InferSchemaType, model, Schema } from "mongoose";
+import {
+  CloudCustomerType,
+  CustomerStatus
+} from "../../domain/types";
 
 const CustomerSchema = new Schema(
   {
@@ -8,15 +11,18 @@ const CustomerSchema = new Schema(
     lastName: { type: String, required: true },
     email: { type: String, unique: true, default: "" },
     phone: { type: String, required: true },
-    type: { type: String, required: true, enum: Object.values(CustomerType) },
+    category: {
+      type: String,
+      required: true,
+      enum: Object.values(CloudCustomerType),
+    },
     status: {
       type: String,
       required: true,
       enum: Object.values(CustomerStatus),
     },
-    montoMes: { type: Number, default: 0 },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 type CustomerDoc = InferSchemaType<typeof CustomerSchema>;
