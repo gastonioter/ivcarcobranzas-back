@@ -1,6 +1,5 @@
-import { CustomerAlreadyExistsError } from "@/customer/domain/customer.exceptions";
 import { CustomError } from "@/types";
-import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import z from "zod";
 
 export default function errorHandler(

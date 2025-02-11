@@ -1,151 +1,74 @@
 import { Email } from "../../shared/valueObjects/email.vo";
-import { autoGetterSetter } from "../../shared/utils/autoGetterSetter";
-import { CloudCustomerType, CustomerStatus, CustomerType } from "./types";
+import { CustomerModalidad, CustomerStatus } from "./types";
+import { IModalidadCliente } from "./interfaces/IModalidadCliente";
 import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
-import { CreateCustomerDTO } from "../adapters/inputDTO";
+import { Customer } from "./interfaces/Customer";
 
-/*  */
-abstract class BaseCustomer extends Entity {
-  protected firstName: string;
-  protected lastName: string;
-  protected email: Email;
-  protected phone: string;
-  protected status: CustomerStatus;
-  protected createdAt: Date;
-  protected updatedAt: Date;
+export class CustomerEntity extends Entity {
+  private firstName: string;
+  private lastName: string;
+  private email: Email;
+  private phone: string;
+  private status: CustomerStatus;
+  private modalidad: IModalidadCliente;
+  private createdAt: Date;
 
-  constructor(
-    uuid: EntityId,
+  constructor(customer: Customer) {
+    super(customer.uuid);
+    this.firstName = customer.firstName;
+    this.lastName = customer.lastName;
+    this.email = customer.email;
+    this.phone = customer.phone;
+    this.status = customer.status;
+    this.modalidad = customer.modalidad;
+    this.createdAt = customer.createdAt;
+  }
+
+  static create(
     firstName: string,
     lastName: string,
-    email: Email,
+    email: string,
     phone: string,
-    status: CustomerStatus,
-    createdAt: Date,
-    updatedAt: Date,
-  ) {
-    super(uuid);
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.email = email;
-    this.phone = phone;
-    this.status = status;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
+    modalidad: IModalidadCliente,
+  ): CustomerEntity {
+    return new CustomerEntity({
+      uuid: EntityId.create(),
+      firstName,
+      lastName,
+      email: Email.create(email),
+      phone,
+      status: CustomerStatus.ACTIVE,
+      createdAt: new Date(),
+      modalidad,
+    });
   }
 
-  public getFullName(): string {
-    return `${this.firstName} ${this.lastName}`;
-  }
-
-  public isBaja(): boolean {
-    return this.status === CustomerStatus.INACTIVE;
-  }
-  public getCreatedAt(): Date {
-    return this.createdAt;
-  }
-  public getFirstName(): string {
+  getFirstName(): string {
     return this.firstName;
   }
-  public getLastName(): string {
+  getLastName(): string {
     return this.lastName;
   }
-  public getEmail(): string {
+  getEmail(): string {
     return this.email.getEmail();
   }
-  public getPhone(): string {
+  getPhone(): string {
     return this.phone;
   }
-  public getStatus(): CustomerStatus {
+  getStatus(): CustomerStatus {
     return this.status;
   }
-  public getUpdatedAt(): Date {
-    return this.updatedAt;
+  getModalidad(): CustomerModalidad {
+    return this.modalidad.getModalidad();
   }
-}
-
-export class CustomerEntity extends BaseCustomer {
-  /* determina el precio de la mensualidad */
-  private category?: CloudCustomerType;
-
-  constructor(
-    uuid: EntityId,
-    firstName: string,
-    lastName: string,
-    email: Email,
-    phone: string,
-    status: CustomerStatus,
-    createdAt: Date,
-    updatedAt: Date,
-    category?: CloudCustomerType,
-  ) {
-    super(
-      uuid,
-      firstName,
-      lastName,
-      email,
-      phone,
-      status,
-      createdAt,
-      updatedAt,
-    );
-    this.category = category;
+  setModalidad(modalidad: IModalidadCliente): void {
+    this.modalidad = modalidad;
   }
-
-  public getFullName(): string {
-    return `${this.firstName} ${this.lastName}`;
+  getCreatedAt(): Date {
+    return this.createdAt;
   }
-
-  public isBaja(): boolean {
-    return this.status === CustomerStatus.INACTIVE;
-  }
-
-  public getCategory(): CloudCustomerType | undefined {
-    return this.category;
-  }
-
-  public isCloud(): boolean {
-    return !!this.category;
-  }
-  public getType(): CustomerType {
-    return this.isCloud() ? CustomerType.CLOUD : CustomerType.REGULAR;
-  }
-
-  public static new({
-    firstName,
-    lastName,
-    email,
-    phone,
-    category,
-  }: CreateCustomerDTO): CustomerEntity {
-    if (!firstName || !lastName || !email || !phone) {
-      throw new Error("Missing required fields");
-    }
-    return new CustomerEntity(
-      EntityId.create(),
-      firstName,
-      lastName,
-      Email.create(email),
-      phone,
-      CustomerStatus.ACTIVE,
-      new Date(),
-      new Date(),
-      category,
-    );
-  }
-
-  public static fromPersistence(obj: any): CustomerEntity {
-    return new CustomerEntity(
-      EntityId.fromExisting(obj.uuid),
-      obj.firstName,
-      obj.lastName,
-      Email.create(obj.email),
-      obj.phone,
-      obj.status,
-      obj.createdAt,
-      obj.updatedAt,
-      obj.category,
-    );
+  getPriceCategory() {
+    return this.modalidad.getCategoriaPago();
   }
 }

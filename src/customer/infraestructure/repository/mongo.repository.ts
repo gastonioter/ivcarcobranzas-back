@@ -1,5 +1,5 @@
-import { CustomerRepository } from "@/customer/domain/customer.repository";
-import { CustomerStatus } from "@/customer/domain/types";
+import { CustomerRepository } from "../../domain/interfaces/CustomerRepository";
+import { CustomerStatus } from "../../domain/types";
 import { MongoServerError } from "mongodb";
 import mongoose from "mongoose";
 import {
@@ -8,21 +8,36 @@ import {
 } from "../../domain/customer.exceptions";
 import { CustomerModel } from "../models/customer.schema";
 import { CustomerEntity } from "../../domain/customer.entity";
-import { EditCustomerDTO } from "../../adapters/inputDTO";
+import { EditCustomerDTO } from "../../adapters/CreateCustomerDTO";
+import { CustomerFactory } from "../../domain/CustomerFactory";
+import { PriceCategoryDoc } from "../../../priceCategory/infraestructure/db.schema";
 
 export class CustomerMongoRepository implements CustomerRepository {
   async createCustomer(customer: CustomerEntity): Promise<CustomerEntity> {
     try {
-      const customerDoc = await CustomerModel.create({
+      const saved = await CustomerModel.create({
         uuid: customer.getId(),
         firstName: customer.getFirstName(),
         lastName: customer.getLastName(),
         email: customer.getEmail(),
         phone: customer.getPhone(),
         status: customer.getStatus(),
-        category: customer.getCategory(),
+        createdAt: customer.getCreatedAt(),
+        priceCategoryId: customer.getPriceCategory()?.getId(),
       });
-      return CustomerEntity.fromPersistence(customerDoc);
+
+      if (saved) {
+        const toReturn = await CustomerModel.findOne({ uuid: saved.uuid })
+          .populate<{ priceCategory: PriceCategoryDoc }>("priceCategory")
+          .exec();
+        console.log(toReturn);
+
+        if (!toReturn) {
+          throw new Error("Error al crear el cliente");
+        }
+        return CustomerFactory.fromPersistence(toReturn);
+      }
+      throw new Error("Error al crear el cliente");
     } catch (e) {
       console.log(e);
       if (e instanceof MongoServerError && e.code === 11000) {
@@ -43,16 +58,22 @@ export class CustomerMongoRepository implements CustomerRepository {
   async editCustomer(
     uuid: string,
     customer: EditCustomerDTO,
-  ): Promise<CustomerEntity | null> {
+  ): Promise<CustomerEntity> {
     try {
-      const editedCustomer = CustomerModel.findOneAndUpdate(
+      const editedCustomer = await CustomerModel.findOneAndUpdate(
         { uuid },
         customer,
         {
           new: true,
         },
-      );
-      return CustomerEntity.fromPersistence(editedCustomer);
+      )
+        .populate<{ priceCategory?: PriceCategoryDoc }>("priceCategory")
+        .lean()
+        .exec();
+      if (!editedCustomer) {
+        throw new CustomerNotFoundError();
+      }
+      return CustomerFactory.fromPersistence(editedCustomer);
     } catch (e) {
       if (
         (e instanceof MongoServerError && e.code === 11000) ||
@@ -64,7 +85,7 @@ export class CustomerMongoRepository implements CustomerRepository {
         throw new CustomerNotFoundError();
       }
 
-      return null;
+      throw new Error("Error al editar el cliente");
     }
   }
 
@@ -83,13 +104,20 @@ export class CustomerMongoRepository implements CustomerRepository {
         {
           new: true,
         },
-      );
-      return CustomerEntity.fromPersistence(customer);
+      )
+        .lean()
+        .populate<{ priceCategory?: PriceCategoryDoc }>("priceCategory")
+        .exec();
+      if (!customer) {
+        throw new CustomerNotFoundError();
+      }
+      return CustomerFactory.fromPersistence(customer);
     } catch (e) {
       if (e instanceof mongoose.Error.DocumentNotFoundError) {
         throw new CustomerNotFoundError();
       }
-      return null;
+
+      throw new Error("Error al actualizar el estado del cliente");
     }
   }
   deleteCustomer(uuid: string): Promise<CustomerEntity> {
@@ -99,10 +127,13 @@ export class CustomerMongoRepository implements CustomerRepository {
     throw new Error("Method not implemented.");
   }
   async getCustomers(): Promise<CustomerEntity[]> {
-    const customersDoc = await CustomerModel.find({}).lean();
+    const customersDoc = await CustomerModel.find({})
+      .lean()
+      .populate<{ priceCategory?: PriceCategoryDoc }>("priceCategory")
+      .exec();
 
     return customersDoc.map((customer) =>
-      CustomerEntity.fromPersistence(customer),
+      CustomerFactory.fromPersistence(customer),
     );
   }
 }

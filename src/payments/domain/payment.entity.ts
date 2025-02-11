@@ -1,4 +1,3 @@
-import { MonthlyFeeEntity } from "@/monthlyFee/domain/monthlyFee.entity";
 
 export interface PaymentEntity {
   uuid: string;

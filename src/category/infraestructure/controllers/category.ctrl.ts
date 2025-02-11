@@ -4,18 +4,15 @@ import { NextFunction, Request, Response } from "express";
 export class CategoryController {
   constructor(private readonly categoryUserCase: CategoryUseCases) {}
 
-  public createCategory = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => {
+  public createCategory = async (req: Request, res: Response) => {
     const { name, description } = req.body;
+    
 
     const newCategroy = await this.categoryUserCase.createCategory({
       name,
       description,
     });
-    
+
     res.status(201).json(newCategroy);
   };
 

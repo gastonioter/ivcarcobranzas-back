@@ -1,10 +1,4 @@
-export enum CloudCustomerType {
-  ALTA = "alta",
-  MEDIA = "media",
-  BAJA = "baja",
-}
-
-export enum CustomerType {
+export enum CustomerModalidad {
   REGULAR = "Regular",
   CLOUD = "Cloud",
 }

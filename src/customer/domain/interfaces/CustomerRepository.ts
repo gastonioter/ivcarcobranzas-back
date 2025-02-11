@@ -1,13 +1,13 @@
-import { CustomerEntity } from "./customer.entity";
-import { EditCustomerDTO } from "../adapters/inputDTO";
-import { CustomerStatus } from "./types";
+import { CustomerEntity } from "../customer.entity";
+import { EditCustomerDTO } from "../../adapters/CreateCustomerDTO";
+import { CustomerStatus } from "../types";
 
 export interface CustomerRepository {
   createCustomer(customer: CustomerEntity): Promise<CustomerEntity>;
   editCustomer(
     uuid: string,
     customer: EditCustomerDTO,
-  ): Promise<CustomerEntity | null>;
+  ): Promise<CustomerEntity>;
   deleteCustomer(uuid: string): Promise<CustomerEntity>;
   getCustomer(uuid: string): Promise<CustomerEntity>;
   checkIfExistsOne(email: string, phone: string): Promise<boolean>;
