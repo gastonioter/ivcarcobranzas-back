@@ -5,7 +5,7 @@ import {
 } from "../adapters/CreateCustomerDTO";
 import { CustomerDTO } from "../adapters/CustomerDTO";
 import { CustomerRepository } from "../domain/interfaces/CustomerRepository";
-import { CustomerStatus } from "../domain/types";
+import { CustomerModalidad, CustomerStatus } from "../domain/types";
 import { CustomerFactory } from "../domain/CustomerFactory";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { Email } from "../../shared/valueObjects/email.vo";
@@ -16,10 +16,6 @@ export class CustomerUseCases {
     private readonly customerRepository: CustomerRepository,
     private readonly priceCategoryRepository: MongoPriceCategoryRepository,
   ) {}
-
-  deleteCustomer = async (uuid: string) => {
-    return await this.customerRepository.deleteCustomer(uuid);
-  };
 
   editCustomer = async (
     uuid: string,
@@ -52,9 +48,9 @@ export class CustomerUseCases {
     }
 
     let categoriaPago: PriceCategory | null = null;
-    if (customer.priceCategoryId) {
+    if (customer.modalidadData.modalidad === CustomerModalidad.CLOUD) {
       categoriaPago = await this.priceCategoryRepository.findById(
-        customer.priceCategoryId,
+        customer.modalidadData.priceCategoryId,
       );
     }
 
@@ -62,7 +58,7 @@ export class CustomerUseCases {
       firstName: customer.firstName,
       lastName: customer.lastName,
       phone: customer.phone,
-      modalidad: customer.modalidad,
+      modalidad: customer.modalidadData.modalidad,
       uuid: EntityId.create(),
       email: Email.fromExisting(customer.email),
       category: categoriaPago,

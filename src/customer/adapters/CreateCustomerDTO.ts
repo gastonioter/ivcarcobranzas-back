@@ -5,25 +5,28 @@ const phoneSchema = z.string().regex(/^\+?\d{10,15}$/, {
   message: "Número de teléfono inválido. Debe contener entre 10 y 15 dígitos.",
 });
 
-export const createCustomerSchema = z
-  .object({
-    firstName: z.string().min(2),
-    lastName: z.string().min(2),
-    email: z.string().email(),
-    phone: phoneSchema,
-    modalidad: z.nativeEnum(CustomerModalidad),
-    priceCategoryId: z.string().uuid().optional(), // Solo para CLOUD
-  })
-  .superRefine((data, ctx) => {
-    if (data.modalidad === CustomerModalidad.CLOUD && !data.priceCategoryId) {
-      ctx.addIssue({
-        path: ["category"],
-        message:
-          "Los clientes de modalidad CLOUD deben tener una categoría de pago.",
-        code: "custom",
-      });
-    }
-  });
+const LocalCustomerSchema = z.object({
+  modalidad: z.literal(CustomerModalidad.REGULAR),
+});
+
+const CloudCustomerSchema = z.object({
+  modalidad: z.literal(CustomerModalidad.CLOUD),
+  priceCategoryId: z
+    .string()
+    .uuid()
+    .nonempty("La categoria de pago es requerida"),
+});
+
+export const createCustomerSchema = z.object({
+  firstName: z.string().min(2),
+  lastName: z.string().min(2),
+  email: z.string().email(),
+  phone: phoneSchema,
+  modalidadData: z.discriminatedUnion("modalidad", [
+    LocalCustomerSchema,
+    CloudCustomerSchema,
+  ]),
+});
 
 export const BajaCustumerSchema = z.object({
   uuid: z.string(),

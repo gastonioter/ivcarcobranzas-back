@@ -33,11 +33,4 @@ export class CustomerController {
     const customer = await this.customerUseCases.getCustomer(req.params.uuid);
     res.status(200).json(customer);
   };
-
-  public delete = async (req: Request, res: Response) => {
-    const customer = await this.customerUseCases.deleteCustomer(
-      req.params.uuid
-    );
-    res.status(200).json(customer);
-  };
 }

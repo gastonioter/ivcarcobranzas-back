@@ -1,50 +1,58 @@
-import { CustomerRepository } from "../../domain/interfaces/CustomerRepository";
-import { CustomerStatus } from "../../domain/types";
-import { MongoServerError } from "mongodb";
 import mongoose from "mongoose";
-import {
-  CustomerAlreadyExistsError,
-  CustomerNotFoundError,
-} from "../../domain/customer.exceptions";
-import { CustomerModel } from "../models/customer.schema";
-import { CustomerEntity } from "../../domain/customer.entity";
-import { EditCustomerDTO } from "../../adapters/CreateCustomerDTO";
-import { CustomerFactory } from "../../domain/CustomerFactory";
 import { PriceCategoryDoc } from "../../../priceCategory/infraestructure/db.schema";
+import { EditCustomerDTO } from "../../adapters/CreateCustomerDTO";
+import { CustomerEntity } from "../../domain/customer.entity";
+import { CustomerNotFoundError } from "../../domain/customer.exceptions";
+import { CustomerFactory } from "../../domain/CustomerFactory";
+import { CustomerRepository } from "../../domain/interfaces/CustomerRepository";
+import { CustomerModalidad, CustomerStatus } from "../../domain/types";
+import {
+  CloudCustomerModel,
+  CustomerModel,
+  RegularCustomerModel,
+} from "../models/customer.schema";
 
 export class CustomerMongoRepository implements CustomerRepository {
   async createCustomer(customer: CustomerEntity): Promise<CustomerEntity> {
     try {
-      const saved = await CustomerModel.create({
+      let saved;
+      const baseCustomerData = {
         uuid: customer.getId(),
         firstName: customer.getFirstName(),
         lastName: customer.getLastName(),
         email: customer.getEmail(),
         phone: customer.getPhone(),
+        modalidad: customer.getModalidad(),
         status: customer.getStatus(),
         createdAt: customer.getCreatedAt(),
-        priceCategoryId: customer.getPriceCategory()?.getId(),
-      });
+      };
 
-      if (saved) {
+      if (customer.getModalidad() === CustomerModalidad.CLOUD) {
+        saved = await CloudCustomerModel.create({
+          ...baseCustomerData,
+          categoryPriceId: customer.getPriceCategory()?.getId(),
+        });
+
         const toReturn = await CustomerModel.findOne({ uuid: saved.uuid })
-          .populate<{ priceCategory: PriceCategoryDoc }>("priceCategory")
+          .populate<{ priceCategory: PriceCategoryDoc }>("priceCategory", {
+            strictPopulate: false,
+          })
           .exec();
-        console.log(toReturn);
 
-        if (!toReturn) {
-          throw new Error("Error al crear el cliente");
+        if (toReturn) {
+          return CustomerFactory.fromPersistence(toReturn);
+        } else {
+          throw new Error("Ocurrio un error al crear el cliente");
         }
-        return CustomerFactory.fromPersistence(toReturn);
+      } else {
+        saved = await RegularCustomerModel.create({
+          ...baseCustomerData,
+        });
+        return CustomerFactory.fromPersistence(saved);
       }
-      throw new Error("Error al crear el cliente");
     } catch (e) {
       console.log(e);
-      if (e instanceof MongoServerError && e.code === 11000) {
-        throw new CustomerAlreadyExistsError();
-      }
-
-      throw new Error("Error al crear el cliente");
+      throw new Error("Ocurrio un error al crear el cliente");
     }
   }
 
@@ -55,37 +63,54 @@ export class CustomerMongoRepository implements CustomerRepository {
 
     return !!customer;
   }
+
   async editCustomer(
     uuid: string,
     customer: EditCustomerDTO,
   ): Promise<CustomerEntity> {
     try {
-      const editedCustomer = await CustomerModel.findOneAndUpdate(
-        { uuid },
-        customer,
-        {
-          new: true,
-        },
-      )
-        .populate<{ priceCategory?: PriceCategoryDoc }>("priceCategory")
-        .lean()
-        .exec();
-      if (!editedCustomer) {
-        throw new CustomerNotFoundError();
-      }
-      return CustomerFactory.fromPersistence(editedCustomer);
-    } catch (e) {
-      if (
-        (e instanceof MongoServerError && e.code === 11000) ||
-        e instanceof mongoose.Error
-      ) {
-        throw new CustomerAlreadyExistsError();
-      }
-      if (e instanceof mongoose.Error.DocumentNotFoundError) {
+      const baseCustomerData = {
+        firstName: customer.firstName,
+        lastName: customer.lastName,
+        email: customer.email,
+        phone: customer.phone,
+        modalidad: customer.modalidadData.modalidad,
+      };
+
+      const currentCustomer = await CustomerModel.findOne({ uuid }).lean();
+
+      if (!currentCustomer) {
         throw new CustomerNotFoundError();
       }
 
-      throw new Error("Error al editar el cliente");
+      if (customer.modalidadData.modalidad === CustomerModalidad.CLOUD) {
+        const updated = await CloudCustomerModel.updateOne(
+          { uuid },
+          {
+            ...baseCustomerData,
+            categoryPriceId: customer.modalidadData.priceCategoryId,
+          },
+          {
+            new: true,
+            lean: true,
+          },
+        ).populate<{ priceCategory: PriceCategoryDoc }>("priceCategory");
+
+        return CustomerFactory.fromPersistence(updated);
+      } else {
+        const updated = await RegularCustomerModel.updateOne(
+          { uuid },
+          {
+            ...baseCustomerData,
+          },
+          { new: true, lean: true },
+        );
+
+        return CustomerFactory.fromPersistence(updated);
+      }
+    } catch (e) {
+      console.log(e);
+      throw new Error("Algo salio mal al editar el cliente.");
     }
   }
 

@@ -1,13 +1,17 @@
 import { CustomerEntity } from "../domain/customer.entity";
 import { CustomerModalidad } from "../domain/types";
-import { CloudCustomer } from "../domain/valueObjects/CloudCustomer.vo";
 
-type CloudDataDTO = {
-  priceCategory: {
-    name: string;
-    price: number;
-  };
-};
+type ModalidadData =
+  | {
+      modalidad: CustomerModalidad.CLOUD;
+      priceCategory: {
+        name: string;
+        price: number;
+      };
+    }
+  | {
+      modalidad: CustomerModalidad.REGULAR;
+    };
 
 export class CustomerDTO {
   public readonly uuid: string;
@@ -17,11 +21,9 @@ export class CustomerDTO {
   public readonly phone: string;
   public readonly status: string;
   public readonly createdAt: Date;
-  public readonly modalidad: CustomerModalidad;
-  public readonly cloudData?: CloudDataDTO;
+  public readonly modalidadData: ModalidadData;
 
   constructor(customer: CustomerEntity) {
-    console.log("DTO:", customer.getPriceCategory());
     this.uuid = customer.getId();
     this.firstName = customer.getFirstName();
     this.lastName = customer.getLastName();
@@ -29,15 +31,22 @@ export class CustomerDTO {
     this.phone = customer.getPhone();
     this.status = customer.getStatus();
     this.createdAt = customer.getCreatedAt();
-    this.modalidad = customer.getModalidad();
+
+    /* Inject the specific depending on the Customer */
     if (customer.getModalidad() === CustomerModalidad.CLOUD) {
-      console.log("RETORNANDO UN CUSTOMER CLOUD");
-      this.cloudData = {
+      this.modalidadData = {
+        modalidad: CustomerModalidad.CLOUD,
         priceCategory: {
           name: customer.getPriceCategory()!.getName(),
           price: customer.getPriceCategory()!.getPrice(),
         },
       };
+    } else if (customer.getModalidad() === CustomerModalidad.REGULAR) {
+      this.modalidadData = {
+        modalidad: CustomerModalidad.REGULAR,
+      };
+    } else {
+      throw new Error("Invalid modalidad");
     }
   }
 }

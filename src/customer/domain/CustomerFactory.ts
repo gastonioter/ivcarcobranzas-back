@@ -2,7 +2,11 @@ import { PriceCategoryDoc } from "../../priceCategory/infraestructure/db.schema"
 import { PriceCategory } from "../../priceCategory/domain/priceCategory.entity";
 import { Email } from "../../shared/valueObjects/email.vo";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
-import { CustomerDoc } from "../infraestructure/models/customer.schema";
+import {
+  CustomerDoc,
+  ICloudCustomer,
+  IRegularCustomer,
+} from "../infraestructure/models/customer.schema";
 import { CustomerEntity } from "./customer.entity";
 import { IModalidadCliente } from "./interfaces/IModalidadCliente";
 import { CustomerModalidad } from "./types";
@@ -40,15 +44,14 @@ export class CustomerFactory {
     );
   }
 
-  static fromPersistence(
-    data: CustomerDoc & { priceCategory?: PriceCategoryDoc },
-  ): CustomerEntity {
+  static fromPersistence(data: any): CustomerEntity {
+    console.log("PERSISTED: ", data);
     let modalidad: IModalidadCliente;
 
-    if (data.priceCategory) {
+    if (data.modalidad == CustomerModalidad.CLOUD) {
       modalidad = new CloudCustomer(
         PriceCategory.fromPersistence({
-          uuid: EntityId.fromExisting(data.priceCategory.uuid),
+          uuid: EntityId.fromExisting(data.categoryPriceId),
           name: data.priceCategory.name,
           price: data.priceCategory.price,
           description: data.priceCategory.description,
