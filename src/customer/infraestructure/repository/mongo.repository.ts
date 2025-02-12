@@ -185,6 +185,7 @@ export class CustomerMongoRepository implements CustomerRepository {
 
   private async findByIdAndPopulate(uuid: string) {
     return await CustomerModel.findOne({ uuid })
+      // solo existe si es un cliente cloud, sino es null
       .populate<{
         cloudCategory?: CloudCategoryDoc;
       }>("cloudCategory")

@@ -14,7 +14,7 @@ import errorHandler from "./middlewares/errorHandlerMiddleware";
 import { monthlyFeeRoutes } from "./monthlyFee";
 import { paymentRoutes } from "./payments";
 import { productRoutes } from "./product";
-import { salesRoutes } from "./sale";
+import { SalesRoutes } from "./transaction/sale";
 import { sendEmail } from "./shared/infraestructure/sendEmail";
 
 import { sendDocument } from "./shared/infraestructure/sendDocument";
@@ -133,13 +133,15 @@ app.use("/api/auth", userRoutes);
 
 /* private routes */
 //app.use(authorizationMiddleware);
+
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/customers", customerRoutes);
-app.use("/api/sales", salesRoutes);
+app.use("/api/sales", SalesRoutes);
 app.use("/api/monthlyfees", monthlyFeeRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/cloudcategories", CloudCategoryRoutes);
+
 app.use(errorHandler);
 
 MongoDB.getInstance().then(() => {

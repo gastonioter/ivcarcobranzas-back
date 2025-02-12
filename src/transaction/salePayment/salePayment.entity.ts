@@ -1,5 +1,6 @@
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { Entity } from "../../shared/domain/Entity";
+import { ISalePayment as PersistedPayment } from "../sale/infraestructure/sale.schema";
 
 export class SalePayment extends Entity {
   status: SalePaymentStatus;
@@ -38,13 +39,19 @@ export class SalePayment extends Entity {
     });
   }
 
-  static fromPersistence(sale: PersistedSalePayment) {
+  static fromPersistence({
+    uuid,
+    paymentMethod,
+    amount,
+    status,
+    createdAt,
+  }: PersistedPayment) {
     return new SalePayment({
-      uuid: EntityId.fromExisting(sale.uuid),
-      status: sale.status as SalePaymentStatus,
-      amount: sale.amount,
-      createdAt: sale.createdAt,
-      paymentMethod: sale.paymentMethod as PaymentMethods,
+      uuid: EntityId.fromExisting(uuid),
+      paymentMethod: paymentMethod as PaymentMethods,
+      amount,
+      status: status as SalePaymentStatus,
+      createdAt,
     });
   }
 
@@ -56,6 +63,18 @@ export class SalePayment extends Entity {
   }
   deactivate() {
     this.status = SalePaymentStatus.CANCELLED;
+  }
+  getAmount() {
+    return this.amount;
+  }
+  getMethod() {
+    return this.paymentMethod;
+  }
+  getStatus() {
+    return this.status;
+  }
+  getCreatedAt() {
+    return this.createdAt;
   }
 }
 
@@ -79,11 +98,3 @@ export enum SalePaymentStatus {
   ACTIVE = "ACTIVO",
   CANCELLED = "ANULADO",
 }
-
-export type PersistedSalePayment = {
-  uuid: string;
-  paymentMethod: string;
-  amount: number;
-  status: string;
-  createdAt: Date;
-};

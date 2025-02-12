@@ -47,8 +47,6 @@ export class SaleController {
     const { saleID, paymentID } = req.params;
     const { status } = req.body;
 
-    console.log(saleID, paymentID, status);
-
     const payment = await this.saleUseCases.updatePaymentStatus({
       saleID,
       paymentID,

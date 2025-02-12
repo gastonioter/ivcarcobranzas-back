@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function zodValidator(zodSchema: z.Schema) {
   return async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body);
     try {
       await zodSchema.parseAsync(req.body);
       next();

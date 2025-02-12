@@ -1,9 +1,9 @@
 import { SalePayment } from "./salePayment.entity";
 
 export interface SalePaymentRepository {
-  addPayment(uuid: string, data: SalePayment): Promise<SalePayment>;
+  save(uuid: string, data: SalePayment): Promise<SalePayment>;
 
-  updatePaymentStatus({
+  update({
     saleID,
     paymentID,
     status,
@@ -13,5 +13,5 @@ export interface SalePaymentRepository {
     status: string;
   }): Promise<SalePayment>;
 
-  getPayments(saleID: string): Promise<SalePayment[]>;
+  findAll(saleID: string): Promise<SalePayment[]>;
 }

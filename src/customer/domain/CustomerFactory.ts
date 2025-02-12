@@ -66,3 +66,21 @@ export class CustomerFactory {
     });
   }
 }
+
+export interface IPersistedCustomer {
+  uuid: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  status: string;
+  modalidad: string;
+  modalidadData?: {
+    uuid: string;
+    name: string;
+    price: number;
+    description: string;
+  };
+  createdAt: Date;
+} 
+

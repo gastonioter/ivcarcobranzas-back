@@ -1,45 +1,140 @@
-import { ITransaction, Transaction } from "../../Transaction";
 import { EntityId } from "../../../shared/valueObjects/entityId.vo";
-import { UserEntity } from "../../../user/domain/user.entity";
 import { SalePayment } from "../../../transaction/salePayment/salePayment.entity";
+import { Detail, ITransaction, Transaction } from "../../domain/Transaction";
+import { ISale as IPersistedSale } from "../infraestructure/sale.schema";
+import { ITransaction as IPersistedTransaction } from "../../infraestructure/transaction.schema";
 
 export class Sale extends Transaction {
-  private seller: UserEntity;
+  private sellerId: string;
   private payments: SalePayment[];
   private status: SaleStatus;
+  private budgetId?: string;
 
   constructor({
     uuid,
     createdAt,
-    customer,
+    customerId,
     payments,
-    seller,
+    sellerId,
     serie,
     status,
     details,
     totalAmount,
+    iva,
+    budgetId,
   }: ISale) {
-    super({ uuid, createdAt, customer, serie, details, totalAmount });
+    super(uuid, serie, customerId, details, totalAmount, iva, createdAt);
     this.payments = payments;
     this.status = status;
-    this.seller = seller;
+    this.sellerId = sellerId;
     this.details = details;
     this.totalAmount = totalAmount;
+    this.budgetId = budgetId;
+  }
+
+  static new({
+    customerId,
+    details,
+    iva,
+    sellerId,
+    budgetId,
+  }: {
+    customerId: string;
+    details: Detail[];
+    iva: number;
+    sellerId: string;
+    budgetId?: string;
+  }): Sale {
+    const totalAmount = Transaction.computeTotalAmount(details);
+    const createdAt = new Date();
+    const payments = [] as SalePayment[];
+    const serie = Transaction.generateSerie();
+    const uuid = EntityId.create();
+    const status = SaleStatus.PENDING;
+
+    return new Sale({
+      uuid,
+      createdAt,
+      status,
+      customerId,
+      details,
+      totalAmount,
+      iva,
+      payments,
+      sellerId,
+      serie,
+      budgetId,
+    });
+  }
+
+  static fromPersistence({
+    createdAt,
+    customerId,
+    details,
+    payments,
+    sellerId,
+    serie,
+    status,
+    totalAmount,
+    uuid,
+    iva,
+    budgetId,
+  }: IPersistedSale & IPersistedTransaction): Sale {
+    return new Sale({
+      uuid: EntityId.fromExisting(uuid),
+      createdAt,
+      customerId,
+      details,
+      payments: payments.map(SalePayment.fromPersistence),
+      sellerId,
+      serie,
+      status: status as SaleStatus,
+      totalAmount,
+      iva,
+      budgetId,
+    });
   }
 
   isPaid() {
     return this.status == SaleStatus.PAID;
   }
 
-  getSeller() {
-    return this.seller;
+  comesFromBudget() {
+    return this.budgetId;
+  }
+
+  getDetails() {
+    return this.details;
+  }
+  getTotalAmount() {
+    return this.totalAmount;
+  }
+  private pay() {
+    this.status = SaleStatus.PAID;
+  }
+  private markAsPending() {
+    this.status = SaleStatus.PENDING;
+  }
+  cancel() {
+    this.status = SaleStatus.CANCELLED;
+  }
+  activate() {
+    const saldo = this.getSaldo();
+    if (saldo <= 0) {
+      this.pay();
+    } else {
+      this.markAsPending();
+    }
   }
 
   isCancelled() {
     return this.status == SaleStatus.CANCELLED;
   }
-  isAnnulled() {
-    return this.status == SaleStatus.ANNULLED;
+  isPending() {
+    return this.status == SaleStatus.PENDING;
+  }
+  getSellerId() {
+    return this.sellerId;
   }
   getPayments() {
     return this.payments;
@@ -55,23 +150,35 @@ export class Sale extends Transaction {
       return acc;
     }, 0);
   }
+
+  getStatus() {
+    return this.status;
+  }
+  getBudgetId() {
+    return this.budgetId;
+  }
+
   addPayment(payment: SalePayment) {
-    if (!this.isPaid()) {
-      this.payments.push(payment);
+    if (this.isPaid()) {
+      throw new Error("La venta ya esta paga");
     }
-    throw new Error("La venta ya fue pagada");
+    if (this.isCancelled()) {
+      throw new Error("No puedes agregar pagos a una venta cancelada");
+    }
+    this.payments.push(payment);
   }
 }
 
 interface ISale extends ITransaction {
   uuid: EntityId;
   payments: SalePayment[];
-  seller: UserEntity;
+  sellerId: string;
   status: SaleStatus;
+  budgetId?: string;
 }
 
-enum SaleStatus {
+export enum SaleStatus {
+  PENDING = "PENDING",
   PAID = "PAID",
   CANCELLED = "CANCELLED",
-  ANNULLED = "ANNULLED",
 }
