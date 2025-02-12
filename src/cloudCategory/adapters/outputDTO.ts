@@ -1,4 +1,4 @@
-import { PriceCategory } from "../domain/priceCategory.entity";
+import { CloudCategory } from "../domain/cloudCategory.entity";
 
 export class PriceCategoryDTO {
   uuid: string;
@@ -6,7 +6,7 @@ export class PriceCategoryDTO {
   description: string;
   price: number;
 
-  constructor(entity: PriceCategory) {
+  constructor(entity: CloudCategory) {
     this.uuid = entity.getId();
     this.name = entity.getName();
     this.description = entity.getDescription();

@@ -40,9 +40,12 @@ export class SaleUseCases {
 
   async addPayment(saleID: string, payment: AddPaymentRequestType) {
     const sale = await this.saleRepository.findById(saleID);
+    if (!sale) {
+      throw new SaleNotFoundError(saleID);
+    }
     if (
-      sale?.status.type == TransactionType.SALE &&
-      sale?.status.status == SaleStatus.CANCELLED
+      sale.status.type == TransactionType.SALE &&
+      sale.status.status == SaleStatus.CANCELLED
     ) {
       throw new InvalidOperationError(
         "No puedes agregar pagos a una venta cancelada",
@@ -50,8 +53,8 @@ export class SaleUseCases {
     }
 
     if (
-      sale?.status.type == TransactionType.BUDGET &&
-      sale?.status.status !== BudgetStatus.APPROVED
+      sale.status.type == TransactionType.BUDGET &&
+      sale.status.status !== BudgetStatus.APPROVED
     ) {
       throw new InvalidOperationError(
         "No puedes agregar pagos a un presupuesto sin aprobar",

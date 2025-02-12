@@ -15,7 +15,7 @@ export class CategoryMongoRepository implements CategoryRepository {
 
   async findAll(): Promise<CategoryEntity[]> {
     const categories = await CategoryModel.find({}).lean();
-    console.log(categories);
+    
 
     return categories.map((category) =>
       CategoryEntity.fromPersistence(category),

@@ -13,6 +13,7 @@ export class CustomerController {
     const { uuid } = req.params;
     const newData = req.body;
 
+
     const customer = await this.customerUseCases.editCustomer(uuid, newData);
 
     res.status(200).json(customer);

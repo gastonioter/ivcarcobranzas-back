@@ -17,9 +17,8 @@ export class ProductController {
   };
 
   public edit = async (req: Request, res: Response) => {
-    console.log(req.params);
     const { uuid } = req.params;
-    console.log(uuid);
+    
     const product = await this.productUseCases.editProduct(uuid, req.body);
     res.status(200).json(product);
   };

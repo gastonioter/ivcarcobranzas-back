@@ -19,9 +19,9 @@ const priceCategorySchema = new Schema({
   },
 });
 
-export type PriceCategoryDoc = InferSchemaType<typeof priceCategorySchema>;
+export type CloudCategoryDoc = InferSchemaType<typeof priceCategorySchema>;
 
-export const priceCategoryModel = model<PriceCategoryDoc>(
-  "PriceCategory",
+export const CloudCategoryModel = model<CloudCategoryDoc>(
+  "CloudCategory",
   priceCategorySchema,
 );

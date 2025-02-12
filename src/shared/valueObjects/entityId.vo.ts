@@ -13,6 +13,7 @@ export class EntityId extends ValueObject<EntityIdProps> {
   }
 
   getId(): string {
+    console.log("UUID!!:", this.props.uuid);
     return this.props.uuid;
   }
 

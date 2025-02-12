@@ -1,12 +1,6 @@
-import { PriceCategoryDoc } from "../../priceCategory/infraestructure/db.schema";
-import { PriceCategory } from "../../priceCategory/domain/priceCategory.entity";
+import { CloudCategory } from "../../cloudCategory/domain/cloudCategory.entity";
 import { Email } from "../../shared/valueObjects/email.vo";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
-import {
-  CustomerDoc,
-  ICloudCustomer,
-  IRegularCustomer,
-} from "../infraestructure/models/customer.schema";
 import { CustomerEntity } from "./customer.entity";
 import { IModalidadCliente } from "./interfaces/IModalidadCliente";
 import { CustomerModalidad } from "./types";
@@ -15,13 +9,12 @@ import { RegularCustomer } from "./valueObjects/RegularCustomer.vo";
 
 export class CustomerFactory {
   static createCustomer(data: {
-    uuid: EntityId;
     firstName: string;
     lastName: string;
     email: Email;
     phone: string;
     modalidad: CustomerModalidad;
-    category?: PriceCategory | null;
+    category?: CloudCategory | null;
   }): CustomerEntity {
     let modalidad: IModalidadCliente;
 
@@ -45,16 +38,16 @@ export class CustomerFactory {
   }
 
   static fromPersistence(data: any): CustomerEntity {
-    console.log("PERSISTED: ", data);
     let modalidad: IModalidadCliente;
 
     if (data.modalidad == CustomerModalidad.CLOUD) {
+      console.log(data.cloudCategory.uuid);
       modalidad = new CloudCustomer(
-        PriceCategory.fromPersistence({
-          uuid: EntityId.fromExisting(data.categoryPriceId),
-          name: data.priceCategory.name,
-          price: data.priceCategory.price,
-          description: data.priceCategory.description,
+        CloudCategory.fromPersistence({
+          uuid: data.cloudCategory.uuid,
+          name: data.cloudCategory.name,
+          price: data.cloudCategory.price,
+          description: data.cloudCategory.description,
         }),
       );
     } else {

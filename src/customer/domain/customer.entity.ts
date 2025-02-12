@@ -4,6 +4,7 @@ import { IModalidadCliente } from "./interfaces/IModalidadCliente";
 import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { Customer } from "./interfaces/Customer";
+import { CloudCategory } from "@/cloudCategory/domain/cloudCategory.entity";
 
 export class CustomerEntity extends Entity {
   private firstName: string;
@@ -68,7 +69,7 @@ export class CustomerEntity extends Entity {
   getCreatedAt(): Date {
     return this.createdAt;
   }
-  getPriceCategory() {
+  getPriceCategory(): CloudCategory | null {
     return this.modalidad.getCategoriaPago();
   }
 }

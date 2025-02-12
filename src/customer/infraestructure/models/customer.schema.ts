@@ -42,13 +42,13 @@ export const CustomerModel = model<ICustomer>("Customer", CustomerSchema);
 
 /* Specific Customers Types */
 export interface ICloudCustomer extends ICustomer {
-  categoryPriceId: string;
+  cloudCategoryId: string;
 }
 
 export interface IRegularCustomer extends ICustomer {}
 
 const CloudCustomerSchema = new Schema<ICloudCustomer>({
-  categoryPriceId: { type: String, required: true },
+  cloudCategoryId: { type: String, required: true },
 });
 
 const RegularCustomerSchema = new Schema<IRegularCustomer>({});
@@ -65,9 +65,9 @@ export const RegularCustomerModel =
     RegularCustomerSchema,
   );
 
-CustomerSchema.virtual("priceCategory", {
-  ref: "PriceCategory",
-  localField: "categoryPriceId",
+CustomerSchema.virtual("cloudCategory", {
+  ref: "CloudCategory",
+  localField: "cloudCategoryId",
   foreignField: "uuid",
   justOne: true,
 });

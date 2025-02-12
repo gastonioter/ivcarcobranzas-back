@@ -11,7 +11,7 @@ const LocalCustomerSchema = z.object({
 
 const CloudCustomerSchema = z.object({
   modalidad: z.literal(CustomerModalidad.CLOUD),
-  priceCategoryId: z
+  cloudCategoryId: z
     .string()
     .uuid()
     .nonempty("La categoria de pago es requerida"),

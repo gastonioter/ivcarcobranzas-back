@@ -1,7 +1,7 @@
 import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 
-export class PriceCategory extends Entity {
+export class CloudCategory extends Entity {
   name: string;
   description: string;
   price: number;
@@ -22,8 +22,8 @@ export class PriceCategory extends Entity {
     name: string,
     price: number,
     description?: string,
-  ): PriceCategory {
-    return new PriceCategory(
+  ): CloudCategory {
+    return new CloudCategory(
       EntityId.create(),
       name,
       price,
@@ -31,9 +31,9 @@ export class PriceCategory extends Entity {
     );
   }
 
-  static fromPersistence(obj: any): PriceCategory {
-    console.log(obj);
-    return new PriceCategory(
+  static fromPersistence(obj: any): CloudCategory {
+    console.log(obj)
+    return new CloudCategory(
       EntityId.fromExisting(obj.uuid),
       obj.name,
       obj.price,
@@ -41,8 +41,8 @@ export class PriceCategory extends Entity {
     );
   }
 
-  update(newData: Partial<PriceCategory>): PriceCategory {
-    return new PriceCategory(
+  update(newData: Partial<CloudCategory>): CloudCategory {
+    return new CloudCategory(
       EntityId.fromExisting(this.getId()),
       newData.name ?? this.name,
       newData.price ?? this.price,

@@ -33,7 +33,7 @@ export class SalesMongoRepository implements SaleRepository {
       {
         arrayFilters: [{ "elem.uuid": paymentID }],
         new: true,
-      }
+      },
     );
 
     if (!updatedSale) {
@@ -45,14 +45,14 @@ export class SalesMongoRepository implements SaleRepository {
 
   async addPayment(
     uuid: string,
-    newPayment: SalePaymentEntity
+    newPayment: SalePaymentEntity,
   ): Promise<TransactionEntity> {
     const updatedSale = await SaleModel.findOneAndUpdate(
       { uuid },
       { $push: { payments: newPayment } },
       {
         new: true,
-      }
+      },
     );
     if (!updatedSale) {
       throw new SaleNotFoundError(uuid);
@@ -75,7 +75,7 @@ export class SalesMongoRepository implements SaleRepository {
     if (!sale) {
       throw new SaleNotFoundError(uuid);
     }
-    console.log(sale);
+
     return saleDTO(sale);
   }
 
@@ -98,13 +98,12 @@ export class SalesMongoRepository implements SaleRepository {
     uuid: string;
     status: TransactionStatus;
   }): Promise<TransactionEntity | null> {
-    console.log(status);
     const updatedSale = await SaleModel.findOneAndUpdate(
       { uuid },
       { status },
       {
         new: true,
-      }
+      },
     );
     if (!updatedSale) {
       return null;

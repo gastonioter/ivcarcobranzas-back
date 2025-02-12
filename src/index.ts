@@ -23,7 +23,7 @@ import { generatePdf } from "./shared/utils/generatePdf";
 import { reciepttest } from "../data";
 import { Reciept } from "./components/pdfs/Receipt";
 import { base64 } from "./shared/utils/base64";
-import { priceCategoryRouter } from "./priceCategory";
+import { CloudCategoryRoutes } from "./cloudCategory";
 let renderToStream: any;
 
 const app = express();
@@ -139,7 +139,7 @@ app.use("/api/customers", customerRoutes);
 app.use("/api/sales", salesRoutes);
 app.use("/api/monthlyfees", monthlyFeeRoutes);
 app.use("/api/payments", paymentRoutes);
-app.use("/api/cloudcategories", priceCategoryRouter);
+app.use("/api/cloudcategories", CloudCategoryRoutes);
 app.use(errorHandler);
 
 MongoDB.getInstance().then(() => {

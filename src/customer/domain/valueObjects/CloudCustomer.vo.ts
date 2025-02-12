@@ -1,18 +1,18 @@
-import { PriceCategory } from "@/priceCategory/domain/priceCategory.entity";
+import { CloudCategory } from "@/cloudCategory/domain/cloudCategory.entity";
 import { IModalidadCliente } from "../interfaces/IModalidadCliente";
 import { CustomerModalidad } from "../types";
 
 export class CloudCustomer implements IModalidadCliente {
-  private category: PriceCategory;
+  private category: CloudCategory;
 
-  constructor(category: PriceCategory) {
+  constructor(category: CloudCategory) {
     this.category = category;
   }
 
   getModalidad(): CustomerModalidad {
     return CustomerModalidad.CLOUD;
   }
-  getCategoriaPago(): PriceCategory {
+  getCategoriaPago(): CloudCategory {
     return this.category;
   }
 }

@@ -1,4 +1,4 @@
-import { MongoPriceCategoryRepository } from "../../../priceCategory/infraestructure/db.mongo";
+import { MongoPriceCategoryRepository } from "../../../cloudCategory/infraestructure/db.mongo";
 import { Router } from "express";
 import { asyncHandler } from "../../../middlewares/asyncHandlerMiddleware";
 import { zodValidator } from "../../../middlewares/zodValidator";

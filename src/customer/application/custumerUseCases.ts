@@ -1,4 +1,4 @@
-import { MongoPriceCategoryRepository } from "../../priceCategory/infraestructure/db.mongo";
+import { MongoPriceCategoryRepository } from "../../cloudCategory/infraestructure/db.mongo";
 import {
   CreateCustomerDTO,
   EditCustomerDTO,
@@ -9,7 +9,8 @@ import { CustomerModalidad, CustomerStatus } from "../domain/types";
 import { CustomerFactory } from "../domain/CustomerFactory";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { Email } from "../../shared/valueObjects/email.vo";
-import { PriceCategory } from "@/priceCategory/domain/priceCategory.entity";
+import { CloudCategory } from "../../cloudCategory/domain/cloudCategory.entity";
+import { CustomerEntity } from "../domain/customer.entity";
 
 export class CustomerUseCases {
   constructor(
@@ -22,7 +23,7 @@ export class CustomerUseCases {
     customer: EditCustomerDTO,
   ): Promise<CustomerDTO> => {
     const edited = await this.customerRepository.editCustomer(uuid, customer);
-
+    
     return new CustomerDTO(edited);
   };
 
@@ -47,10 +48,10 @@ export class CustomerUseCases {
       throw new Error("Ya existe un cliente con ese email o celular.");
     }
 
-    let categoriaPago: PriceCategory | null = null;
+    let categoriaPago: CloudCategory | null = null;
     if (customer.modalidadData.modalidad === CustomerModalidad.CLOUD) {
       categoriaPago = await this.priceCategoryRepository.findById(
-        customer.modalidadData.priceCategoryId,
+        customer.modalidadData.cloudCategoryId,
       );
     }
 
@@ -59,7 +60,6 @@ export class CustomerUseCases {
       lastName: customer.lastName,
       phone: customer.phone,
       modalidad: customer.modalidadData.modalidad,
-      uuid: EntityId.create(),
       email: Email.fromExisting(customer.email),
       category: categoriaPago,
     });

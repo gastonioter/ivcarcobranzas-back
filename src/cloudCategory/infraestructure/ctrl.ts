@@ -3,14 +3,14 @@ import {
   CreatePriceCategoryDTO,
   EditPriceCategoryDTO,
 } from "../adapters/createDTO";
-import { priceCategoryUseCases } from "../application/priceCategoryuseCases";
+import { CloudCategoryUseCases } from "../application/cloudCategoryuseCases";
 
 export class PriceCategoryController {
-  constructor(private readonly useCases: priceCategoryUseCases) {}
+  constructor(private readonly useCases: CloudCategoryUseCases) {}
 
   async create(req: Request, res: Response) {
     const dto = req.body as CreatePriceCategoryDTO;
-    const category = await this.useCases.createPriceCategory(dto);
+    const category = await this.useCases.create(dto);
     res.status(201).json(category);
   }
 

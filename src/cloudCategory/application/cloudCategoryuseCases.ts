@@ -3,25 +3,25 @@ import {
   EditPriceCategoryDTO,
 } from "../adapters/createDTO";
 import { PriceCategoryDTO } from "../adapters/outputDTO";
-import { PriceCategory } from "../domain/priceCategory.entity";
-import { PriceCategoryRepo } from "../domain/priceCategory.repo";
+import { CloudCategory } from "../domain/cloudCategory.entity";
+import { PriceCategoryRepo } from "../domain/cloudCategory.repo";
 
-export class priceCategoryUseCases {
+export class CloudCategoryUseCases {
   constructor(private priceCategoryRepository: PriceCategoryRepo) {}
 
-  async createPriceCategory(
-    priceCategory: CreatePriceCategoryDTO,
+  async create(
+    cloudCategory: CreatePriceCategoryDTO,
   ): Promise<PriceCategoryDTO> {
-    const newPriceCategory = PriceCategory.create(
-      priceCategory.name,
-      priceCategory.price,
-      priceCategory.description,
+    const newPriceCategory = CloudCategory.create(
+      cloudCategory.name,
+      cloudCategory.price,
+      cloudCategory.description,
     );
     const saved = await this.priceCategoryRepository.save(newPriceCategory);
     return new PriceCategoryDTO(saved);
   }
 
-  async getPriceCategoryById(id: string): Promise<PriceCategory> {
+  async getById(id: string): Promise<CloudCategory> {
     return await this.priceCategoryRepository.findById(id);
   }
 
