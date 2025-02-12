@@ -2,12 +2,12 @@ import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { Entity } from "../../shared/domain/Entity";
 
 export class SalePayment extends Entity {
-  status: PaymentStatus;
+  status: SalePaymentStatus;
   amount: number;
   paymentMethod: PaymentMethods;
   createdAt: Date;
 
-  constructor({
+  private constructor({
     uuid,
     status,
     amount,
@@ -21,20 +21,47 @@ export class SalePayment extends Entity {
     this.createdAt = createdAt;
   }
 
+  static new({
+    paymentMethod,
+    amount,
+  }: Pick<ISalePayment, "amount" | "paymentMethod">): SalePayment {
+    if (amount <= 0) {
+      throw new Error("El monto ingresado no es valido");
+    }
+
+    return new SalePayment({
+      uuid: EntityId.create(),
+      amount,
+      paymentMethod,
+      createdAt: new Date(),
+      status: SalePaymentStatus.ACTIVE,
+    });
+  }
+
+  static fromPersistence(sale: PersistedSalePayment) {
+    return new SalePayment({
+      uuid: EntityId.fromExisting(sale.uuid),
+      status: sale.status as SalePaymentStatus,
+      amount: sale.amount,
+      createdAt: sale.createdAt,
+      paymentMethod: sale.paymentMethod as PaymentMethods,
+    });
+  }
+
   isActive() {
-    return this.status == PaymentStatus.ACTIVE;
+    return this.status == SalePaymentStatus.ACTIVE;
   }
   activate() {
-    this.status = PaymentStatus.ACTIVE;
+    this.status = SalePaymentStatus.ACTIVE;
   }
   deactivate() {
-    this.status = PaymentStatus.CANCELLED;
+    this.status = SalePaymentStatus.CANCELLED;
   }
 }
 
 export interface ISalePayment {
   uuid: EntityId;
-  status: PaymentStatus;
+  status: SalePaymentStatus;
   amount: number;
   paymentMethod: PaymentMethods;
   createdAt: Date;
@@ -48,7 +75,15 @@ export enum PaymentMethods {
   MP = "MERCADO PAGO",
   OTHER = "OTRO",
 }
-export enum PaymentStatus {
+export enum SalePaymentStatus {
   ACTIVE = "ACTIVO",
   CANCELLED = "ANULADO",
 }
+
+export type PersistedSalePayment = {
+  uuid: string;
+  paymentMethod: string;
+  amount: number;
+  status: string;
+  createdAt: Date;
+};
