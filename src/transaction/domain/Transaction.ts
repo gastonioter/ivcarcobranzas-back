@@ -11,6 +11,7 @@ export abstract class Transaction extends Entity {
     protected totalAmount: number,
     protected iva: number,
     protected createdAt: Date,
+    protected sellerId: string,
   ) {
     super(uuid);
   }
@@ -26,6 +27,15 @@ export abstract class Transaction extends Entity {
   }
   getIva() {
     return this.iva;
+  }
+  getDetails() {
+    return this.details;
+  }
+  getSellerId() {
+    return this.sellerId;
+  }
+  getTotalAmount() {
+    return this.totalAmount;
   }
   static computeTotalAmount(details: Detail[]) {
     return details.reduce(
@@ -47,6 +57,7 @@ export interface Detail {
 export interface ITransaction {
   uuid: EntityId;
   serie: string;
+  sellerId: string;
   details: Detail[]; // value object
   totalAmount: number;
   customerId: string;

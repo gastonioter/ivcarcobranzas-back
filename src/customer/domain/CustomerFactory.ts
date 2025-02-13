@@ -41,7 +41,7 @@ export class CustomerFactory {
     let modalidad: IModalidadCliente;
 
     if (data.modalidad == CustomerModalidad.CLOUD) {
-      console.log(data.cloudCategory.uuid);
+     
       modalidad = new CloudCustomer(
         CloudCategory.fromPersistence({
           uuid: data.cloudCategory.uuid,

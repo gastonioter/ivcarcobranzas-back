@@ -1,8 +1,7 @@
+import { Sale } from "../sale/domain/sale.entity";
 import { SalePayment } from "./salePayment.entity";
 
 export interface SalePaymentRepository {
-  save(uuid: string, data: SalePayment): Promise<SalePayment>;
-
   update({
     saleID,
     paymentID,
@@ -11,7 +10,7 @@ export interface SalePaymentRepository {
     saleID: string;
     paymentID: string;
     status: string;
-  }): Promise<SalePayment>;
+  }): Promise<Sale>;
 
   findAll(saleID: string): Promise<SalePayment[]>;
 }

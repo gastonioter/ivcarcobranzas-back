@@ -24,6 +24,7 @@ import { reciepttest } from "../data";
 import { Reciept } from "./components/pdfs/Receipt";
 import { base64 } from "./shared/utils/base64";
 import { CloudCategoryRoutes } from "./cloudCategory";
+import { BudgetRoutes } from "./transaction/budget";
 let renderToStream: any;
 
 const app = express();
@@ -138,6 +139,7 @@ app.use("/api/categories", categoriesRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/sales", SalesRoutes);
+app.use("/api/budgets", BudgetRoutes);
 app.use("/api/monthlyfees", monthlyFeeRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/cloudcategories", CloudCategoryRoutes);

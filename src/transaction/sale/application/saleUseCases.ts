@@ -1,3 +1,4 @@
+import { SalePaymentRepository } from "@/transaction/salePayment/salePayment.repository";
 import { CustomerEntity } from "../../../customer/domain/customer.entity";
 import { CustomerRepository } from "../../../customer/domain/interfaces/CustomerRepository";
 import { InvalidOperationError } from "../../../shared/domain/exceptions";
@@ -15,6 +16,7 @@ export class SaleUseCases {
   constructor(
     private readonly saleRepository: SaleRepository,
     private readonly customerRepository: CustomerRepository,
+    private readonly salePaymentRepository: SalePaymentRepository,
   ) {}
 
   async createSale({
@@ -101,26 +103,26 @@ export class SaleUseCases {
       return this.updateStatus(uuid, status);
     }
 
-    if (payment) {
-      return this.addPayment(uuid, payment);
+    if (payment.type === "CREATE") {
+      return await this.addPayment(uuid, payment);
+    }
+    if (payment.type === "UPDATE") {
+      return await this.updateSalePayment(uuid, payment);
     }
 
     throw new InvalidOperationError("No se puede actualizar la venta");
   }
 
-  async updatePaymentStatus({
-    saleID,
-    paymentID,
-    status,
-  }: {
-    saleID: string;
-    paymentID: string;
-    status: SalePaymentStatus;
-  }) {
-    const sale = await this.saleRepository.updatePayment(
+  private async updateSalePayment(
+    saleID: string,
+    payment: { uuid: string; status: SalePaymentStatus },
+  ) {
+    const updated = await this.salePaymentRepository.update({
       saleID,
-      paymentID,
-      status,
-    );
+      paymentID: payment.uuid,
+      status: payment.status,
+    });
+
+    return SaleDTO(updated);
   }
 }

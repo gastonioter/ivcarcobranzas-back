@@ -10,6 +10,7 @@ export class BudgetController {
   }
   async getDetails(req: Request, res: Response) {
     const { uuid } = req.params;
+    console.log(uuid)
     const budget = await this.budgetUseCases.getDetails(uuid);
     res.status(200).send(budget);
   }

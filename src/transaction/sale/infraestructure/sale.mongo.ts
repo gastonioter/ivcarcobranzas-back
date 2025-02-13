@@ -26,6 +26,7 @@ export class SaleMongoRepository implements SaleRepository {
       return Sale.fromPersistence(saved);
     } catch (e) {
       console.log(e);
+      console.log(sale)
       throw new Error("No se pudo crear la venta");
     }
   }
@@ -36,6 +37,9 @@ export class SaleMongoRepository implements SaleRepository {
   }
   async findByUuid(uuid: string): Promise<Sale> {
     const sale = await SaleModel.findOne({ uuid });
+    if (!sale) {
+      throw Error("Venta no encontrada");
+    }
     return Sale.fromPersistence(sale);
   }
   async update(sale: Sale): Promise<Sale> {
@@ -62,6 +66,9 @@ export class SaleMongoRepository implements SaleRepository {
         new: true,
       },
     );
+    if (!updated) {
+      throw Error("La venta no existe");
+    }
 
     return Sale.fromPersistence(updated);
   }

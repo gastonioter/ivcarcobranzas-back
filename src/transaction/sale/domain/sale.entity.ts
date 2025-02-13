@@ -5,7 +5,6 @@ import { ISale as IPersistedSale } from "../infraestructure/sale.schema";
 import { ITransaction as IPersistedTransaction } from "../../infraestructure/transaction.schema";
 
 export class Sale extends Transaction {
-  private sellerId: string;
   private payments: SalePayment[];
   private status: SaleStatus;
   private budgetId?: string;
@@ -23,10 +22,18 @@ export class Sale extends Transaction {
     iva,
     budgetId,
   }: ISale) {
-    super(uuid, serie, customerId, details, totalAmount, iva, createdAt);
+    super(
+      uuid,
+      serie,
+      customerId,
+      details,
+      totalAmount,
+      iva,
+      createdAt,
+      sellerId,
+    );
     this.payments = payments;
     this.status = status;
-    this.sellerId = sellerId;
     this.details = details;
     this.totalAmount = totalAmount;
     this.budgetId = budgetId;
@@ -103,12 +110,6 @@ export class Sale extends Transaction {
     return this.budgetId;
   }
 
-  getDetails() {
-    return this.details;
-  }
-  getTotalAmount() {
-    return this.totalAmount;
-  }
   private pay() {
     this.status = SaleStatus.PAID;
   }
@@ -133,9 +134,7 @@ export class Sale extends Transaction {
   isPending() {
     return this.status == SaleStatus.PENDING;
   }
-  getSellerId() {
-    return this.sellerId;
-  }
+
   getPayments() {
     return this.payments;
   }

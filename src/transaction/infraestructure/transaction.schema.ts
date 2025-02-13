@@ -15,6 +15,7 @@ export const TransactionSchema = new Schema<ITransaction>(
     details: { type: [DetailSchema], required: true },
     totalAmount: { type: Number, required: true },
     iva: { type: Number, required: true },
+    sellerId: { type: String, required: true },
   },
   {
     discriminatorKey: "type",
@@ -41,6 +42,7 @@ export interface ITransaction extends Document {
   serie: string;
   details: IDetail[];
   totalAmount: number;
+  sellerId: string;
   customerId: string;
   iva: number;
   createdAt: Date;

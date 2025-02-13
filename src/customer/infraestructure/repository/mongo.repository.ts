@@ -177,7 +177,7 @@ export class CustomerMongoRepository implements CustomerRepository {
       .lean()
       .exec();
 
-    console.log(customersDoc);
+
     return customersDoc.map((customer) =>
       CustomerFactory.fromPersistence(customer),
     );

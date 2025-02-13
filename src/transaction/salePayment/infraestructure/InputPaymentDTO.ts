@@ -1,13 +1,22 @@
 import z from "zod";
 import { PaymentMethods, SalePaymentStatus } from "../salePayment.entity";
 
-export const CreatePaymentSchema = z
-  .object({
-    amount: z.number().positive(),
-    paymentMethod: z.nativeEnum(PaymentMethods),
-  })
-  .optional();
-
-export const updateSalePaymentSchema = z.object({
-  status: z.nativeEnum(SalePaymentStatus),
+export const CreatePaymentSchema = z.object({
+  type: z.literal("CREATE"),
+  amount: z.number({
+    message: "El monto es invalido",
+    required_error: "El monto es requerido",
+  }),
+  paymentMethod: z.nativeEnum(PaymentMethods),
 });
+
+export const UpdatePaymentSchema = z.object({
+  type: z.literal("UPDATE"),
+  status: z.nativeEnum(SalePaymentStatus),
+  uuid: z.string().uuid(),
+});
+
+export const PaymentSchema = z.discriminatedUnion("type", [
+  CreatePaymentSchema,
+  UpdatePaymentSchema,
+]);

@@ -36,7 +36,7 @@ export class CustomerDTO {
 
     /* Inject the specific depending on the Customer */
     if (customer.getModalidad() === CustomerModalidad.CLOUD) {
-      console.log(customer.getPriceCategory()?.getId());
+      
       this.modalidadData = {
         modalidad: CustomerModalidad.CLOUD,
         cloudCategory: {

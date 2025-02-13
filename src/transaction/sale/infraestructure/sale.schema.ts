@@ -25,7 +25,6 @@ export const SalePaymentSchema = new Schema<ISalePayment>({
 });
 export const SaleSchema = new Schema<ISale>({
   payments: { type: [SalePaymentSchema], required: true },
-  sellerId: { type: String, required: true },
   status: { type: String, enum: Object.values(SaleStatus), required: true },
   budgetId: { type: String },
 });
@@ -40,7 +39,6 @@ SaleSchema.virtual("seller", {
 export interface ISale extends ITransaction {
   payments: ISalePayment[];
   status: string;
-  sellerId: string;
   budgetId?: string;
 }
 

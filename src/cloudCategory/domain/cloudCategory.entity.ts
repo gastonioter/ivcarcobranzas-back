@@ -32,7 +32,7 @@ export class CloudCategory extends Entity {
   }
 
   static fromPersistence(obj: any): CloudCategory {
-    console.log(obj)
+    
     return new CloudCategory(
       EntityId.fromExisting(obj.uuid),
       obj.name,
