@@ -18,22 +18,12 @@ export class Budget extends Transaction {
     serie,
     uuid,
     details,
-    totalAmount,
     approvedAt,
     iva,
     expiresAt,
     sellerId,
   }: IBudget) {
-    super(
-      uuid,
-      serie,
-      customerId,
-      details,
-      totalAmount,
-      iva,
-      createdAt,
-      sellerId,
-    );
+    super(uuid, serie, customerId, details, iva, createdAt, sellerId);
     this.approvedAt = approvedAt;
     this.status = status;
     this.expiresAt = expiresAt;
@@ -73,27 +63,10 @@ export class Budget extends Transaction {
       status,
       customerId,
       details,
-      totalAmount,
       iva,
       serie,
       expiresAt,
       sellerId,
-    });
-  }
-
-  static fromPersistence(budget: IPersistedBudget): Budget {
-    return new Budget({
-      uuid: EntityId.fromExisting(budget.uuid),
-      serie: budget.serie,
-      customerId: budget.customerId,
-      details: budget.details,
-      totalAmount: budget.totalAmount,
-      iva: budget.iva,
-      createdAt: budget.createdAt,
-      status: budget.status,
-      approvedAt: budget.approvedAt,
-      expiresAt: budget.expiresAt,
-      sellerId: budget.sellerId,
     });
   }
 
@@ -105,6 +78,14 @@ export class Budget extends Transaction {
     if (this.isRejected()) {
       throw new Error("El presupuesto ya fue rechazado, no se puede aprobar");
     }
+    if (this.isExpierd()) {
+      throw new Error("El presupuesto ya expiró, no se puede aprobar");
+    }
+
+    if (this.isApproved()) {
+      throw new Error("El presupuesto ya esta aprobado");
+    }
+
     this.status = BudgetStatus.APPROVED;
     this.approvedAt = new Date();
   }
@@ -138,11 +119,26 @@ export class Budget extends Transaction {
     return this.expiresAt ? this.expiresAt < new Date() : false;
   }
 
-  getAppovedAt() {
+  getApprovedAt() {
     return this.approvedAt;
   }
   getStatus() {
     return this.status;
+  }
+
+  static fromPersistence(budget: IPersistedBudget): Budget {
+    return new Budget({
+      uuid: EntityId.fromExisting(budget.uuid),
+      serie: budget.serie,
+      customerId: budget.customerId,
+      details: budget.details,
+      iva: budget.iva,
+      createdAt: budget.createdAt,
+      status: budget.status,
+      approvedAt: budget.approvedAt,
+      expiresAt: budget.expiresAt,
+      sellerId: budget.sellerId,
+    });
   }
 }
 

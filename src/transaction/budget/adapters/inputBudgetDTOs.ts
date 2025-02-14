@@ -3,7 +3,11 @@ import z from "zod";
 import { BudgetStatus } from "../domain/budget.entity";
 
 export const CreateBudgetSchema = createTransactionSchema.extend({
-  expiresAt: z.date().optional(),
+  expiresAt: z
+    .string()
+    .datetime()
+    .transform((val) => new Date(val))
+    .optional(),
 });
 
 export const EditBudgetSchema = z.object({

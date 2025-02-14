@@ -3,17 +3,19 @@ import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 
 export abstract class Transaction extends Entity {
+  protected totalAmount: number;
   constructor(
     uuid: EntityId,
     protected serie: string,
     protected customerId: string,
     protected details: Detail[],
-    protected totalAmount: number,
+    //protected totalAmount: number,
     protected iva: number,
     protected createdAt: Date,
     protected sellerId: string,
   ) {
     super(uuid);
+    this.totalAmount = Transaction.computeTotalAmount(details);
   }
 
   getCustomerId() {
@@ -49,6 +51,7 @@ export abstract class Transaction extends Entity {
 }
 
 export interface Detail {
+  uuid: string;
   product: string;
   quantity: number;
   unitPrice: number;
@@ -59,7 +62,6 @@ export interface ITransaction {
   serie: string;
   sellerId: string;
   details: Detail[]; // value object
-  totalAmount: number;
   customerId: string;
   createdAt: Date;
   iva: number;

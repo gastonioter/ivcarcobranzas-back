@@ -1,6 +1,7 @@
 import { model, Schema } from "mongoose";
 
 export const DetailSchema = new Schema<IDetail>({
+  uuid: { type: String, required: true },
   product: { type: String, required: true },
   quantity: { type: Number, required: true },
   unitPrice: { type: Number, required: true },
@@ -32,6 +33,7 @@ TransactionSchema.virtual("customer", {
 });
 
 interface IDetail extends Document {
+  uuid: string;
   product: string;
   quantity: number;
   unitPrice: number;

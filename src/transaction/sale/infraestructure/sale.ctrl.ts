@@ -20,6 +20,12 @@ export class SaleController {
     res.status(200).send(sales);
   }
 
+  async getPayments(req: Request, res: Response) {
+    const { uuid } = req.params;
+    const payments = await this.saleUseCases.getPayments(uuid);
+    res.status(200).send(payments);
+  }
+
   async update(req: Request, res: Response) {
     const { uuid } = req.params;
     const sale = await this.saleUseCases.update(uuid, req.body);

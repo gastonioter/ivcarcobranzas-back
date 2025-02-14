@@ -11,12 +11,15 @@ import { SaleRepository } from "../../sale/domain/sale.repository";
 import { CreateSaleDTO, EditSaleDTO } from "../adapets/inputSaleDTOs";
 import SaleDTO from "../adapets/saleDTO";
 import { Sale, SaleStatus } from "../domain/sale.entity";
+import { UserRepository } from "../../../user/domain/user.repository";
+import { SalePaymentDTO } from "../../../transaction/salePayment/adapets/salePaymentDTO";
 
 export class SaleUseCases {
   constructor(
     private readonly saleRepository: SaleRepository,
     private readonly customerRepository: CustomerRepository,
     private readonly salePaymentRepository: SalePaymentRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async createSale({
@@ -25,7 +28,7 @@ export class SaleUseCases {
     iva,
     sellerId,
     budgetId,
-  }: CreateSaleDTO) {
+  }: CreateSaleDTO & { budgetId: string }) {
     const sale = Sale.new({
       customerId,
       details,
@@ -34,7 +37,8 @@ export class SaleUseCases {
       budgetId,
     });
 
-    return await this.saleRepository.save(sale);
+    const saved = await this.saleRepository.save(sale);
+    return SaleDTO(saved);
   }
 
   async getDetails(uuid: string) {
@@ -42,19 +46,45 @@ export class SaleUseCases {
     const customer = await this.customerRepository.getCustomer(
       sale.getCustomerId(),
     );
-    return SaleDTO(sale, customer);
+    const seller = await this.userRepository.getById(sale.getSellerId());
+
+    return SaleDTO(sale, customer, seller);
+  }
+
+  async getPayments(uuid: string) {
+    const payments = await this.salePaymentRepository.findAll(uuid);
+    return payments.map(SalePaymentDTO);
   }
 
   async listSales() {
     const sales = await this.saleRepository.findAll();
     const customers = await this.customerRepository.getCustomers();
+    const users = await this.userRepository.listUsers();
 
     return sales.map((sale) => {
       const customer = customers.find(
         (customer) => customer.getId() === sale.getCustomerId(),
       );
-      return SaleDTO(sale, customer as CustomerEntity);
+      const seller = users.find((user) => user.uuid === sale.getSellerId());
+
+      return SaleDTO(sale, customer as CustomerEntity, seller);
     });
+  }
+
+  async update(uuid: string, { payment, status }: EditSaleDTO) {
+    if (status) {
+      return this.updateStatus(uuid, status);
+    }
+    if (payment) {
+      if (payment.type === "CREATE") {
+        return await this.addPayment(uuid, payment);
+      }
+      if (payment.type === "UPDATE") {
+        return await this.updateSalePayment(uuid, payment);
+      }
+    }
+
+    throw new InvalidOperationError("No se puede actualizar la venta");
   }
 
   private async updateStatus(uuid: string, status: string) {
@@ -98,30 +128,20 @@ export class SaleUseCases {
     return SaleDTO(updated);
   }
 
-  async update(uuid: string, { payment, status }: EditSaleDTO) {
-    if (status) {
-      return this.updateStatus(uuid, status);
-    }
-
-    if (payment.type === "CREATE") {
-      return await this.addPayment(uuid, payment);
-    }
-    if (payment.type === "UPDATE") {
-      return await this.updateSalePayment(uuid, payment);
-    }
-
-    throw new InvalidOperationError("No se puede actualizar la venta");
-  }
-
   private async updateSalePayment(
     saleID: string,
     payment: { uuid: string; status: SalePaymentStatus },
   ) {
+    // acutalizo la informacion del pago
     const updated = await this.salePaymentRepository.update({
       saleID,
       paymentID: payment.uuid,
       status: payment.status,
     });
+
+    // actualizo el estado de la venta y lo guardo
+    updated.checkIfPaid();
+    await this.saleRepository.update(updated);
 
     return SaleDTO(updated);
   }

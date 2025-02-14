@@ -1,7 +1,6 @@
 import { UserEntity } from "user/domain/user.entity";
 import { UserRepository } from "user/domain/user.repository";
 import { UserModel } from "../models/user.schema";
-import { UserValue } from "../../domain/user.value";
 
 export class MongoRepository implements UserRepository {
   constructor() {}
@@ -20,5 +19,12 @@ export class MongoRepository implements UserRepository {
   async listUsers(): Promise<UserEntity[]> {
     const users = await UserModel.find({});
     return users;
+  }
+  async getById(uuid: string): Promise<UserEntity> {
+    const user = await UserModel.findOne({ uuid });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
   }
 }

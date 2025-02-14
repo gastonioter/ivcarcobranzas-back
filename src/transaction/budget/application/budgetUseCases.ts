@@ -6,12 +6,14 @@ import { BudgetDTO } from "../adapters/outputBudgetDTO";
 import { Budget, BudgetStatus } from "../domain/budget.entity";
 import { BudgetRepository } from "../domain/budget.repository";
 import { SaleRepository } from "../../sale/domain/sale.repository";
+import { UserRepository } from "@/user/domain/user.repository";
 
 export class BudgetUseCases {
   constructor(
     private readonly budgetRepository: BudgetRepository,
     private readonly customerRepository: CustomerRepository,
     private readonly saleRepository: SaleRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async createBudget({
@@ -35,19 +37,25 @@ export class BudgetUseCases {
 
   async getDetails(uuid: string) {
     const budget = await this.budgetRepository.findByUuid(uuid);
-    return BudgetDTO(budget);
+    const customer = await this.customerRepository.getCustomer(
+      budget.getCustomerId(),
+    );
+
+    const user = await this.userRepository.getById(budget.getSellerId());
+    return BudgetDTO(budget, customer, user);
   }
 
   async listBudgets() {
     const budgets = await this.budgetRepository.findAll();
     const customers = await this.customerRepository.getCustomers();
-
+    const users = await this.userRepository.listUsers();
     return budgets.map((budget) => {
       const customer = customers.find(
         (customer) => customer.getId() == budget.getCustomerId(),
       );
+      const user = users.find((user) => user.uuid == budget.getSellerId());
 
-      return BudgetDTO(budget, customer as CustomerEntity);
+      return BudgetDTO(budget, customer as CustomerEntity, user);
     });
   }
 
@@ -56,6 +64,7 @@ export class BudgetUseCases {
     switch (status) {
       case BudgetStatus.APPROVED:
         budget.approve();
+        await this.budgetRepository.update(budget);
         const newSale = Sale.new({
           customerId: budget.getCustomerId(),
           details: budget.getDetails(),

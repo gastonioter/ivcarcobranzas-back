@@ -3,13 +3,14 @@ import { SalePayment } from "../../../transaction/salePayment/salePayment.entity
 import { Detail, ITransaction, Transaction } from "../../domain/Transaction";
 import { ISale as IPersistedSale } from "../infraestructure/sale.schema";
 import { ITransaction as IPersistedTransaction } from "../../infraestructure/transaction.schema";
+import { InvalidOperationError } from "../../../shared/domain/exceptions";
 
 export class Sale extends Transaction {
   private payments: SalePayment[];
   private status: SaleStatus;
   private budgetId?: string;
 
-  constructor({
+  private constructor({
     uuid,
     createdAt,
     customerId,
@@ -18,7 +19,7 @@ export class Sale extends Transaction {
     serie,
     status,
     details,
-    totalAmount,
+
     iva,
     budgetId,
   }: ISale) {
@@ -27,15 +28,14 @@ export class Sale extends Transaction {
       serie,
       customerId,
       details,
-      totalAmount,
+
       iva,
       createdAt,
       sellerId,
     );
     this.payments = payments;
     this.status = status;
-    this.details = details;
-    this.totalAmount = totalAmount;
+
     this.budgetId = budgetId;
   }
 
@@ -52,7 +52,7 @@ export class Sale extends Transaction {
     sellerId: string;
     budgetId?: string;
   }): Sale {
-    const totalAmount = Transaction.computeTotalAmount(details);
+    //const totalAmount = Transaction.computeTotalAmount(details);
     const createdAt = new Date();
     const payments = [] as SalePayment[];
     const serie = Transaction.generateSerie();
@@ -65,7 +65,6 @@ export class Sale extends Transaction {
       status,
       customerId,
       details,
-      totalAmount,
       iva,
       payments,
       sellerId,
@@ -82,7 +81,6 @@ export class Sale extends Transaction {
     sellerId,
     serie,
     status,
-    totalAmount,
     uuid,
     iva,
     budgetId,
@@ -96,7 +94,6 @@ export class Sale extends Transaction {
       sellerId,
       serie,
       status: status as SaleStatus,
-      totalAmount,
       iva,
       budgetId,
     });
@@ -141,6 +138,14 @@ export class Sale extends Transaction {
   getSaldo() {
     return this.totalAmount - this.getTotalPaid();
   }
+  checkIfPaid() {
+    console.log("checkingggg....");
+    if (this.getSaldo() <= 0) {
+      this.pay();
+    } else {
+      this.markAsPending();
+    }
+  }
   getTotalPaid() {
     return this.payments.reduce((acc, payment) => {
       if (payment.isActive()) {
@@ -159,17 +164,21 @@ export class Sale extends Transaction {
 
   addPayment(payment: SalePayment) {
     if (this.isPaid()) {
-      throw new Error("La venta ya esta paga");
+      throw new InvalidOperationError(
+        "No puedes agregar pagos a una venta pagada",
+      );
     }
     if (this.isCancelled()) {
       throw new Error("No puedes agregar pagos a una venta cancelada");
     }
     this.payments.push(payment);
+    if (this.getSaldo() <= 0) {
+      this.pay();
+    }
   }
 }
 
 interface ISale extends ITransaction {
-  uuid: EntityId;
   payments: SalePayment[];
   sellerId: string;
   status: SaleStatus;

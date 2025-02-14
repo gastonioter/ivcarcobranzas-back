@@ -1,11 +1,12 @@
+import { UserEntity } from "../../user/domain/user.entity";
 import { CustomerEntity } from "../../customer/domain/customer.entity";
 import { Detail, Transaction } from "../../transaction/domain/Transaction";
 
 export function mapTransactionDTO(
   t: Transaction,
   c?: CustomerEntity,
+  u?: UserEntity,
 ): ITransactionDTO {
-  console.log(t);
   return {
     createdAt: t.getCreatedAt(),
     iva: t.getIva(),
@@ -13,7 +14,8 @@ export function mapTransactionDTO(
     uuid: t.getId(),
     customer: c ? mapCustomer(c) : undefined,
     details: mapDetails(t.getDetails()),
-    sellerId: t.getSellerId(),
+    seller: u ? { email: u.email } : undefined,
+    totalAmount: t.getTotalAmount(),
   };
 }
 
@@ -24,14 +26,19 @@ export interface ITransactionDTO {
   customer?: SaleCustomerDTO;
   createdAt: Date;
   iva: number;
-  sellerId: string;
+  totalAmount: number;
+  seller?: SellerDTO;
 }
 
+interface SellerDTO {
+  email: string;
+}
 interface DetailDTO {
   product: string;
   quantity: number;
   unitPrice: number;
   total: number;
+  uuid: string;
 }
 
 interface SaleCustomerDTO {
@@ -50,6 +57,7 @@ export function mapCustomer(customer: CustomerEntity): SaleCustomerDTO {
 
 export function mapDetails(details: Detail[]): DetailDTO[] {
   return details.map((detail) => ({
+    uuid: detail.uuid,
     product: detail.product,
     quantity: detail.quantity,
     unitPrice: detail.unitPrice,

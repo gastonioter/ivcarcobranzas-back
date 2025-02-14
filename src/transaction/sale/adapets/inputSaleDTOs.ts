@@ -2,15 +2,15 @@ import z from "zod";
 import { createTransactionSchema } from "../../infraestructure/transaction.dto";
 import { PaymentSchema } from "../../salePayment/infraestructure/InputPaymentDTO";
 
-export const CreateSaleSchema = createTransactionSchema.extend({
-  
-  budgetId: z.string().optional(),
-});
+/* Schemas form Zod Validation at routes*/
+export const CreateSaleSchema = createTransactionSchema.extend({});
 
 export const EditSaleSchema = z.object({
   status: z.enum(["ACTIVATE", "DEACTIVATE"]).optional(),
-  payment: PaymentSchema,
+  payment: PaymentSchema.optional(),
 });
+
+/* Types for use cases arguments */
 
 export type EditSaleDTO = z.infer<typeof EditSaleSchema>;
 

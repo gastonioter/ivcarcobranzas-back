@@ -9,13 +9,14 @@ import {
 import { CustomerUseCases } from "../../application/custumerUseCases";
 import { CustomerController } from "../controllers/customer.ctrl";
 import { CustomerMongoRepository } from "../repository/mongo.repository";
+import { SaleMongoRepository } from "../../../transaction/sale/infraestructure/sale.mongo";
 
 export const routes = Router();
 
-const customerRepo = new CustomerMongoRepository();
 const customerUseCases = new CustomerUseCases(
-  customerRepo,
+  new CustomerMongoRepository(),
   new MongoPriceCategoryRepository(),
+  new SaleMongoRepository(),
 );
 const customerController = new CustomerController(customerUseCases);
 
@@ -27,6 +28,10 @@ routes.post(
 
 routes.get("/", asyncHandler(customerController.list));
 
+routes.post(
+  "/accountsummary/:uuid",
+  asyncHandler(customerController.accountSummary),
+);
 routes.patch(
   "/:uuid",
   zodValidator(createCustomerSchema),

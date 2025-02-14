@@ -4,6 +4,7 @@ import {
   ITransactionDTO,
   mapTransactionDTO,
 } from "../../../transaction/adapers/TransactionDTO";
+import { UserEntity } from "../../../user/domain/user.entity";
 
 interface BudgetDTO extends ITransactionDTO {
   expiresAt?: Date;
@@ -14,11 +15,12 @@ interface BudgetDTO extends ITransactionDTO {
 export function BudgetDTO(
   budget: Budget,
   customer?: CustomerEntity,
+  user?: UserEntity,
 ): BudgetDTO {
   return {
-    ...mapTransactionDTO(budget, customer),
+    ...mapTransactionDTO(budget, customer, user),
     expiresAt: budget.getExpiresAt(),
     status: budget.getStatus(),
-    approvedAt: budget.getAppovedAt(),
+    approvedAt: budget.getApprovedAt(),
   };
 }

@@ -32,8 +32,12 @@ export class SalePaymentMongoRepository implements SalePaymentRepository {
   }
 
   async findAll(saleID: string): Promise<SalePayment[]> {
-    const payments = await SaleModel.findById(saleID).select("payments");
+    const sale = await SaleModel.findOne({ uuid: saleID }).select("payments");
 
-    return payments.map(SalePayment.fromPersistence);
+    if (!sale) {
+      throw new Error("Sale not found");
+    }
+
+    return sale.payments.map(SalePayment.fromPersistence);
   }
 }

@@ -13,7 +13,6 @@ export class CustomerController {
     const { uuid } = req.params;
     const newData = req.body;
 
-
     const customer = await this.customerUseCases.editCustomer(uuid, newData);
 
     res.status(200).json(customer);
@@ -32,6 +31,12 @@ export class CustomerController {
 
   public get = async (req: Request, res: Response) => {
     const customer = await this.customerUseCases.getCustomer(req.params.uuid);
+    res.status(200).json(customer);
+  };
+
+  public accountSummary = async (req: Request, res: Response) => {
+    const { uuid } = req.params;
+    const customer = await this.customerUseCases.accountSummary(uuid);
     res.status(200).json(customer);
   };
 }

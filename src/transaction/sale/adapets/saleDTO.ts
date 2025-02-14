@@ -8,6 +8,7 @@ import {
 } from "../../../transaction/adapers/TransactionDTO";
 import { SalePaymentsDTO } from "../../../transaction/salePayment/infraestructure/outputSalePaymentDTO";
 import { Sale, SaleStatus } from "../domain/sale.entity";
+import { UserEntity } from "@/user/domain/user.entity";
 
 interface SaleSummary {
   debe: number;
@@ -23,9 +24,10 @@ interface ISaleDTO extends ITransactionDTO {
 export default function SaleDTO(
   sale: Sale,
   customer?: CustomerEntity,
+  seller?: UserEntity,
 ): ISaleDTO {
   return {
-    ...mapTransactionDTO(sale, customer),
+    ...mapTransactionDTO(sale, customer, seller),
 
     status: sale.getStatus(),
     summary: {

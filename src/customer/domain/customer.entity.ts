@@ -73,3 +73,17 @@ export class CustomerEntity extends Entity {
     return this.modalidad.getCategoriaPago();
   }
 }
+
+export interface SummaryAccount {
+  details: SummaryDetail[];
+  debe: number;
+  haber: number;
+  saldo: number;
+}
+
+export interface SummaryDetail {
+  saleId: string;
+  debe: number;
+  haber: number;
+  saldo: number;
+}

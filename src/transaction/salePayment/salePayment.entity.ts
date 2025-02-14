@@ -1,12 +1,13 @@
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { Entity } from "../../shared/domain/Entity";
-import { ISalePayment as PersistedPayment } from "../sale/infraestructure/sale.schema";
+import { ISalePayment as PersistedPayment } from "../salePayment/infraestructure/salePayment.schema";
 
 export class SalePayment extends Entity {
   status: SalePaymentStatus;
   amount: number;
   paymentMethod: PaymentMethods;
   createdAt: Date;
+  updatedAt?: Date;
 
   private constructor({
     uuid,
@@ -14,12 +15,14 @@ export class SalePayment extends Entity {
     amount,
     paymentMethod,
     createdAt,
+    updatedAt,
   }: ISalePayment) {
     super(uuid);
     this.status = status;
     this.amount = amount;
     this.paymentMethod = paymentMethod;
     this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   static new({
@@ -41,6 +44,7 @@ export class SalePayment extends Entity {
 
   static fromPersistence({
     uuid,
+    updatedAt,
     paymentMethod,
     amount,
     status,
@@ -52,6 +56,7 @@ export class SalePayment extends Entity {
       amount,
       status: status as SalePaymentStatus,
       createdAt,
+      updatedAt,
     });
   }
 
@@ -60,9 +65,12 @@ export class SalePayment extends Entity {
   }
   activate() {
     this.status = SalePaymentStatus.ACTIVE;
+    this.setUpdatedAt();
   }
+
   deactivate() {
     this.status = SalePaymentStatus.CANCELLED;
+    this.setUpdatedAt();
   }
   getAmount() {
     return this.amount;
@@ -76,6 +84,12 @@ export class SalePayment extends Entity {
   getCreatedAt() {
     return this.createdAt;
   }
+  getUpdatedAt() {
+    return this.updatedAt;
+  }
+  private setUpdatedAt() {
+    this.updatedAt = new Date();
+  }
 }
 
 export interface ISalePayment {
@@ -84,6 +98,7 @@ export interface ISalePayment {
   amount: number;
   paymentMethod: PaymentMethods;
   createdAt: Date;
+  updatedAt?: Date;
 }
 
 export enum PaymentMethods {

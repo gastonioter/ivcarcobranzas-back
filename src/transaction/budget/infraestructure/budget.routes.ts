@@ -10,13 +10,20 @@ import {
   CreateBudgetSchema,
   EditBudgetSchema,
 } from "../adapters/inputBudgetDTOs";
+import { MongoRepository } from "../../../user/infraestructure/repository/mongo.repository";
 
 export const router = Router();
 
 const budgetrepo = new BudgetMongoRepository();
 const customerrepo = new CustomerMongoRepository();
 const salesrepo = new SaleMongoRepository();
-const usecases = new BudgetUseCases(budgetrepo, customerrepo, salesrepo);
+const userrepo = new MongoRepository();
+const usecases = new BudgetUseCases(
+  budgetrepo,
+  customerrepo,
+  salesrepo,
+  userrepo,
+);
 const ctrl = new BudgetController(usecases);
 
 router.post(

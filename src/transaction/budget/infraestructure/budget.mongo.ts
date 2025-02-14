@@ -15,6 +15,7 @@ export class BudgetMongoRepository implements BudgetRepository {
       expiresAt: budget.getExpiresAt(),
       status: budget.getStatus(),
       sellerId: budget.getSellerId(),
+      approvedAt: budget.getApprovedAt(),
     });
 
     return Budget.fromPersistence(saved);
@@ -32,6 +33,7 @@ export class BudgetMongoRepository implements BudgetRepository {
     const dataToUpdate = {
       status: budget.getStatus(),
       expiresAt: budget.getExpiresAt(),
+      approvedAt: budget.getApprovedAt(),
     };
 
     const updated = await BudgetModel.findOneAndUpdate(

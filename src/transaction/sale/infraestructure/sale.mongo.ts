@@ -1,10 +1,8 @@
-import {
-  SalePayment,
-  SalePaymentStatus,
-} from "@/transaction/salePayment/salePayment.entity";
 import { Sale } from "../domain/sale.entity";
 import { SaleRepository } from "../domain/sale.repository";
-import { SaleModel, SalePaymentSchema } from "./sale.schema";
+import { SaleModel } from "./sale.schema";
+import { ISalePayment } from "../../salePayment/infraestructure/salePayment.schema";
+import { SalePayment } from "@/transaction/salePayment/salePayment.entity";
 
 export class SaleMongoRepository implements SaleRepository {
   async save(sale: Sale): Promise<Sale> {
@@ -26,7 +24,7 @@ export class SaleMongoRepository implements SaleRepository {
       return Sale.fromPersistence(saved);
     } catch (e) {
       console.log(e);
-      console.log(sale)
+
       throw new Error("No se pudo crear la venta");
     }
   }
@@ -43,23 +41,11 @@ export class SaleMongoRepository implements SaleRepository {
     return Sale.fromPersistence(sale);
   }
   async update(sale: Sale): Promise<Sale> {
-    const paymentInstance = sale.getPayments().at(-1);
-
-    const payment = {
-      uuid: paymentInstance!.getId(),
-      status: paymentInstance!.getStatus(),
-      amount: paymentInstance!.getAmount(),
-      paymentMethod: paymentInstance!.getMethod(),
-      createdAt: paymentInstance!.getCreatedAt(),
-    };
-
     const updated = await SaleModel.findOneAndUpdate(
       { uuid: sale.getId() },
       {
         status: sale.getStatus(),
-        $push: {
-          payments: payment,
-        },
+        payments: sale.getPayments().map(this.mapPaymentToPersistance),
       },
       {
         lean: true,
@@ -72,14 +58,23 @@ export class SaleMongoRepository implements SaleRepository {
 
     return Sale.fromPersistence(updated);
   }
-  savePayment(saleId: string, payment: SalePayment): Promise<Sale> {
-    throw new Error("Method not implemented.");
+
+  async getSalesByCustomer(uuid: string): Promise<Sale[]> {
+    const sales = await SaleModel.find({
+      customerId: uuid,
+    });
+
+    return sales.map(Sale.fromPersistence);
   }
-  updatePayment(
-    saleId: string,
-    paymentId: string,
-    payment: SalePaymentStatus,
-  ): Promise<Sale> {
-    throw new Error("Method not implemented.");
+
+  private mapPaymentToPersistance(payment: SalePayment) {
+    return {
+      uuid: payment.getId(),
+      paymentMethod: payment.getMethod(),
+      amount: payment.getAmount(),
+      status: payment.getStatus(),
+      createdAt: payment.getCreatedAt(),
+      updatedAt: payment.getUpdatedAt(),
+    };
   }
 }

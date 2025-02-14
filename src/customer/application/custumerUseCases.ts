@@ -10,12 +10,18 @@ import { CustomerFactory } from "../domain/CustomerFactory";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { Email } from "../../shared/valueObjects/email.vo";
 import { CloudCategory } from "../../cloudCategory/domain/cloudCategory.entity";
-import { CustomerEntity } from "../domain/customer.entity";
+import {
+  CustomerEntity,
+  SummaryAccount,
+  SummaryDetail,
+} from "../domain/customer.entity";
+import { SaleMongoRepository } from "@/transaction/sale/infraestructure/sale.mongo";
 
 export class CustomerUseCases {
   constructor(
     private readonly customerRepository: CustomerRepository,
     private readonly priceCategoryRepository: MongoPriceCategoryRepository,
+    private readonly salesRepository: SaleMongoRepository,
   ) {}
 
   editCustomer = async (
@@ -23,7 +29,7 @@ export class CustomerUseCases {
     customer: EditCustomerDTO,
   ): Promise<CustomerDTO> => {
     const edited = await this.customerRepository.editCustomer(uuid, customer);
-    
+
     return new CustomerDTO(edited);
   };
 
@@ -71,5 +77,38 @@ export class CustomerUseCases {
 
   updateStatus = async (uuid: string, status: CustomerStatus) => {
     return await this.customerRepository.updateStatus(uuid, status);
+  };
+
+  accountSummary = async (uuid: string): Promise<SummaryAccount> => {
+    const sales = await this.salesRepository.getSalesByCustomer(uuid);
+
+    const summaryDetails: SummaryDetail[] = sales.map((sale) => {
+      const detail: SummaryDetail = {
+        saleId: sale.getId(),
+        debe: sale.getTotalAmount(),
+        haber: sale.getTotalPaid(),
+        saldo: sale.getTotalAmount() - sale.getTotalPaid(),
+      };
+      return detail;
+    });
+
+    const reducedSummary = summaryDetails.reduce(
+      (acc, detail) => {
+        return {
+          debe: acc.debe + detail.debe,
+          haber: acc.haber + detail.haber,
+          saldo: acc.saldo + detail.saldo,
+        };
+      },
+      {
+        debe: 0,
+        haber: 0,
+        saldo: 0,
+      },
+    );
+    return {
+      ...reducedSummary,
+      details: summaryDetails,
+    };
   };
 }
