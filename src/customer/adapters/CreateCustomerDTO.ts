@@ -28,11 +28,18 @@ export const createCustomerSchema = z.object({
   ]),
 });
 
-export const BajaCustumerSchema = z.object({
-  uuid: z.string(),
+export const editCustomerSchema = createCustomerSchema.extend({
+  uuid: z.string().uuid(),
   status: z.nativeEnum(CustomerStatus),
 });
 
+export const updateCustomerStatusSchema = z.object({
+  status: z.nativeEnum(CustomerStatus),
+  uuid: z.string().uuid(),
+});
+
 export type CreateCustomerDTO = z.infer<typeof createCustomerSchema>;
-export type EditCustomerDTO = z.infer<typeof createCustomerSchema>;
-export type BajaCustomerRequest = z.infer<typeof BajaCustumerSchema>;
+export type EditCustomerDTO = z.infer<typeof editCustomerSchema>;
+export type UpdateCustomerStatusDTO = z.infer<
+  typeof updateCustomerStatusSchema
+>;

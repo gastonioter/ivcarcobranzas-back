@@ -3,8 +3,9 @@ import { Router } from "express";
 import { asyncHandler } from "../../../middlewares/asyncHandlerMiddleware";
 import { zodValidator } from "../../../middlewares/zodValidator";
 import {
-  BajaCustumerSchema,
   createCustomerSchema,
+  editCustomerSchema,
+  updateCustomerStatusSchema,
 } from "../../adapters/CreateCustomerDTO";
 import { CustomerUseCases } from "../../application/custumerUseCases";
 import { CustomerController } from "../controllers/customer.ctrl";
@@ -34,12 +35,12 @@ routes.post(
 );
 routes.patch(
   "/:uuid",
-  zodValidator(createCustomerSchema),
+  zodValidator(editCustomerSchema),
   asyncHandler(customerController.edit),
 );
 
 routes.post(
   "/status",
-  zodValidator(BajaCustumerSchema),
+  zodValidator(updateCustomerStatusSchema),
   asyncHandler(customerController.updateStatus),
 );

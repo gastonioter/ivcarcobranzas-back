@@ -9,6 +9,7 @@ export class Sale extends Transaction {
   private payments: SalePayment[];
   private status: SaleStatus;
   private budgetId?: string;
+  private discount?: number;
 
   private constructor({
     uuid,
@@ -19,7 +20,7 @@ export class Sale extends Transaction {
     serie,
     status,
     details,
-
+    discount,
     iva,
     budgetId,
   }: ISale) {
@@ -35,7 +36,7 @@ export class Sale extends Transaction {
     );
     this.payments = payments;
     this.status = status;
-
+    this.discount = discount;
     this.budgetId = budgetId;
   }
 
@@ -44,6 +45,7 @@ export class Sale extends Transaction {
     details,
     iva,
     sellerId,
+    discount,
     budgetId,
   }: {
     customerId: string;
@@ -51,6 +53,7 @@ export class Sale extends Transaction {
     iva: number;
     sellerId: string;
     budgetId?: string;
+    discount?: number;
   }): Sale {
     //const totalAmount = Transaction.computeTotalAmount(details);
     const createdAt = new Date();
@@ -58,6 +61,7 @@ export class Sale extends Transaction {
     const serie = Transaction.generateSerie();
     const uuid = EntityId.create();
     const status = SaleStatus.PENDING;
+    discount = discount ?? 0;
 
     return new Sale({
       uuid,
@@ -70,6 +74,7 @@ export class Sale extends Transaction {
       sellerId,
       serie,
       budgetId,
+      discount,
     });
   }
 
@@ -84,6 +89,7 @@ export class Sale extends Transaction {
     uuid,
     iva,
     budgetId,
+    discount,
   }: IPersistedSale & IPersistedTransaction): Sale {
     return new Sale({
       uuid: EntityId.fromExisting(uuid),
@@ -96,6 +102,7 @@ export class Sale extends Transaction {
       status: status as SaleStatus,
       iva,
       budgetId,
+      discount,
     });
   }
 
@@ -183,6 +190,7 @@ interface ISale extends ITransaction {
   sellerId: string;
   status: SaleStatus;
   budgetId?: string;
+  discount?: number;
 }
 
 export enum SaleStatus {

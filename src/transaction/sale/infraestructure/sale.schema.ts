@@ -11,6 +11,7 @@ export const SaleSchema = new Schema<ISale>({
   payments: { type: [SalePaymentSchema], required: true },
   status: { type: String, enum: Object.values(SaleStatus), required: true },
   budgetId: { type: String },
+  discount: { type: Number },
 });
 
 SaleSchema.virtual("seller", {
@@ -24,6 +25,7 @@ export interface ISale extends ITransaction {
   payments: ISalePayment[];
   status: string;
   budgetId?: string;
+  discount?: number;
 }
 
 export const SaleModel = TransactionModel.discriminator("Sale", SaleSchema);
