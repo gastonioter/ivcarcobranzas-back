@@ -92,7 +92,6 @@ export const Budget = async ({
       marginBottom: 2,
     },
     footer: {
-      marginTop: 20,
       textAlign: "center",
       fontSize: 10,
       color: "#888",
@@ -272,7 +271,7 @@ export const Budget = async ({
             Subtotal: {formattedCurrency(transaction.subtotal)}
           </Text>
           <Text style={tableStyles.summaryItem}>
-            IVA ({transaction.iva}):{" "}
+            IVA ({transaction.iva}):
             {formattedCurrency((transaction.subtotal * transaction.iva) / 100)}
           </Text>
           <Text style={{ ...tableStyles.summaryItem, width: "50.5%" }}>

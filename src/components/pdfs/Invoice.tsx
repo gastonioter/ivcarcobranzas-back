@@ -1,49 +1,22 @@
+import { PrintableTransaction } from "../../prints/types";
+import { formattedCurrency } from "../utils/formattedCurrency";
+import { formattedDate } from "../utils/formattedDate";
+
 const loadPDFRenderer = async () => {
   const pdfRenderer = await import("@react-pdf/renderer");
   return pdfRenderer;
 };
 
-interface InvoiceProps {
-  company: {
-    name: string;
-
-    razonSocial: string;
-    iva: string;
-    logo: string;
-    address: string;
-    contact: {
-      phone: string;
-      email: string;
-      web: string;
-    };
-  };
-  client: {
-    name: string;
-    email: string;
-    phone: string;
-  };
-  saleDetails: {
-    description: string;
-    quantity: number;
-    price: number;
-    total: number;
-  }[];
-
-  venta: {
-    id: string;
-    date: string;
-    serie: string;
-  };
-}
-
 export const Invoice = async ({
   company,
-  client,
-  saleDetails,
-  venta,
-}: InvoiceProps) => {
+  customer,
+  details,
+  transaction,
+}: PrintableTransaction) => {
   const { Document, Page, Text, View, StyleSheet, Image } =
     await loadPDFRenderer();
+
+  const { date, iva, total, subtotal, id } = transaction;
 
   const styles = StyleSheet.create({
     page: {
@@ -58,8 +31,8 @@ export const Invoice = async ({
     headerContainer: {
       display: "flex",
       flexDirection: "row",
-      gap: 4,
-      alignItems: "center",
+      gap: 2,
+      alignItems: "flex-start",
     },
     logo: {
       width: 60,
@@ -67,7 +40,7 @@ export const Invoice = async ({
       objectFit: "cover",
     },
     companyContainer: {
-      flex: 2,
+      flex: 1.5,
     },
     companyName: {
       color: "#232323",
@@ -83,7 +56,7 @@ export const Invoice = async ({
       fontSize: 8,
     },
     tipoComprobanteContainer: {
-      // marginLeft: "auto",
+      marginLeft: "auto",
       border: "3px solid #8e8e8e",
       padding: 15,
       fontSize: 12,
@@ -105,59 +78,16 @@ export const Invoice = async ({
     customerSection: {
       padding: 5,
     },
-    totals: {
-      flexDirection: "row",
-      justifyContent: "flex-end",
-      marginTop: 10,
-      fontSize: 10,
+    customerTitle: {
+      fontSize: 15,
       fontWeight: "bold",
-    },
-    sectionTitle: {
-      fontSize: 14,
-      fontWeight: "bold",
-      marginTop: 20,
       marginBottom: 5,
     },
     text: {
       fontSize: 12,
-      marginBottom: 5,
-    },
-    table: {
-      marginTop: 10,
-      marginBottom: 20,
-      width: "100%",
-      borderBottom: "1px solid #000",
-    },
-    tableRow: {
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      padding: "5px 0",
-      borderBottom: "1px solid #ddd",
-    },
-    tableHeaderRow: {
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      padding: "5px 0",
-      fontWeight: "extrabold",
-      textTransform: "uppercase",
-    },
-    tableCell: {
-      width: "25%",
-      fontSize: 12,
-      textAlign: "left",
-      paddingLeft: 5,
-    },
-    totalSection: {
-      display: "flex",
-      justifyContent: "space-between",
-      fontSize: 14,
-      fontWeight: "bold",
-      marginTop: 15,
+      marginBottom: 2,
     },
     footer: {
-      marginTop: 20,
       textAlign: "center",
       fontSize: 10,
       color: "#888",
@@ -167,31 +97,33 @@ export const Invoice = async ({
 
   const aclarationsStyles = StyleSheet.create({
     section: {
-      marginTop: 20,
+      marginTop: "auto",
       fontSize: 8,
       color: "#404040",
       fontStyle: "italic",
       display: "flex",
-      flexDirection: "column",
+      flexDirection: "row",
       borderBottom: "1px solid #a2a2a2",
       bordertop: "1px solid #888",
     },
 
     box: {
       padding: 10,
+      gap: 2,
       display: "flex",
       flexDirection: "column",
+      flex: 1,
     },
     title: {
       fontSize: 10,
-      marginBottom: 4,
+      padding: 3,
+      backgroundColor: "#bbbbbb",
     },
     text: {
       fontSize: 8,
       fontWeight: "light",
     },
   });
-
 
   const tableStyles = StyleSheet.create({
     table: {
@@ -237,10 +169,17 @@ export const Invoice = async ({
       color: "#000",
       marginTop: 5,
       display: "flex",
-      alignItems: "flex-end",
-      flexDirection: "column",
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      flexWrap: "wrap",
       gap: 4,
-      fontWeight: 900,
+    },
+    summaryItem: {
+      fontWeight: "bold",
+      padding: 5,
+      textAlign: "center",
+      width: "25%",
+      border: "1px solid #383838",
     },
   });
 
@@ -264,18 +203,21 @@ export const Invoice = async ({
 
           {/* Datos del Recibo (ID, Fecha, etc.) */}
           <View style={styles.tipoComprobanteContainer}>
-            <Text style={styles.tipoComprobanteText}>NOTA DE VENTA</Text>
-            {/* <Text style={{ marginBottom: 2 }}>Venta ID: {venta.id}</Text> */}
-            <Text style={{ marginBottom: 2 }}>Nro: {venta.serie}</Text>
-            <Text>Fecha: {venta.date}</Text>
+            <Text style={styles.tipoComprobanteText}>COMPORBANTE DE VENTA</Text>
+            <Text style={{ marginBottom: 2 }}>ID: {transaction.id}</Text>
+            <Text>Fecha: {formattedDate(transaction.date)}</Text>
           </View>
         </View>
         <View style={styles.divider}></View>
         {/* Datos del Cliente */}
         <View style={styles.customerSection}>
-          <Text style={styles.text}>Cliente: {client.name}</Text>
-          <Text style={styles.text}>Teléfono: {client.phone}</Text>
-          <Text style={styles.text}>Email: {client.email}</Text>
+          <Text style={styles.text}>
+            CLIENTE: {customer.firstName.toUpperCase()}{" "}
+            {customer.lastName.toUpperCase()}
+          </Text>
+
+          <Text style={styles.text}>CELULAR: {customer.phone}</Text>
+          <Text style={styles.text}>EMAIL: {customer.email}</Text>
         </View>
         {/* Detalle de la Venta */}
         <View style={tableStyles.table}>
@@ -296,22 +238,24 @@ export const Invoice = async ({
           </View>
 
           {/* Filas de la tabla */}
-          {saleDetails.map((item, index) => (
+          {details.map((item, index) => (
             <View style={tableStyles.tableRow} key={index}>
               <View style={tableStyles.tableCol}>
                 <Text style={tableStyles.tableCell}>{item.quantity}</Text>
               </View>
               <View style={tableStyles.tableCol}>
-                <Text style={tableStyles.tableCell}>{item.description}</Text>
-              </View>
-              <View style={tableStyles.tableCol}>
                 <Text style={tableStyles.tableCell}>
-                  ${item.price.toFixed(2)}
+                  {item.description.toUpperCase()}
                 </Text>
               </View>
               <View style={tableStyles.tableCol}>
                 <Text style={tableStyles.tableCell}>
-                  ${item.total.toFixed(2)}
+                  {formattedCurrency(item.price)}
+                </Text>
+              </View>
+              <View style={tableStyles.tableCol}>
+                <Text style={tableStyles.tableCell}>
+                  {formattedCurrency(item.total)}
                 </Text>
               </View>
             </View>
@@ -319,11 +263,28 @@ export const Invoice = async ({
         </View>
         {/* Totals Section */}
         <View style={tableStyles.summary}>
-          <Text>Subtotal: $1200</Text>
-          <Text>IVA (21%): $252</Text>
-          <Text>Total: $1452</Text>
+          <Text style={tableStyles.summaryItem}>
+            Subtotal: {formattedCurrency(transaction.subtotal)}
+          </Text>
+          <Text style={tableStyles.summaryItem}>
+            IVA ({transaction.iva}):
+            {formattedCurrency((transaction.subtotal * transaction.iva) / 100)}
+          </Text>
+          <Text style={{ ...tableStyles.summaryItem, width: "50.5%" }}>
+            Total: {formattedCurrency(transaction.total)}
+          </Text>
         </View>
+
         <View style={aclarationsStyles.section}>
+          <View style={aclarationsStyles.box}>
+            <Text style={aclarationsStyles.title}>Formas de Pago</Text>
+            <Text style={aclarationsStyles.text}>Pago en efectivo</Text>
+            <Text style={aclarationsStyles.text}>Transferencia bancaria</Text>
+            <Text style={aclarationsStyles.text}>
+              Pago con QR o billetera virtual
+            </Text>
+          </View>
+
           <View style={aclarationsStyles.box}>
             <Text style={aclarationsStyles.title}>Contacto</Text>
             <Text style={aclarationsStyles.text}>alarmasivcar@hotmail.com</Text>
@@ -339,4 +300,114 @@ export const Invoice = async ({
       </Page>
     </Document>
   );
+  // return (
+  //   <Document>
+  //     <Page size={"A4"} style={styles.page}>
+  //       {/* HeaderContainer  */}
+  //       <View style={styles.headerContainer}>
+  //         <Image
+  //           src="https://ivcaralarmas.com/public/img/logo.png"
+  //           style={styles.logo}
+  //         />
+  //         <View style={styles.companyContainer}>
+  //           <Text style={styles.companyName}>{company.name}</Text>
+  //           <Text style={styles.companyDescriptionText}>{company.address}</Text>
+  //           <Text style={styles.companyDescriptionText}>
+  //             {company.razonSocial}
+  //           </Text>
+  //           <Text style={styles.companyDescriptionText}>{company.iva}</Text>
+  //         </View>
+
+  //         {/* Datos del Recibo (ID, Fecha, etc.) */}
+  //         <View style={styles.tipoComprobanteContainer}>
+  //           <Text style={styles.tipoComprobanteText}>NOTA DE VENTA</Text>
+
+  //           <Text style={{ marginBottom: 2 }}>ID: {id}</Text>
+  //           <Text>Fecha: {formattedDate(date)}</Text>
+  //         </View>
+  //       </View>
+  //       <View style={styles.divider}></View>
+  //       {/* Datos del Cliente */}
+  //       <View style={styles.customerSection}>
+  //         <Text style={styles.text}>
+  //           CLIENTE: {customer.firstName.toUpperCase()}{" "}
+  //           {customer.lastName.toUpperCase()}
+  //         </Text>
+
+  //         <Text style={styles.text}>CELULAR: {customer.phone}</Text>
+  //         <Text style={styles.text}>EMAIL: {customer.email}</Text>
+  //       </View>
+  //       {/* Detalle de la Venta */}
+  //       <View style={tableStyles.table}>
+  //         {/* Encabezado de la tabla */}
+  //         <View style={tableStyles.tableRow}>
+  //           <View style={tableStyles.tableColHeader}>
+  //             <Text style={tableStyles.tableCellHeader}>Cantidad</Text>
+  //           </View>
+  //           <View style={tableStyles.tableColHeader}>
+  //             <Text style={tableStyles.tableCellHeader}>Descripción</Text>
+  //           </View>
+  //           <View style={tableStyles.tableColHeader}>
+  //             <Text style={tableStyles.tableCellHeader}>Precio Unitario</Text>
+  //           </View>
+  //           <View style={tableStyles.tableColHeader}>
+  //             <Text style={tableStyles.tableCellHeader}>Total</Text>
+  //           </View>
+  //         </View>
+
+  //         {/* Filas de la tabla */}
+  //         {details.map((item, index) => (
+  //           <View style={tableStyles.tableRow} key={index}>
+  //             <View style={tableStyles.tableCol}>
+  //               <Text style={tableStyles.tableCell}>{item.quantity}</Text>
+  //             </View>
+  //             <View style={tableStyles.tableCol}>
+  //               <Text style={tableStyles.tableCell}>
+  //                 {item.description.toUpperCase()}
+  //               </Text>
+  //             </View>
+  //             <View style={tableStyles.tableCol}>
+  //               <Text style={tableStyles.tableCell}>
+  //                 {formattedCurrency(item.price)}
+  //               </Text>
+  //             </View>
+  //             <View style={tableStyles.tableCol}>
+  //               <Text style={tableStyles.tableCell}>
+  //                 {formattedCurrency(item.total)}
+  //               </Text>
+  //             </View>
+  //           </View>
+  //         ))}
+  //       </View>
+  //       {/* Totals Section */}
+  //       {/* Totals Section */}
+  //       <View style={tableStyles.summary}>
+  //         <Text style={tableStyles.summaryItem}>
+  //           Subtotal: {formattedCurrency(subtotal)}
+  //         </Text>
+  //         <Text style={tableStyles.summaryItem}>
+  //           IVA ({iva}):
+  //           {formattedCurrency((subtotal * iva) / 100)}
+  //         </Text>
+  //         <Text style={{ ...tableStyles.summaryItem, width: "50.5%" }}>
+  //           Total: {formattedCurrency(total)}
+  //         </Text>
+  //       </View>
+  //       <View style={aclarationsStyles.section}>
+  //         <View style={aclarationsStyles.box}>
+  //           <Text style={aclarationsStyles.title}>Formas de Pago</Text>
+  //           <Text style={aclarationsStyles.text}>Pago en efectivo</Text>
+  //           <Text style={aclarationsStyles.text}>Transferencia bancaria</Text>
+  //           <Text style={aclarationsStyles.text}>
+  //             Pago con QR o billetera virtual
+  //           </Text>
+  //         </View>
+  //       </View>
+  //       {/* Mensaje de Agradecimiento */}
+  //       <Text style={styles.footer}>
+  //
+  //       </Text>
+  //     </Page>
+  //   </Document>
+  // );
 };
