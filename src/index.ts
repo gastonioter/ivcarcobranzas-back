@@ -20,11 +20,13 @@ import { sendEmail } from "./shared/infraestructure/sendEmail";
 import { sendDocument } from "./shared/infraestructure/sendDocument";
 import { generatePdf } from "./shared/utils/generatePdf";
 
-import { reciepttest } from "../data";
+import { budgettest, reciepttest } from "../data";
 import { Reciept } from "./components/pdfs/Receipt";
 import { base64 } from "./shared/utils/base64";
 import { CloudCategoryRoutes } from "./cloudCategory";
 import { BudgetRoutes } from "./transaction/budget";
+import { Budget } from "./components/pdfs/Budget";
+import { PrintRoutes } from "./prints";
 let renderToStream: any;
 
 const app = express();
@@ -67,73 +69,11 @@ app.use("/api/auth", userRoutes);
 //   }),
 // );
 
-// app.get(
-//   "/",
-//   asyncHandler(async (req, res) => {
-//     if (!renderToStream) {
-//       renderToStream = (await import("@react-pdf/renderer")).renderToStream;
-//     }
-
-//     //
-//     // const pdfStream = await renderToStream(
-//     //   await NotaDeVenta({
-//     //     company: {
-//     //       logo: `${path.resolve(`../assets/logo.png`)}`,
-//     //       name: "IVCAR ALARMAS",
-//     //       iva: "I.V.A: Resp Inscripto",
-//     //       razonSocial: "Razon Social: Osvaldo Norberto Castro ",
-//     //       address: "Domicilio Fiscal: Laboulaye, Cordoba - España 252",
-//     //       contact: {
-//     //         web: "www.ivcaralarmas.com",
-//     //         phone: "3385448580",
-//     //         email: "alarmasivcar@hotmail.com",
-//     //       },
-//     //     },
-//     //     balance: {
-//     //       debt: 110,
-//     //       credit: 0,
-//     //       total: 110,
-//     //     },
-//     //     client: {
-//     //       name: "Juan Pérez",
-//     //       email: "gaston10.c@hotmail.com",
-//     //       phone: "987-654-3210",
-//     //     },
-//     //     saleDetails: [
-//     //       {
-//     //         quantity: 1,
-//     //         description: "Producto A",
-//     //         price: 50,
-//     //         total: 50,
-//     //       },
-//     //       {
-//     //         quantity: 2,
-//     //         description: "Producto B",
-//     //         price: 30,
-//     //         total: 60,
-//     //       },
-//     //     ],
-//     //     receipt: {
-//     //       id: "0001",
-//     //       date: "04/08/2025",
-//     //     },
-//     //   }),
-//     // );
-
-//     const pdfStream = await renderToStream(await Reciept(reciepttest));
-//     res.setHeader("Content-Type", "application/pdf");
-//     res.setHeader("Content-Disposition", `attachment; filename=documento.pdf`);
-//     pdfStream.pipe(res);
-//     pdfStream.on("end", () => res.end());
-//     pdfStream.on("error", (error: any) => {
-//       console.error(error);
-//       res.status(500).end();
-//     });
-//   }),
-// );
-
 /* private routes */
-//app.use(authorizationMiddleware);
+
+app.use("/api/prints", PrintRoutes);
+
+app.use(authorizationMiddleware);
 
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/products", productRoutes);

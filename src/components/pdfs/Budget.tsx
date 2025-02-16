@@ -1,70 +1,26 @@
+import { PrintableTransaction } from "@/prints/types";
+import { formattedFullName } from "../utils/formattedFullname";
+import { formattedCurrency } from "../utils/formattedCurrency";
+import { formattedDate } from "../utils/formattedDate";
+import { computeSubtotal } from "../utils/computeSubtotal";
+
 const loadPDFRenderer = async () => {
   const pdfRenderer = await import("@react-pdf/renderer");
   return pdfRenderer;
 };
 
-interface BudgetProps {
-  company: {
-    name: string;
-
-    razonSocial: string;
-    iva: string;
-    logo: string;
-    address: string;
-    contact: {
-      phone: string;
-      email: string;
-      web: string;
-    };
-  };
-  client: {
-    name: string;
-    email: string;
-    phone: string;
-  };
-  saleDetails: {
-    description: string;
-    quantity: number;
-    price: number;
-    total: number;
-  }[];
-
-  budget: {
-    id: string;
-    date: string;
-    serie: string;
-  };
-}
-
-// Datos de ejemplo
-const data = [
-  {
-    cantidad: 1,
-    descripcion: "Laptop HP EliteBook",
-    precioUnitario: 1200,
-    total: 1200,
-  },
-  {
-    cantidad: 2,
-    descripcion: "Mouse Inalámbrico",
-    precioUnitario: 25,
-    total: 50,
-  },
-  {
-    cantidad: 3,
-    descripcion: "Teclado Mecánico",
-    precioUnitario: 80,
-    total: 240,
-  },
-];
 export const Budget = async ({
   company,
-  client,
-
-  budget,
-}: BudgetProps) => {
+  customer,
+  details,
+  transaction,
+}: PrintableTransaction) => {
   const { Document, Page, Text, View, StyleSheet, Image } =
     await loadPDFRenderer();
+  console.log(
+    formattedFullName(customer.firstName, customer.lastName),
+    formattedCurrency(details[0].price),
+  );
 
   const styles = StyleSheet.create({
     page: {
@@ -126,9 +82,14 @@ export const Budget = async ({
     customerSection: {
       padding: 5,
     },
+    customerTitle: {
+      fontSize: 15,
+      fontWeight: "bold",
+      marginBottom: 5,
+    },
     text: {
       fontSize: 12,
-      marginBottom: 5,
+      marginBottom: 2,
     },
     footer: {
       marginTop: 20,
@@ -141,24 +102,27 @@ export const Budget = async ({
 
   const aclarationsStyles = StyleSheet.create({
     section: {
-      marginTop: 20,
+      marginTop: "auto",
       fontSize: 8,
       color: "#404040",
       fontStyle: "italic",
       display: "flex",
-      flexDirection: "column",
+      flexDirection: "row",
       borderBottom: "1px solid #a2a2a2",
       bordertop: "1px solid #888",
     },
 
     box: {
       padding: 10,
+      gap: 2,
       display: "flex",
       flexDirection: "column",
+      flex: 1,
     },
     title: {
       fontSize: 10,
-      marginBottom: 4,
+      padding: 3,
+      backgroundColor: "#bbbbbb",
     },
     text: {
       fontSize: 8,
@@ -238,16 +202,20 @@ export const Budget = async ({
           {/* Datos del Recibo (ID, Fecha, etc.) */}
           <View style={styles.tipoComprobanteContainer}>
             <Text style={styles.tipoComprobanteText}>PRESUPUESTO</Text>
-            <Text style={{ marginBottom: 2 }}>Nro: {budget.serie}</Text>
-            <Text>Fecha: {budget.date}</Text>
+            <Text style={{ marginBottom: 2 }}>ID: {transaction.id}</Text>
+            <Text>Fecha: {formattedDate(transaction.date)}</Text>
           </View>
         </View>
         <View style={styles.divider}></View>
         {/* Datos del Cliente */}
         <View style={styles.customerSection}>
-          <Text style={styles.text}>Cliente: {client.name}</Text>
-          <Text style={styles.text}>Teléfono: {client.phone}</Text>
-          <Text style={styles.text}>Email: {client.email}</Text>
+          <Text style={styles.text}>
+            CLIENTE: {customer.firstName.toUpperCase()}{" "}
+            {customer.lastName.toUpperCase()}
+          </Text>
+
+          <Text style={styles.text}>CELULAR: {customer.phone}</Text>
+          <Text style={styles.text}>EMAIL: {customer.email}</Text>
         </View>
         {/* Detalle de la Venta */}
         <View style={tableStyles.table}>
@@ -268,22 +236,24 @@ export const Budget = async ({
           </View>
 
           {/* Filas de la tabla */}
-          {data.map((item, index) => (
+          {details.map((item, index) => (
             <View style={tableStyles.tableRow} key={index}>
               <View style={tableStyles.tableCol}>
-                <Text style={tableStyles.tableCell}>{item.cantidad}</Text>
-              </View>
-              <View style={tableStyles.tableCol}>
-                <Text style={tableStyles.tableCell}>{item.descripcion}</Text>
+                <Text style={tableStyles.tableCell}>{item.quantity}</Text>
               </View>
               <View style={tableStyles.tableCol}>
                 <Text style={tableStyles.tableCell}>
-                  ${item.precioUnitario.toFixed(2)}
+                  {item.description.toUpperCase()}
                 </Text>
               </View>
               <View style={tableStyles.tableCol}>
                 <Text style={tableStyles.tableCell}>
-                  ${item.total.toFixed(2)}
+                  {formattedCurrency(item.price)}
+                </Text>
+              </View>
+              <View style={tableStyles.tableCol}>
+                <Text style={tableStyles.tableCell}>
+                  {formattedCurrency(item.total)}
                 </Text>
               </View>
             </View>
@@ -291,9 +261,12 @@ export const Budget = async ({
         </View>
         {/* Totals Section */}
         <View style={tableStyles.summary}>
-          <Text>Subtotal: $1200</Text>
-          <Text>IVA (21%): $252</Text>
-          <Text>Total: $1452</Text>
+          <Text>Subtotal: {formattedCurrency(transaction.subtotal)}</Text>
+          <Text>
+            IVA ({transaction.iva}):{" "}
+            {formattedCurrency((transaction.subtotal * transaction.iva) / 100)}
+          </Text>
+          <Text>Total: {formattedCurrency(transaction.total)}</Text>
         </View>
 
         <View style={aclarationsStyles.section}>
@@ -335,7 +308,6 @@ export const Budget = async ({
               </Text>
             </View>
           </View>
-
           <View style={aclarationsStyles.box}>
             <Text style={aclarationsStyles.title}>Contacto</Text>
             <Text style={aclarationsStyles.text}>alarmasivcar@hotmail.com</Text>
