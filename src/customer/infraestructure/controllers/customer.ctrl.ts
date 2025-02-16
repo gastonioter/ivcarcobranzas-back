@@ -36,7 +36,8 @@ export class CustomerController {
 
   public accountSummary = async (req: Request, res: Response) => {
     const { uuid } = req.params;
-    const customer = await this.customerUseCases.accountSummary(uuid);
-    res.status(200).json(customer);
+    const summary = await this.customerUseCases.accountSummary(uuid);
+    console.log(summary);
+    res.status(200).json(summary);
   };
 }

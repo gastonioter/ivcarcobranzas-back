@@ -7,5 +7,6 @@ export function SalePaymentDTO(payment: SalePayment) {
     paymentMethod: payment.getMethod(),
     status: payment.getStatus(),
     createdAt: payment.getCreatedAt(),
+    isCupon: payment.isCuponPayment(),
   };
 }

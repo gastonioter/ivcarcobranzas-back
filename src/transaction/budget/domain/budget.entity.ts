@@ -52,7 +52,7 @@ export class Budget extends Transaction {
 
     if (iva < 0) throw new Error("El IVA no puede ser menor a 0");
 
-    const totalAmount = Transaction.computeTotalAmount(details);
+    //const totalAmount = this.computeTotalAmount(details);
     const createdAt = new Date();
     const serie = Transaction.generateSerie();
     const uuid = EntityId.create();

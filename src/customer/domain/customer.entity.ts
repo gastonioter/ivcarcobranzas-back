@@ -74,7 +74,7 @@ export class CustomerEntity extends Entity {
   }
 }
 
-export interface SummaryAccount {
+export interface AccountSummary {
   details: SummaryDetail[];
   debe: number;
   haber: number;

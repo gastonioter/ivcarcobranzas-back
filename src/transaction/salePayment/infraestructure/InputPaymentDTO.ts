@@ -8,6 +8,7 @@ export const CreatePaymentSchema = z.object({
     required_error: "El monto es requerido",
   }),
   paymentMethod: z.nativeEnum(PaymentMethods),
+  isCupon: z.boolean().optional(),
 });
 
 export const UpdatePaymentSchema = z.object({

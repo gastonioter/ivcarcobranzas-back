@@ -8,6 +8,7 @@ export class SalePayment extends Entity {
   paymentMethod: PaymentMethods;
   createdAt: Date;
   updatedAt?: Date;
+  private isCupon?: boolean;
 
   private constructor({
     uuid,
@@ -16,6 +17,7 @@ export class SalePayment extends Entity {
     paymentMethod,
     createdAt,
     updatedAt,
+    isCupon,
   }: ISalePayment) {
     super(uuid);
     this.status = status;
@@ -23,12 +25,14 @@ export class SalePayment extends Entity {
     this.paymentMethod = paymentMethod;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+    this.isCupon = isCupon;
   }
 
   static new({
     paymentMethod,
     amount,
-  }: Pick<ISalePayment, "amount" | "paymentMethod">): SalePayment {
+    isCupon,
+  }: Pick<ISalePayment, "amount" | "paymentMethod" | "isCupon">): SalePayment {
     if (amount <= 0) {
       throw new Error("El monto ingresado no es valido");
     }
@@ -39,6 +43,7 @@ export class SalePayment extends Entity {
       paymentMethod,
       createdAt: new Date(),
       status: SalePaymentStatus.ACTIVE,
+      isCupon,
     });
   }
 
@@ -68,7 +73,15 @@ export class SalePayment extends Entity {
     this.setUpdatedAt();
   }
 
+  isCuponPayment() {
+    return this.isCupon;
+  }
+
   deactivate() {
+    if (this.isCuponPayment()) {
+      console.log(this.isCuponPayment());
+      throw new Error("No se puede anular un cupon de descuento");
+    }
     this.status = SalePaymentStatus.CANCELLED;
     this.setUpdatedAt();
   }
@@ -99,6 +112,7 @@ export interface ISalePayment {
   paymentMethod: PaymentMethods;
   createdAt: Date;
   updatedAt?: Date;
+  isCupon?: boolean;
 }
 
 export enum PaymentMethods {
@@ -107,6 +121,7 @@ export enum PaymentMethods {
   TRANSFER = "TRANSFERENCIA BANCARIA",
   CHECK = "CHEQUE",
   MP = "MERCADO PAGO",
+  SALDO = "SALDO A FAVOR",
   OTHER = "OTRO",
 }
 export enum SalePaymentStatus {

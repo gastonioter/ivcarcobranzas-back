@@ -28,6 +28,7 @@ export class SaleUseCases {
     iva,
     sellerId,
     budgetId,
+    discount,
   }: CreateSaleDTO & { budgetId: string }) {
     const sale = Sale.new({
       customerId,
@@ -35,7 +36,17 @@ export class SaleUseCases {
       iva,
       sellerId,
       budgetId,
+      discount,
     });
+
+    if (discount) {
+      const cuponPayment = SalePayment.new({
+        paymentMethod: PaymentMethods.SALDO,
+        amount: discount,
+        isCupon: true,
+      });
+      sale.addPayment(cuponPayment);
+    }
 
     const saved = await this.saleRepository.save(sale);
     return SaleDTO(saved);
@@ -128,6 +139,7 @@ export class SaleUseCases {
     return SaleDTO(updated);
   }
 
+  /* BUG: Deberia solo actualizar el estado, per tambien  duplica los pagos  */
   private async updateSalePayment(
     saleID: string,
     payment: { uuid: string; status: SalePaymentStatus },
@@ -145,4 +157,10 @@ export class SaleUseCases {
 
     return SaleDTO(updated);
   }
+
+  // private async saveSalePayments(sale:Sale){}
+
+  // private async updateSalePayment(saleId, paymentId, status){
+
+  // private async updateSaleStatus(saleId, status){}
 }

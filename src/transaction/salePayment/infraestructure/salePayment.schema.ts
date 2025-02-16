@@ -16,6 +16,7 @@ export const SalePaymentSchema = new Schema<ISalePayment>({
   },
   createdAt: { type: Date, required: true },
   updatedAt: { type: Date },
+  isCupon: { type: Boolean, default: false },
 });
 
 export interface ISalePayment extends Document {
@@ -24,5 +25,6 @@ export interface ISalePayment extends Document {
   amount: number;
   status: string;
   createdAt: Date;
+  isCupon?: boolean;
   updatedAt?: Date;
 }

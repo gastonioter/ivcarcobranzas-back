@@ -1,5 +1,8 @@
 import { EntityId } from "../../../shared/valueObjects/entityId.vo";
-import { SalePayment } from "../../../transaction/salePayment/salePayment.entity";
+import {
+  PaymentMethods,
+  SalePayment,
+} from "../../../transaction/salePayment/salePayment.entity";
 import { Detail, ITransaction, Transaction } from "../../domain/Transaction";
 import { ISale as IPersistedSale } from "../infraestructure/sale.schema";
 import { ITransaction as IPersistedTransaction } from "../../infraestructure/transaction.schema";
@@ -24,16 +27,7 @@ export class Sale extends Transaction {
     iva,
     budgetId,
   }: ISale) {
-    super(
-      uuid,
-      serie,
-      customerId,
-      details,
-
-      iva,
-      createdAt,
-      sellerId,
-    );
+    super(uuid, serie, customerId, details, iva, createdAt, sellerId);
     this.payments = payments;
     this.status = status;
     this.discount = discount;
@@ -146,7 +140,6 @@ export class Sale extends Transaction {
     return this.totalAmount - this.getTotalPaid();
   }
   checkIfPaid() {
-    console.log("checkingggg....");
     if (this.getSaldo() <= 0) {
       this.pay();
     } else {
@@ -167,6 +160,10 @@ export class Sale extends Transaction {
   }
   getBudgetId() {
     return this.budgetId;
+  }
+
+  getDiscount() {
+    return this.discount;
   }
 
   addPayment(payment: SalePayment) {

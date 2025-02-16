@@ -1,8 +1,7 @@
+import { SalePayment } from "@/transaction/salePayment/salePayment.entity";
 import { Sale } from "../domain/sale.entity";
 import { SaleRepository } from "../domain/sale.repository";
 import { SaleModel } from "./sale.schema";
-import { ISalePayment } from "../../salePayment/infraestructure/salePayment.schema";
-import { SalePayment } from "@/transaction/salePayment/salePayment.entity";
 
 export class SaleMongoRepository implements SaleRepository {
   async save(sale: Sale): Promise<Sale> {
@@ -16,9 +15,10 @@ export class SaleMongoRepository implements SaleRepository {
         iva: sale.getIva(),
         createdAt: sale.getCreatedAt(),
         sellerId: sale.getSellerId(),
-        payments: sale.getPayments(),
+        payments: sale.getPayments().map(this.mapPaymentToPersistance),
         status: sale.getStatus(),
         budgetId: sale.getBudgetId(),
+        discount: sale.getDiscount(),
       });
 
       return Sale.fromPersistence(saved);
@@ -45,7 +45,9 @@ export class SaleMongoRepository implements SaleRepository {
       { uuid: sale.getId() },
       {
         status: sale.getStatus(),
-        payments: sale.getPayments().map(this.mapPaymentToPersistance),
+        $set: {
+          payments: sale.getPayments().map(this.mapPaymentToPersistance),
+        },
       },
       {
         lean: true,
@@ -74,6 +76,7 @@ export class SaleMongoRepository implements SaleRepository {
       amount: payment.getAmount(),
       status: payment.getStatus(),
       createdAt: payment.getCreatedAt(),
+      isCupon: payment.isCuponPayment(),
       updatedAt: payment.getUpdatedAt(),
     };
   }

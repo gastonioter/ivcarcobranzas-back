@@ -19,6 +19,7 @@ interface ISaleDTO extends ITransactionDTO {
   summary: SaleSummary;
   status: SaleStatus;
   payments: SalePaymentsDTO[];
+  discount?: number;
 }
 
 export default function SaleDTO(
@@ -30,6 +31,7 @@ export default function SaleDTO(
     ...mapTransactionDTO(sale, customer, seller),
 
     status: sale.getStatus(),
+    discount: sale.getDiscount(),
     summary: {
       debe: sale.getTotalAmount(),
       haber: sale.getTotalPaid(),

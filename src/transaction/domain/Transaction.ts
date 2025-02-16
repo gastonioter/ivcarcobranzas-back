@@ -15,7 +15,7 @@ export abstract class Transaction extends Entity {
     protected sellerId: string,
   ) {
     super(uuid);
-    this.totalAmount = Transaction.computeTotalAmount(details);
+    this.totalAmount = this.computeTotalAmount();
   }
 
   getCustomerId() {
@@ -39,14 +39,23 @@ export abstract class Transaction extends Entity {
   getTotalAmount() {
     return this.totalAmount;
   }
-  static computeTotalAmount(details: Detail[]) {
-    return details.reduce(
+
+  getSubtotal() {
+    return this.details.reduce(
       (acc, detail) => acc + detail.unitPrice * detail.quantity,
       0,
     );
   }
   static generateSerie() {
     return `S${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`;
+  }
+
+  protected computeTotalAmount() {
+    /* (to be override) falta el descuento para transaccion tipo venta */
+    const subtotal = this.getSubtotal();
+    const taxAmount = (subtotal * this.iva) / 100;
+
+    return subtotal + taxAmount;
   }
 }
 

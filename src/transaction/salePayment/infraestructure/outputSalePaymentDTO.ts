@@ -6,4 +6,5 @@ export interface SalePaymentsDTO {
   paymentMethod: PaymentMethods;
   status: SalePaymentStatus;
   createdAt: Date;
+  isCupon?: boolean;
 }
