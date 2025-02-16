@@ -47,4 +47,8 @@ export class BudgetMongoRepository implements BudgetRepository {
 
     return Budget.fromPersistence(updated);
   }
+
+  async countOfBudgets(): Promise<number> {
+    return await BudgetModel.countDocuments();
+  }
 }

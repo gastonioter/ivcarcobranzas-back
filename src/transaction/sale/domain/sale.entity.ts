@@ -41,6 +41,7 @@ export class Sale extends Transaction {
     sellerId,
     discount,
     budgetId,
+    semilla,
   }: {
     customerId: string;
     details: Detail[];
@@ -48,11 +49,12 @@ export class Sale extends Transaction {
     sellerId: string;
     budgetId?: string;
     discount?: number;
+    semilla: number;
   }): Sale {
     //const totalAmount = Transaction.computeTotalAmount(details);
     const createdAt = new Date();
     const payments = [] as SalePayment[];
-    const serie = Transaction.generateSerie();
+    const serie = `VTA-${Transaction.generateSerie(semilla)}`;
     const uuid = EntityId.create();
     const status = SaleStatus.PENDING;
     discount = discount ?? 0;

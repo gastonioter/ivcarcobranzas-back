@@ -35,12 +35,14 @@ export class Budget extends Transaction {
     iva,
     expiresAt,
     sellerId,
+    semilla,
   }: {
     customerId: string;
     details: Detail[];
     iva: number;
     expiresAt?: Date;
     sellerId: string;
+    semilla: number;
   }): Budget {
     if (expiresAt && expiresAt < new Date())
       throw new Error(
@@ -54,7 +56,7 @@ export class Budget extends Transaction {
 
     //const totalAmount = this.computeTotalAmount(details);
     const createdAt = new Date();
-    const serie = Transaction.generateSerie();
+    const serie = `PTO-${Transaction.generateSerie(semilla)}`;
     const uuid = EntityId.create();
     const status = BudgetStatus.PENDING;
     return new Budget({

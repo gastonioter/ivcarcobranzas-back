@@ -68,6 +68,9 @@ export class SaleMongoRepository implements SaleRepository {
 
     return sales.map(Sale.fromPersistence);
   }
+  async countOfSales(): Promise<number> {
+    return await SaleModel.countDocuments();
+  }
 
   private mapPaymentToPersistance(payment: SalePayment) {
     return {

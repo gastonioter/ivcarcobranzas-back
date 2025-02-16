@@ -83,6 +83,7 @@ export interface AccountSummary {
 
 export interface SummaryDetail {
   saleId: string;
+  saleSerie: string;
   debe: number;
   haber: number;
   saldo: number;

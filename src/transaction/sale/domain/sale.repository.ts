@@ -6,4 +6,5 @@ export interface SaleRepository {
   findByUuid(uuid: string): Promise<Sale>;
   update(sale: Sale): Promise<Sale>;
   getSalesByCustomer(uuid: string): Promise<Sale[]>;
+  countOfSales(): Promise<number>;
 }

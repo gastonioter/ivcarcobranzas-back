@@ -23,12 +23,15 @@ export class BudgetUseCases {
     expiresAt,
     sellerId,
   }: CreateBudgetDTO) {
+    const totalBudgets = await this.budgetRepository.countOfBudgets();
+
     const budgetEntity = Budget.new({
       customerId,
       details,
       iva,
       expiresAt,
       sellerId,
+      semilla: totalBudgets,
     });
 
     const saved = await this.budgetRepository.create(budgetEntity);
@@ -65,12 +68,14 @@ export class BudgetUseCases {
       case BudgetStatus.APPROVED:
         budget.approve();
         await this.budgetRepository.update(budget);
+        const totalSales = await this.saleRepository.countOfSales();
         const newSale = Sale.new({
           customerId: budget.getCustomerId(),
           details: budget.getDetails(),
           iva: budget.getIva(),
           budgetId: budget.getId(),
           sellerId: budget.getSellerId(),
+          semilla: totalSales,
         });
         await this.saleRepository.save(newSale);
         break;

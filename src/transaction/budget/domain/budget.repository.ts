@@ -5,4 +5,5 @@ export interface BudgetRepository {
   findAll(): Promise<Budget[]>;
   findByUuid(uuid: string): Promise<Budget>;
   update(budget: Budget): Promise<Budget>;
+  countOfBudgets(): Promise<number>;
 }

@@ -2,6 +2,8 @@ import { CustomerEntity } from "../../customer/domain/customer.entity";
 import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 
+const BASE_SERIE = 1000;
+
 export abstract class Transaction extends Entity {
   protected totalAmount: number;
   constructor(
@@ -46,8 +48,8 @@ export abstract class Transaction extends Entity {
       0,
     );
   }
-  static generateSerie() {
-    return `S${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`;
+  static generateSerie(semilla: number) {
+    return `${String(semilla + BASE_SERIE).padStart(8, "0")}`;
   }
 
   protected computeTotalAmount() {

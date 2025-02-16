@@ -93,6 +93,7 @@ export class CustomerUseCases {
     const summaryDetails: SummaryDetail[] = sales.map((sale) => {
       const detail: SummaryDetail = {
         saleId: sale.getId(),
+        saleSerie:sale.getSerie(),
         debe: sale.getTotalAmount(),
         haber: sale.getTotalPaid(),
         saldo: sale.getTotalAmount() - sale.getTotalPaid(),

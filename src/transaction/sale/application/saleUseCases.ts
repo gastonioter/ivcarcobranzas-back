@@ -30,6 +30,7 @@ export class SaleUseCases {
     budgetId,
     discount,
   }: CreateSaleDTO & { budgetId: string }) {
+    const totalSales = await this.saleRepository.countOfSales();
     const sale = Sale.new({
       customerId,
       details,
@@ -37,6 +38,7 @@ export class SaleUseCases {
       sellerId,
       budgetId,
       discount,
+      semilla: totalSales,
     });
 
     if (discount) {
