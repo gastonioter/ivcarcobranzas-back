@@ -174,10 +174,17 @@ export const Budget = async ({
       color: "#000",
       marginTop: 5,
       display: "flex",
-      alignItems: "flex-end",
-      flexDirection: "column",
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      flexWrap: "wrap",
       gap: 4,
-      fontWeight: 900,
+    },
+    summaryItem: {
+      fontWeight: "bold",
+      padding: 5,
+      textAlign: "center",
+      width: "25%",
+      border: "1px solid #383838",
     },
   });
 
@@ -261,12 +268,16 @@ export const Budget = async ({
         </View>
         {/* Totals Section */}
         <View style={tableStyles.summary}>
-          <Text>Subtotal: {formattedCurrency(transaction.subtotal)}</Text>
-          <Text>
+          <Text style={tableStyles.summaryItem}>
+            Subtotal: {formattedCurrency(transaction.subtotal)}
+          </Text>
+          <Text style={tableStyles.summaryItem}>
             IVA ({transaction.iva}):{" "}
             {formattedCurrency((transaction.subtotal * transaction.iva) / 100)}
           </Text>
-          <Text>Total: {formattedCurrency(transaction.total)}</Text>
+          <Text style={{ ...tableStyles.summaryItem, width: "50.5%" }}>
+            Total: {formattedCurrency(transaction.total)}
+          </Text>
         </View>
 
         <View style={aclarationsStyles.section}>
