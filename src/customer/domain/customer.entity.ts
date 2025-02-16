@@ -82,6 +82,7 @@ export interface AccountSummary {
 }
 
 export interface SummaryDetail {
+  date: Date;
   saleId: string;
   saleSerie: string;
   debe: number;

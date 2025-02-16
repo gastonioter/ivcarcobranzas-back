@@ -6,6 +6,8 @@ import { BudgetMongoRepository } from "../../transaction/budget/infraestructure/
 import { PrintsController } from "./prints.ctrl";
 import { asyncHandler } from "../../middlewares/asyncHandlerMiddleware";
 import { PrintSaleUseCase } from "../application/print-sale-use-case";
+import { PrintReciboUseCase } from "../application/print-recibo-use-case";
+import { PrintAccountSummaryUseCase } from "../application/print-accountsummary-use-case";
 
 export const router = Router();
 
@@ -15,7 +17,22 @@ const budgetsrepo = new BudgetMongoRepository();
 
 const usecases = new PrintBudgetUseCase(budgetsrepo, customersrepo);
 const sales = new PrintSaleUseCase(salesrepo, customersrepo);
-const ctrl = new PrintsController(usecases, sales);
+const reciptuescase = new PrintReciboUseCase(salesrepo, customersrepo);
+const printAccountSummaryUseCase = new PrintAccountSummaryUseCase(
+  salesrepo,
+  customersrepo,
+);
+const ctrl = new PrintsController(
+  usecases,
+  sales,
+  reciptuescase,
+  printAccountSummaryUseCase,
+);
 
 router.get("/budget/:uuid", asyncHandler(ctrl.printBudget.bind(ctrl)));
 router.get("/sale/:uuid", asyncHandler(ctrl.printSale.bind(ctrl)));
+router.get(
+  "/recipt/:saleId/:paymentId",
+  asyncHandler(ctrl.printRecibo.bind(ctrl)),
+);
+router.get("/rsmcta/:uuid", asyncHandler(ctrl.printAccountSummary.bind(ctrl)));

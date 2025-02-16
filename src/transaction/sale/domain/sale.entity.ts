@@ -138,6 +138,13 @@ export class Sale extends Transaction {
   getPayments() {
     return this.payments;
   }
+  getSummary(): SaleSummary {
+    return {
+      debe: this.getTotalAmount(),
+      haber: this.getTotalPaid(),
+      saldo: this.getSaldo(),
+    };
+  }
   getSaldo() {
     return this.totalAmount - this.getTotalPaid();
   }
@@ -182,6 +189,12 @@ export class Sale extends Transaction {
       this.pay();
     }
   }
+}
+
+interface SaleSummary {
+  debe: number;
+  haber: number;
+  saldo: number;
 }
 
 interface ISale extends ITransaction {

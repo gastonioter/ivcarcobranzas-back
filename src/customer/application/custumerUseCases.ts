@@ -16,6 +16,7 @@ import {
   SummaryDetail,
 } from "../domain/customer.entity";
 import { SaleMongoRepository } from "@/transaction/sale/infraestructure/sale.mongo";
+import { getCustomerSummaryAccount } from "../domain/services/AccountSummary";
 
 export class CustomerUseCases {
   constructor(
@@ -81,46 +82,9 @@ export class CustomerUseCases {
 
   accountSummary = async (uuid: string): Promise<AccountSummary> => {
     const sales = await this.salesRepository.getSalesByCustomer(uuid);
+    const accountSummary: AccountSummary =
+      await getCustomerSummaryAccount(sales);
 
-    if (!sales.length) {
-      return {
-        debe: 0,
-        haber: 0,
-        saldo: 0,
-        details: [],
-      };
-    }
-    const summaryDetails: SummaryDetail[] = sales.map((sale) => {
-      const detail: SummaryDetail = {
-        saleId: sale.getId(),
-        saleSerie:sale.getSerie(),
-        debe: sale.getTotalAmount(),
-        haber: sale.getTotalPaid(),
-        saldo: sale.getTotalAmount() - sale.getTotalPaid(),
-      };
-      return detail;
-    });
-
-    // if (summaryDetails.length == 1) {
-    //   const [detail] = summaryDetails;
-    //   return {
-    //     debe: detail.debe,
-    //     haber: detail.haber,
-    //     saldo: detail.saldo,
-    //     details: [detail],
-    //   };
-    // }
-    const reducedSummary = summaryDetails.reduce((acc, detail) => {
-      return {
-        debe: acc.debe + detail.debe,
-        haber: acc.haber + detail.haber,
-        saldo: acc.saldo + detail.saldo,
-      } as SummaryDetail;
-    });
-
-    return {
-      ...reducedSummary,
-      details: summaryDetails,
-    };
+    return accountSummary;
   };
 }

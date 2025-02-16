@@ -36,6 +36,7 @@ type TransactionInfo = {
 };
 
 type CustomerInfo = {
+  uuid?: string;
   firstName: string;
   lastName: string;
   email: string;

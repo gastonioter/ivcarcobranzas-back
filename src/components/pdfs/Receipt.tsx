@@ -1,27 +1,13 @@
+import { PrintableTransaction } from "@/prints/types";
+import { formattedCurrency } from "../utils/formattedCurrency";
+import { formattedDate } from "../utils/formattedDate";
+
 const loadPDFRenderer = async () => {
   const pdfRenderer = await import("@react-pdf/renderer");
   return pdfRenderer;
 };
 
 interface RecieptProps {
-  company: {
-    name: string;
-
-    razonSocial: string;
-    iva: string;
-    logo: string;
-    address: string;
-    contact: {
-      phone: string;
-      email: string;
-      web: string;
-    };
-  };
-  client: {
-    name: string;
-    email: string;
-    phone: string;
-  };
   receipt: {
     id: string;
     date: string;
@@ -36,7 +22,15 @@ interface RecieptProps {
   };
 }
 
-export const Reciept = async ({ company, client, receipt }: RecieptProps) => {
+type PrintableRecipt = Omit<PrintableTransaction, "details" | "transaction"> &
+  RecieptProps;
+
+export const Reciept = async ({
+  company,
+  customer,
+  receipt,
+  saleSummary,
+}: PrintableRecipt) => {
   const { Document, Page, Text, View, StyleSheet, Image } =
     await loadPDFRenderer();
 
@@ -119,7 +113,7 @@ export const Reciept = async ({ company, client, receipt }: RecieptProps) => {
     },
 
     footer: {
-      marginTop: 20,
+      marginTop: 10,
       textAlign: "center",
       fontSize: 10,
       color: "#888",
@@ -152,7 +146,7 @@ export const Reciept = async ({ company, client, receipt }: RecieptProps) => {
       padding: 5,
     },
     tableCol: {
-      width: "60px",
+      width: "150px",
       // borderStyle: "solid",
       // borderWidth: 1,
       // borderColor: "#383838",
@@ -175,24 +169,27 @@ export const Reciept = async ({ company, client, receipt }: RecieptProps) => {
 
   const aclarationsStyles = StyleSheet.create({
     section: {
-      marginTop: 20,
+      marginTop: "auto",
       fontSize: 8,
       color: "#404040",
       fontStyle: "italic",
       display: "flex",
-      flexDirection: "column",
+      flexDirection: "row",
       borderBottom: "1px solid #a2a2a2",
       bordertop: "1px solid #888",
     },
 
     box: {
       padding: 10,
+      gap: 2,
       display: "flex",
       flexDirection: "column",
+      flex: 1,
     },
     title: {
       fontSize: 10,
-      marginBottom: 4,
+      padding: 3,
+      backgroundColor: "#bbbbbb",
     },
     text: {
       fontSize: 8,
@@ -205,10 +202,7 @@ export const Reciept = async ({ company, client, receipt }: RecieptProps) => {
       <Page size={"A4"} style={styles.page}>
         {/* HeaderContainer  */}
         <View style={styles.headerContainer}>
-          <Image
-            src="https://ivcaralarmas.com/public/img/logo.png"
-            style={styles.logo}
-          />
+          <Image src={company.logo} style={styles.logo} />
           <View style={styles.companyContainer}>
             <Text style={styles.companyName}>{company.name}</Text>
             <Text style={styles.companyDescriptionText}>{company.address}</Text>
@@ -221,30 +215,33 @@ export const Reciept = async ({ company, client, receipt }: RecieptProps) => {
           {/* Datos del Recibo (ID, Fecha, etc.) */}
           <View style={styles.tipoComprobanteContainer}>
             <Text style={styles.tipoComprobanteText}>RECIBO</Text>
-            <Text style={{ marginBottom: 2 }}>ID: REC-{receipt.saleNumer}</Text>
+            <Text style={{ marginBottom: 2 }}>ID VTA: {receipt.saleNumer}</Text>
 
-            <Text>Fecha: {receipt.date}</Text>
+            <Text>Fecha: {formattedDate(receipt.date)}</Text>
           </View>
         </View>
         <View style={styles.divider}></View>
         {/* Datos del Cliente */}
         <View style={styles.customerSection}>
           <Text style={styles.sectionTitle}>
-            Recibido de: {client.name.toUpperCase()}
+            Recibido de:{" "}
+            {customer.firstName.toUpperCase() +
+              " " +
+              customer.lastName.toUpperCase()}
           </Text>
-          <Text style={styles.text}>Teléfono: {client.phone}</Text>
-          <Text style={styles.text}>Email: {client.email}</Text>
+          <Text style={styles.text}>Teléfono: {customer.phone}</Text>
+          <Text style={styles.text}>Email: {customer.email}</Text>
         </View>
 
         {/* Informacion del Pago */}
         <View>
-          <Text>Monto pagado: $1200,00</Text>
-          <Text>Metodo de pago: Transferencia Bancaria</Text>
+          <Text>Monto pagado: {formattedCurrency(receipt.amount)}</Text>
+          <Text>Metodo de pago: {receipt.method.toUpperCase()}</Text>
         </View>
 
         <View style={styles.divider}></View>
         <View>
-          <Text style={styles.text}>Resumen de la venta 0001 actualizado:</Text>
+          <Text style={styles.text}>Resumen de venta a la fecha:</Text>
         </View>
         {/* Resumen de Venta */}
         <View style={{ display: "flex", gap: 10 }}>
@@ -255,7 +252,9 @@ export const Reciept = async ({ company, client, receipt }: RecieptProps) => {
                 <Text style={tableStyles.tableCellHeader}>Debe</Text>
               </View>
               <View style={tableStyles.tableCol}>
-                <Text style={tableStyles.tableCell}>10000</Text>
+                <Text style={tableStyles.tableCell}>
+                  {formattedCurrency(saleSummary.debe)}
+                </Text>
               </View>
             </View>
             {/* HABER */}
@@ -264,7 +263,9 @@ export const Reciept = async ({ company, client, receipt }: RecieptProps) => {
                 <Text style={tableStyles.tableCellHeader}>Haber</Text>
               </View>
               <View style={tableStyles.tableCol}>
-                <Text style={tableStyles.tableCell}>10000</Text>
+                <Text style={tableStyles.tableCell}>
+                  {formattedCurrency(saleSummary.haber)}
+                </Text>
               </View>
             </View>
             {/* SALDO */}
@@ -273,7 +274,9 @@ export const Reciept = async ({ company, client, receipt }: RecieptProps) => {
                 <Text style={tableStyles.tableCellHeader}>Saldo</Text>
               </View>
               <View style={tableStyles.tableCol}>
-                <Text style={tableStyles.tableCell}>10000</Text>
+                <Text style={tableStyles.tableCell}>
+                  {formattedCurrency(saleSummary.saldo)}
+                </Text>
               </View>
             </View>
           </View>

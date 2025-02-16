@@ -192,10 +192,7 @@ export const Budget = async ({
       <Page size={"A4"} style={styles.page}>
         {/* HeaderContainer  */}
         <View style={styles.headerContainer}>
-          <Image
-            src="https://ivcaralarmas.com/public/img/logo.png"
-            style={styles.logo}
-          />
+          <Image src={company.logo} style={styles.logo} />
           <View style={styles.companyContainer}>
             <Text style={styles.companyName}>{company.name}</Text>
             <Text style={styles.companyDescriptionText}>{company.address}</Text>
