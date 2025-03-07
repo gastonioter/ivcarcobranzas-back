@@ -1,5 +1,6 @@
 import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
+import { CuotaPersistence } from "../infraestrcture/cuota.schema";
 
 export class Cuota extends Entity {
   private year: number;
@@ -29,7 +30,7 @@ export class Cuota extends Entity {
     return new Cuota(EntityId.create(), month, year, amount, initialStatus);
   }
 
-  public static fromPersistence(persisted: any): Cuota {
+  public static fromPersistence(persisted: CuotaPersistence): Cuota {
     return new Cuota(
       EntityId.fromExisting(persisted.uuid),
       persisted.month,
@@ -59,6 +60,9 @@ export class Cuota extends Entity {
     if (this.isDelayed()) {
       this.status = CuotaStatus.LATE;
     }
+  }
+  getStatus() {
+    return this.status;
   }
 }
 
