@@ -9,7 +9,7 @@ export class CuotaUseCases {
     private readonly customerRepository: CustomerRepository,
   ) {}
 
-  async create({ amount, customerId }: CreateCuotaDTO) {
+  async addCuotaToCustomer({ amount, customerId }: CreateCuotaDTO) {
     const cuota = Cuota.new({ amount });
     await this.cuotaRepository.save(cuota);
 
@@ -17,5 +17,17 @@ export class CuotaUseCases {
     customer.addCuota(cuota);
 
     await this.customerRepository.saveCuota(customer.getId(), cuota);
+  }
+
+  async getCuotas(): Promise<Cuota[]> {
+    const customers = await this.customerRepository.getCustomers();
+
+    return customers.reduce((acc, customer) => {
+      const cuotas = customer.getCuotas();
+      if (cuotas) {
+        return [...acc, ...cuotas];
+      }
+      return acc;
+    }, [] as Cuota[]);
   }
 }
