@@ -37,13 +37,17 @@ export class Cuota extends Entity {
   public static new({
     amount,
     secuence,
+    year,
+    month,
+    status,
   }: {
     amount: number;
     secuence: number;
+    year: number;
+    month: number;
+    status: CuotaStatus.PENDING | CuotaStatus.NO_SERVICE;
   }): Cuota {
     if (amount <= 0) throw new Error("El monto de la cuota es invalido");
-    const month = new Date().getMonth();
-    const year = new Date().getFullYear();
     const initialStatus = CuotaStatus.PENDING;
     const createdAt = new Date();
     const serie = `CUOTA-${Cuota.generateSerie(secuence)}`;
@@ -106,4 +110,5 @@ export enum CuotaStatus {
   PENDING = "PENDIENTE",
   PAID = "PAGADA",
   LATE = "ATRASADA",
+  NO_SERVICE = "SIN SERVICIO",
 }

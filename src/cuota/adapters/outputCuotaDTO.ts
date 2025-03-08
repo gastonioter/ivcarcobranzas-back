@@ -15,7 +15,7 @@ export function cuotaDTO(cuota: Cuota): CuotaDTO {
     uuid: cuota.getId(),
     status: cuota.getStatus(),
     amount: cuota.getAmount(),
-    month: cuota.getMonth() + 1,
+    month: cuota.getMonth(),
     year: cuota.getYear(),
     serie: cuota.getSerie(),
     createdAt: cuota.getCreatedAt(),

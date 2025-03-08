@@ -1,4 +1,3 @@
-import { CloudCustomer } from "@/customer/domain/valueObjects/CloudCustomer.vo";
 import { CloudCategoryDoc } from "../../cloudCategory/infraestructure/db.schema";
 import { CustomerFactory } from "../../customer/domain/CustomerFactory";
 import { CustomerEntity } from "../../customer/domain/customer.entity";
@@ -30,6 +29,8 @@ export class CuotaMongoRepository implements CuotaRepository {
               amount: cuota.getAmount(),
               year: cuota.getYear(),
               month: cuota.getMonth(),
+              createdAt: cuota.getCreatedAt(),
+              serie: cuota.getSerie(),
               status: cuota.getStatus(),
             },
           },
@@ -45,11 +46,6 @@ export class CuotaMongoRepository implements CuotaRepository {
   }
 
   async findCustomerCuotas(customerId: string): Promise<CustomerEntity> {
-    const customer = await this.recreateCustomer(customerId);
-    return CustomerFactory.fromPersistence(customer);
-  }
-
-  private async recreateCustomer(customerId: string) {
     const customer = await CustomerModel.findOne({ uuid: customerId })
       .populate<{
         cloudCategory?: CloudCategoryDoc;

@@ -35,7 +35,8 @@ export class CustomerUseCases {
   };
 
   getCustomer = async (uuid: string) => {
-    return await this.customerRepository.getCustomer(uuid);
+    const customer = await this.customerRepository.getCustomer(uuid);
+    return new CustomerDTO(customer);
   };
 
   getCustomers = async (): Promise<CustomerDTO[]> => {

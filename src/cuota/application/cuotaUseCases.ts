@@ -10,16 +10,29 @@ export class CuotaUseCases {
     private readonly customerRepository: CustomerRepository,
   ) {}
 
-  async addCuotaToCustomer({ amount, customerId }: CreateCuotaDTO) {
+  async addCuotaToCustomer({
+    amount,
+    customerId,
+    month,
+    year,
+    status,
+  }: CreateCuotaDTO) {
     const customer = await this.cuotaRepository.findCustomerCuotas(customerId);
 
     const totalCuotas = customer.getCuotas().length;
 
-    const cuota = Cuota.new({ amount, secuence: totalCuotas });
+    const cuota = Cuota.new({
+      amount,
+      secuence: totalCuotas,
+      month,
+      year,
+      status,
+    });
 
     customer.addCuota(cuota);
 
     await this.cuotaRepository.save(customer.getId(), cuota);
+    return cuotaDTO(cuota);
   }
 
   async getCuotas(customerId: string): Promise<CuotaDTO[]> {

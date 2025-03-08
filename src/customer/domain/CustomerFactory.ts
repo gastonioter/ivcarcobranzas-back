@@ -40,7 +40,6 @@ export class CustomerFactory {
 
   static fromPersistence(data: any): CustomerEntity {
     let modalidad: IModalidadCliente;
-    console.log(data);
     if (data.modalidad == CustomerModalidad.CLOUD) {
       modalidad = new CloudCustomer(
         CloudCategory.fromPersistence({
