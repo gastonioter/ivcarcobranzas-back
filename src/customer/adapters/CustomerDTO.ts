@@ -25,7 +25,6 @@ export class CustomerDTO {
   public readonly modalidadData: ModalidadData;
 
   constructor(customer: CustomerEntity) {
-    //console.log(customer);
     this.uuid = customer.getId();
     this.firstName = customer.getFirstName();
     this.lastName = customer.getLastName();

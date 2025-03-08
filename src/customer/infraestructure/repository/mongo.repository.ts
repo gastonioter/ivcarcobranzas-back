@@ -1,4 +1,5 @@
-import mongoose, { mongo, Mongoose, MongooseError } from "mongoose";
+import { Cuota } from "../../../cuota/domain/cuota.entity";
+import mongoose, { mongo } from "mongoose";
 import { CloudCategoryDoc } from "../../../cloudCategory/infraestructure/db.schema";
 import { EditCustomerDTO } from "../../adapters/CreateCustomerDTO";
 import { CustomerEntity } from "../../domain/customer.entity";
@@ -161,9 +162,36 @@ export class CustomerMongoRepository implements CustomerRepository {
       throw new Error("Error al actualizar el estado del cliente");
     }
   }
+  async saveCuota(customerId: string, cuota: Cuota): Promise<void> {
+    const customer = await CustomerModel.findOne({ uuid: customerId });
+
+    if (!customer) {
+      throw new CustomerNotFoundError();
+    }
+
+    if (customer.modalidad === CustomerModalidad.CLOUD) {
+      await CloudCustomerModel.findOneAndUpdate(
+        { uuid: customerId },
+        {
+          $push: {
+            cuotas: {
+              uuid: cuota.getId(),
+              amount: cuota.getAmount(),
+              year: cuota.getYear(),
+              month: cuota.getMonth(),
+              status: cuota.getStatus(),
+            },
+          },
+        },
+      );
+    } else {
+      throw new Error("El cliente no es de modalidad cloud");
+    }
+  }
   deleteCustomer(uuid: string): Promise<CustomerEntity> {
     throw new Error("Method not implemented.");
   }
+
   async getCustomer(uuid: string): Promise<CustomerEntity> {
     const customer = await this.findByIdAndPopulate(uuid);
     if (!customer) {
@@ -171,12 +199,12 @@ export class CustomerMongoRepository implements CustomerRepository {
     }
     return CustomerFactory.fromPersistence(customer);
   }
+
   async getCustomers(): Promise<CustomerEntity[]> {
     const customersDoc = await CustomerModel.find({})
       .populate<{ cloudCategory?: CloudCategoryDoc }>("cloudCategory")
       .lean()
       .exec();
-
 
     return customersDoc.map((customer) =>
       CustomerFactory.fromPersistence(customer),

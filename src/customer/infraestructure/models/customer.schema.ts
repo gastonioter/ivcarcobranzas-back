@@ -1,5 +1,6 @@
 import { InferSchemaType, model, Schema } from "mongoose";
 import { CustomerModalidad, CustomerStatus } from "../../domain/types";
+import { CuotaPersistence } from "../../../cuota/infraestrcture/cuota.schema";
 
 interface ICustomer extends Document {
   /* Common properties */

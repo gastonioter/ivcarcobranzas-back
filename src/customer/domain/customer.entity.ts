@@ -5,6 +5,7 @@ import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { Customer } from "./interfaces/Customer";
 import { CloudCategory } from "@/cloudCategory/domain/cloudCategory.entity";
+import { Cuota } from "@/cuota/domain/cuota.entity";
 
 export class CustomerEntity extends Entity {
   private firstName: string;
@@ -71,6 +72,12 @@ export class CustomerEntity extends Entity {
   }
   getPriceCategory(): CloudCategory | null {
     return this.modalidad.getCategoriaPago();
+  }
+  addCuota(cuota: Cuota): void {
+    this.modalidad.addCuota(cuota);
+  }
+  getCuotas(): Cuota[] | null {
+    return this.modalidad.getCuotas();
   }
 }
 
