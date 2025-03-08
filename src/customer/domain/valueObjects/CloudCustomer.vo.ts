@@ -1,21 +1,21 @@
-import { CloudCategory } from "@/cloudCategory/domain/cloudCategory.entity";
+import { CloudCategory } from "../../../cloudCategory/domain/cloudCategory.entity";
 import { IModalidadCliente } from "../interfaces/IModalidadCliente";
 import { CustomerModalidad } from "../types";
-import { Cuota } from "@/cuota/domain/cuota.entity";
+import { Cuota } from "../../../cuota/domain/cuota.entity";
 
 export class CloudCustomer implements IModalidadCliente {
   private category: CloudCategory;
   private cuotas: Cuota[];
 
-  constructor(category: CloudCategory) {
+  constructor(category: CloudCategory, cuotas?: Cuota[]) {
     this.category = category;
-    this.cuotas = [];
+    this.cuotas = cuotas || [];
   }
 
   addCuota(cuota: Cuota): void {
     this.cuotas.push(cuota);
   }
-  
+
   getCuotas(): Cuota[] {
     return this.cuotas;
   }

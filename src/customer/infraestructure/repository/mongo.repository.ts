@@ -85,6 +85,7 @@ export class CustomerMongoRepository implements CustomerRepository {
             status: current.status,
             createdAt: current.createdAt,
             categoryPriceId: customer.modalidadData.cloudCategoryId,
+            // cuotas:current.cuotas
           });
         } else {
           await RegularCustomerModel.create({
@@ -162,32 +163,7 @@ export class CustomerMongoRepository implements CustomerRepository {
       throw new Error("Error al actualizar el estado del cliente");
     }
   }
-  async saveCuota(customerId: string, cuota: Cuota): Promise<void> {
-    const customer = await CustomerModel.findOne({ uuid: customerId });
 
-    if (!customer) {
-      throw new CustomerNotFoundError();
-    }
-
-    if (customer.modalidad === CustomerModalidad.CLOUD) {
-      await CloudCustomerModel.findOneAndUpdate(
-        { uuid: customerId },
-        {
-          $push: {
-            cuotas: {
-              uuid: cuota.getId(),
-              amount: cuota.getAmount(),
-              year: cuota.getYear(),
-              month: cuota.getMonth(),
-              status: cuota.getStatus(),
-            },
-          },
-        },
-      );
-    } else {
-      throw new Error("El cliente no es de modalidad cloud");
-    }
-  }
   deleteCustomer(uuid: string): Promise<CustomerEntity> {
     throw new Error("Method not implemented.");
   }

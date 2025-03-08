@@ -15,6 +15,6 @@ export class RegularCustomer implements IModalidadCliente {
     throw new Error("Regular customers cannot have cuotas");
   }
   getCuotas() {
-    return null;
+    return [];
   }
 }

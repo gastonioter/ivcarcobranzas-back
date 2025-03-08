@@ -13,7 +13,7 @@ export class CuotaController {
   }
 
   async getCuotas(req: Request, res: Response) {
-    const cuotas = await this.cuotaUseCases.getCuotas();
+    const cuotas = await this.cuotaUseCases.getCuotas(req.params.customerId);
     res.status(200).json(cuotas);
   }
 }

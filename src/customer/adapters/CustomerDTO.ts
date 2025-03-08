@@ -1,3 +1,4 @@
+import { CuotaDTO, cuotaDTO } from "../../cuota/adapters/outputCuotaDTO";
 import { CustomerEntity } from "../domain/customer.entity";
 import { CustomerModalidad, CustomerStatus } from "../domain/types";
 
@@ -9,6 +10,7 @@ type ModalidadData =
         price: number;
         uuid: string;
       };
+      cuotas: CuotaDTO[];
     }
   | {
       modalidad: CustomerModalidad.REGULAR;
@@ -35,7 +37,6 @@ export class CustomerDTO {
 
     /* Inject the specific depending on the Customer */
     if (customer.getModalidad() === CustomerModalidad.CLOUD) {
-      
       this.modalidadData = {
         modalidad: CustomerModalidad.CLOUD,
         cloudCategory: {
@@ -43,6 +44,7 @@ export class CustomerDTO {
           price: customer.getPriceCategory()!.getPrice(),
           uuid: customer.getPriceCategory()!.getId(),
         },
+        cuotas: customer.getCuotas().map(cuotaDTO),
       };
     } else if (customer.getModalidad() === CustomerModalidad.REGULAR) {
       this.modalidadData = {

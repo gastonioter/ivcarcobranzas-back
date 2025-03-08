@@ -1,5 +1,6 @@
 import { CustomerRepository } from "../../customer/domain/interfaces/CustomerRepository";
 import { CreateCuotaDTO } from "../adapters/inputCuotaDTO";
+import { CuotaDTO, cuotaDTO } from "../adapters/outputCuotaDTO";
 import { Cuota } from "../domain/cuota.entity";
 import { CuotaRepository } from "../domain/cuota.repository";
 
@@ -11,23 +12,16 @@ export class CuotaUseCases {
 
   async addCuotaToCustomer({ amount, customerId }: CreateCuotaDTO) {
     const cuota = Cuota.new({ amount });
-    await this.cuotaRepository.save(cuota);
 
     const customer = await this.customerRepository.getCustomer(customerId);
+
     customer.addCuota(cuota);
 
-    await this.customerRepository.saveCuota(customer.getId(), cuota);
+    await this.cuotaRepository.save(customer.getId(), cuota);
   }
 
-  async getCuotas(): Promise<Cuota[]> {
-    const customers = await this.customerRepository.getCustomers();
-
-    return customers.reduce((acc, customer) => {
-      const cuotas = customer.getCuotas();
-      if (cuotas) {
-        return [...acc, ...cuotas];
-      }
-      return acc;
-    }, [] as Cuota[]);
+  async getCuotas(customerId: string): Promise<CuotaDTO[]> {
+    const customer = await this.cuotaRepository.findCustomerCuotas(customerId);
+    return customer.getCuotas().map(cuotaDTO);
   }
 }

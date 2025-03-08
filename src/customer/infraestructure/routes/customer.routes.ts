@@ -28,6 +28,7 @@ routes.post(
 );
 
 routes.get("/", asyncHandler(customerController.list));
+routes.get("/:uuid", asyncHandler(customerController.get));
 
 routes.post(
   "/accountsummary/:uuid",

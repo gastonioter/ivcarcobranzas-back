@@ -1,3 +1,4 @@
+import { Cuota } from "../../cuota/domain/cuota.entity";
 import { CloudCategory } from "../../cloudCategory/domain/cloudCategory.entity";
 import { Email } from "../../shared/valueObjects/email.vo";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
@@ -23,7 +24,7 @@ export class CustomerFactory {
       if (!data.category) {
         throw new Error("Los clientes cloud deben tener una categoría de pago");
       }
-      modalidad = new CloudCustomer(data.category);
+      modalidad = new CloudCustomer(data.category, []);
     } else {
       modalidad = new RegularCustomer();
     }
@@ -39,9 +40,8 @@ export class CustomerFactory {
 
   static fromPersistence(data: any): CustomerEntity {
     let modalidad: IModalidadCliente;
-
+    console.log(data);
     if (data.modalidad == CustomerModalidad.CLOUD) {
-     
       modalidad = new CloudCustomer(
         CloudCategory.fromPersistence({
           uuid: data.cloudCategory.uuid,
@@ -49,6 +49,7 @@ export class CustomerFactory {
           price: data.cloudCategory.price,
           description: data.cloudCategory.description,
         }),
+        data.cuotas?.map(Cuota.fromPersistence) || [],
       );
     } else {
       modalidad = new RegularCustomer();
@@ -82,5 +83,4 @@ export interface IPersistedCustomer {
     description: string;
   };
   createdAt: Date;
-} 
-
+}

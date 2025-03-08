@@ -6,5 +6,5 @@ export interface IModalidadCliente {
   getModalidad(): CustomerModalidad;
   getCategoriaPago(): CloudCategory | null;
   addCuota(cuota: Cuota): void;
-  getCuotas(): Cuota[] | null;
+  getCuotas(): Cuota[] | [];
 }

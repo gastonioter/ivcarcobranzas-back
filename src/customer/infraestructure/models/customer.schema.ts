@@ -1,6 +1,9 @@
 import { InferSchemaType, model, Schema } from "mongoose";
 import { CustomerModalidad, CustomerStatus } from "../../domain/types";
-import { CuotaPersistence } from "../../../cuota/infraestrcture/cuota.schema";
+import {
+  CuotaPersistence,
+  CuotaSchema,
+} from "../../../cuota/infraestrcture/cuota.schema";
 
 interface ICustomer extends Document {
   /* Common properties */
@@ -44,12 +47,14 @@ export const CustomerModel = model<ICustomer>("Customer", CustomerSchema);
 /* Specific Customers Types */
 export interface ICloudCustomer extends ICustomer {
   cloudCategoryId: string;
+  cuotas?: CuotaPersistence[];
 }
 
 export interface IRegularCustomer extends ICustomer {}
 
 const CloudCustomerSchema = new Schema<ICloudCustomer>({
   cloudCategoryId: { type: String, required: true },
+  cuotas: CuotaSchema,
 });
 
 const RegularCustomerSchema = new Schema<IRegularCustomer>({});

@@ -76,7 +76,7 @@ export class CustomerEntity extends Entity {
   addCuota(cuota: Cuota): void {
     this.modalidad.addCuota(cuota);
   }
-  getCuotas(): Cuota[] | null {
+  getCuotas() {
     return this.modalidad.getCuotas();
   }
 }

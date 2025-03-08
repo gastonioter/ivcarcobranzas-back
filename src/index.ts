@@ -17,6 +17,7 @@ import { SalesRoutes } from "./transaction/sale";
 import { CloudCategoryRoutes } from "./cloudCategory";
 import { PrintRoutes } from "./prints";
 import { BudgetRoutes } from "./transaction/budget";
+import { cuotaRoutes } from "./cuota";
 
 const app = express();
 
@@ -30,10 +31,9 @@ app.use("/api/auth", userRoutes);
 
 /* private routes */
 
-app.use(authorizationMiddleware);
+//app.use(authorizationMiddleware);
 
 app.use("/api/prints", PrintRoutes);
-
 
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/products", productRoutes);
@@ -42,6 +42,7 @@ app.use("/api/sales", SalesRoutes);
 app.use("/api/budgets", BudgetRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/cloudcategories", CloudCategoryRoutes);
+app.use("/api/cuotas", cuotaRoutes);
 
 app.use(errorHandler);
 

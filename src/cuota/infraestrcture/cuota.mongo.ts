@@ -1,26 +1,61 @@
+import { CloudCategoryDoc } from "../../cloudCategory/infraestructure/db.schema";
+import { CustomerFactory } from "../../customer/domain/CustomerFactory";
+import { CustomerEntity } from "../../customer/domain/customer.entity";
+import { CustomerNotFoundError } from "../../customer/domain/customer.exceptions";
+import { CustomerModalidad } from "../../customer/domain/types";
+import {
+  CloudCustomerModel,
+  CustomerModel,
+} from "../../customer/infraestructure/models/customer.schema";
+import { InvalidOperationError } from "../../shared/domain/exceptions";
 import { Cuota, CuotaStatus } from "../domain/cuota.entity";
 import { CuotaRepository } from "../domain/cuota.repository";
-import { CuotaModel } from "./cuota.schema";
 
 export class CuotaMongoRepository implements CuotaRepository {
-  async save(cuota: Cuota): Promise<Cuota> {
-    const toSave = {
-      uuid: cuota.getId(),
-      month: cuota.getMonth(),
-      year: cuota.getYear(),
-      amount: cuota.getAmount(),
-      status: cuota.getStatus(),
-    };
+  async save(customerId: string, cuota: Cuota): Promise<void> {
+    const customer = await CustomerModel.findOne({ uuid: customerId });
 
-    const saved = await CuotaModel.create(toSave);
-    return Cuota.fromPersistence(saved);
+    if (!customer) {
+      throw new CustomerNotFoundError();
+    }
+
+    if (customer.modalidad === CustomerModalidad.CLOUD) {
+      await CloudCustomerModel.findOneAndUpdate(
+        { uuid: customerId },
+        {
+          $push: {
+            cuotas: {
+              uuid: cuota.getId(),
+              amount: cuota.getAmount(),
+              year: cuota.getYear(),
+              month: cuota.getMonth(),
+              status: cuota.getStatus(),
+            },
+          },
+        },
+      );
+    } else {
+      throw new Error("El cliente no es de modalidad cloud");
+    }
   }
 
   async update(uuid: string, status: CuotaStatus): Promise<Cuota> {
     throw new Error("Method not implemented.");
   }
 
-  async findAll(): Promise<Cuota[]> {
-    throw new Error("Method not implemented.");
+  async findCustomerCuotas(customerId: string): Promise<CustomerEntity> {
+    const customer = await CustomerModel.findOne({ uuid: customerId })
+      .populate<{
+        cloudCategory?: CloudCategoryDoc;
+      }>("cloudCategory")
+      .lean();
+
+    if (!customer) {
+      throw new CustomerNotFoundError();
+    }
+    if (customer.modalidad !== CustomerModalidad.CLOUD) {
+      throw new InvalidOperationError("El cliente no es de modalidad cloud");
+    }
+    return CustomerFactory.fromPersistence(customer);
   }
 }

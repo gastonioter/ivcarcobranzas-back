@@ -19,5 +19,4 @@ export interface CustomerRepository {
 
   // TODO: implementar filtros y ordenamiento por apellido en el repo
   getCustomers(): Promise<CustomerEntity[]>;
-  saveCuota(customerId: string, cuota: Cuota): Promise<void>;
 }
