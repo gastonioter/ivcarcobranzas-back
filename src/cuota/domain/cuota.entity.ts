@@ -2,11 +2,15 @@ import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { CuotaPersistence } from "../infraestrcture/cuota.schema";
 
+const BASE_SERIE = 1000;
+
 export class Cuota extends Entity {
   private year: number;
   private month: number;
   private amount: number;
   private status: CuotaStatus;
+  private createdAt: Date;
+  private serie: string;
 
   private constructor(
     uuid: EntityId,
@@ -14,20 +18,44 @@ export class Cuota extends Entity {
     year: number,
     amount: number,
     status: CuotaStatus,
+    createdAt: Date,
+    serie: string,
   ) {
     super(uuid);
     this.amount = amount;
     this.month = month;
     this.year = year;
     this.status = status;
+    this.createdAt = createdAt;
+    this.serie = serie;
   }
 
-  public static new({ amount }: { amount: number }): Cuota {
+  private static generateSerie(sec: number) {
+    return `${String(sec + BASE_SERIE).padStart(8, "0")}`;
+  }
+
+  public static new({
+    amount,
+    secuence,
+  }: {
+    amount: number;
+    secuence: number;
+  }): Cuota {
     if (amount <= 0) throw new Error("El monto de la cuota es invalido");
     const month = new Date().getMonth();
     const year = new Date().getFullYear();
     const initialStatus = CuotaStatus.PENDING;
-    return new Cuota(EntityId.create(), month, year, amount, initialStatus);
+    const createdAt = new Date();
+    const serie = `CUOTA-${Cuota.generateSerie(secuence)}`;
+    return new Cuota(
+      EntityId.create(),
+      month,
+      year,
+      amount,
+      initialStatus,
+      createdAt,
+      serie,
+    );
   }
 
   public static fromPersistence(persisted: CuotaPersistence): Cuota {
@@ -37,6 +65,8 @@ export class Cuota extends Entity {
       persisted.year,
       persisted.amount,
       persisted.status,
+      persisted.createdAt,
+      persisted.serie,
     );
   }
 
@@ -63,6 +93,12 @@ export class Cuota extends Entity {
   }
   getStatus() {
     return this.status;
+  }
+  getCreatedAt() {
+    return this.createdAt;
+  }
+  getSerie() {
+    return this.serie;
   }
 }
 

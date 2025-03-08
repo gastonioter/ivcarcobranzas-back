@@ -11,9 +11,11 @@ export class CuotaUseCases {
   ) {}
 
   async addCuotaToCustomer({ amount, customerId }: CreateCuotaDTO) {
-    const cuota = Cuota.new({ amount });
+    const customer = await this.cuotaRepository.findCustomerCuotas(customerId);
 
-    const customer = await this.customerRepository.getCustomer(customerId);
+    const totalCuotas = customer.getCuotas().length;
+
+    const cuota = Cuota.new({ amount, secuence: totalCuotas });
 
     customer.addCuota(cuota);
 

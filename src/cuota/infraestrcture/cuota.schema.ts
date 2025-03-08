@@ -7,6 +7,8 @@ export interface CuotaPersistence extends Document {
   year: number;
   amount: number;
   status: CuotaStatus;
+  serie: string;
+  createdAt: Date;
 }
 export const CuotaSchema = new Schema<CuotaPersistence>({
   uuid: { type: String, required: true },
@@ -14,5 +16,6 @@ export const CuotaSchema = new Schema<CuotaPersistence>({
   year: { type: Number, required: true },
   amount: { type: Number, required: true },
   status: { type: String, enum: Object.values(CuotaStatus), required: true },
+  serie: { type: String, required: true },
+  createdAt: { type: Date, required: true },
 });
-
