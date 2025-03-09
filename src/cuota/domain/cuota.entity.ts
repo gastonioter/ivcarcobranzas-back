@@ -48,6 +48,7 @@ export class Cuota extends Entity {
     status: CuotaStatus.PENDING | CuotaStatus.NO_SERVICE;
   }): Cuota {
     if (amount <= 0) throw new Error("El monto de la cuota es invalido");
+
     const initialStatus = CuotaStatus.PENDING;
     const createdAt = new Date();
     const serie = `CUOTA-${Cuota.generateSerie(secuence)}`;
@@ -103,6 +104,9 @@ export class Cuota extends Entity {
   }
   getSerie() {
     return this.serie;
+  }
+  setState(status: CuotaStatus) {
+    this.status = status;
   }
 }
 

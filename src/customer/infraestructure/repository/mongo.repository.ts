@@ -85,7 +85,6 @@ export class CustomerMongoRepository implements CustomerRepository {
             status: current.status,
             createdAt: current.createdAt,
             categoryPriceId: customer.modalidadData.cloudCategoryId,
-            // cuotas:current.cuotas
           });
         } else {
           await RegularCustomerModel.create({

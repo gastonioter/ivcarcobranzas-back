@@ -19,4 +19,15 @@ export class CuotaController {
     const cuotas = await this.cuotaUseCases.getCuotas(req.params.customerId);
     res.status(200).json(cuotas);
   }
+
+  async updateCuotasStatus(req: Request, res: Response) {
+    const { cuotasId, customerId, status } = req.body;
+
+    const cuotas = await this.cuotaUseCases.updateCuotasStatus(
+      cuotasId,
+      customerId,
+      status,
+    );
+    res.status(200).json(cuotas);
+  }
 }

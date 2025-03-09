@@ -41,8 +41,22 @@ export class CuotaMongoRepository implements CuotaRepository {
     }
   }
 
-  async update(uuid: string, status: CuotaStatus): Promise<Cuota> {
-    throw new Error("Method not implemented.");
+  async update(customer: CustomerEntity): Promise<CustomerEntity> {
+    await CloudCustomerModel.findOneAndUpdate(
+      {
+        uuid: customer.getId(),
+      },
+      {
+        $set: {
+          cuotas: customer.getCuotas(),
+        },
+      },
+      {
+        new: true,
+      },
+    );
+
+    return customer;
   }
 
   async findCustomerCuotas(customerId: string): Promise<CustomerEntity> {

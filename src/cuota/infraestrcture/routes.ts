@@ -12,6 +12,9 @@ const cuotaRepo = new CuotaMongoRepository();
 
 const cuotaUseCases = new CuotaUseCases(cuotaRepo, customersRepo);
 const ctrl = new CuotaController(cuotaUseCases);
+
 router.get("/:customerId", asyncHandler(ctrl.getCuotas.bind(ctrl)));
 
 router.post("/", asyncHandler(ctrl.createCuota.bind(ctrl)));
+
+router.patch("/", asyncHandler(ctrl.updateCuotasStatus.bind(ctrl)));

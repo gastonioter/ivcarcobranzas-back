@@ -1,7 +1,7 @@
 import { CustomerRepository } from "../../customer/domain/interfaces/CustomerRepository";
 import { CreateCuotaDTO } from "../adapters/inputCuotaDTO";
 import { CuotaDTO, cuotaDTO } from "../adapters/outputCuotaDTO";
-import { Cuota } from "../domain/cuota.entity";
+import { Cuota, CuotaStatus } from "../domain/cuota.entity";
 import { CuotaRepository } from "../domain/cuota.repository";
 
 export class CuotaUseCases {
@@ -37,6 +37,25 @@ export class CuotaUseCases {
 
   async getCuotas(customerId: string): Promise<CuotaDTO[]> {
     const customer = await this.cuotaRepository.findCustomerCuotas(customerId);
+    return customer.getCuotas().map(cuotaDTO);
+  }
+
+  async updateCuotasStatus(
+    cuotasId: string[],
+    customerId: string,
+    status: CuotaStatus,
+  ) {
+    const customer = await this.customerRepository.getCustomer(customerId);
+    cuotasId.forEach((cuotaId) => {
+      const cuota = customer.getCuotas().find((c) => c.getId() === cuotaId);
+      if (!cuota) {
+        throw new Error("Cuota not found");
+      }
+      cuota.setState(status);
+    });
+
+    await this.cuotaRepository.update(customer);
+
     return customer.getCuotas().map(cuotaDTO);
   }
 }
