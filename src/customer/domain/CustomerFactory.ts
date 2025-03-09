@@ -7,6 +7,7 @@ import { IModalidadCliente } from "./interfaces/IModalidadCliente";
 import { CustomerModalidad } from "./types";
 import { CloudCustomer } from "./valueObjects/CloudCustomer.vo";
 import { RegularCustomer } from "./valueObjects/RegularCustomer.vo";
+import { Pago } from "./pago.entity";
 
 export class CustomerFactory {
   static createCustomer(data: {
@@ -49,6 +50,7 @@ export class CustomerFactory {
           description: data.cloudCategory.description,
         }),
         data.cuotas?.map(Cuota.fromPersistence) || [],
+        data.pagos?.map(Pago.fromPersistence) || [],
       );
     } else {
       modalidad = new RegularCustomer();

@@ -1,9 +1,10 @@
 import { InferSchemaType, model, Schema } from "mongoose";
-import { CustomerModalidad, CustomerStatus } from "../../domain/types";
 import {
   CuotaPersistence,
   CuotaSchema,
 } from "../../../cuota/infraestrcture/cuota.schema";
+import { CustomerModalidad, CustomerStatus } from "../../domain/types";
+import { IPagoPersistence, PagoSchema } from "./pagoCuotas.schema";
 
 interface ICustomer extends Document {
   /* Common properties */
@@ -48,13 +49,15 @@ export const CustomerModel = model<ICustomer>("Customer", CustomerSchema);
 export interface ICloudCustomer extends ICustomer {
   cloudCategoryId: string;
   cuotas?: CuotaPersistence[];
+  pagos?: IPagoPersistence[];
 }
 
 export interface IRegularCustomer extends ICustomer {}
 
 const CloudCustomerSchema = new Schema<ICloudCustomer>({
   cloudCategoryId: { type: String, required: true },
-  cuotas: CuotaSchema,
+  cuotas: [CuotaSchema],
+  pagos: [PagoSchema],
 });
 
 const RegularCustomerSchema = new Schema<IRegularCustomer>({});

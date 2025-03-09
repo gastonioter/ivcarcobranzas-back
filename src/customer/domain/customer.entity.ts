@@ -4,8 +4,9 @@ import { IModalidadCliente } from "./interfaces/IModalidadCliente";
 import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { Customer } from "./interfaces/Customer";
-import { CloudCategory } from "@/cloudCategory/domain/cloudCategory.entity";
-import { Cuota, CuotaStatus } from "@/cuota/domain/cuota.entity";
+import { CloudCategory } from "../../cloudCategory/domain/cloudCategory.entity";
+import { Cuota, CuotaStatus } from "../../cuota/domain/cuota.entity";
+import { Pago } from "./pago.entity";
 
 export class CustomerEntity extends Entity {
   private firstName: string;
@@ -74,27 +75,20 @@ export class CustomerEntity extends Entity {
     return this.modalidad.getCategoriaPago();
   }
   addCuota(newCuota: Cuota): void {
-    const repetedCuota = this.getCuotas().find(
-      (cuota) =>
-        cuota.getMonth() == newCuota.getMonth() &&
-        cuota.getYear() == newCuota.getYear(),
-    );
-    if (repetedCuota) {
-      throw new Error("El cliente ya tiene una cuota para el mismo mes y año");
-    }
     this.modalidad.addCuota(newCuota);
   }
   getCuotas() {
     return this.modalidad.getCuotas();
   }
+  addPago(pago: Pago) {
+    this.modalidad.addPago(pago);
+  }
+  getPagos(): Pago[] {
+    return this.modalidad.getPagos();
+  }
 
   updateCuota(cuotaId: string, status: CuotaStatus) {
-    const cuotas = this.getCuotas();
-    const cuota = cuotas.find((cuota) => cuota.getId() === cuotaId);
-    if (!cuota) {
-      throw new Error("La cuota no existe");
-    }
-    cuota.setState(status);
+    this.modalidad.updateCuota(cuotaId, status);
   }
 }
 

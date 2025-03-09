@@ -1,3 +1,4 @@
+import { Pago } from "@/customer/domain/pago.entity";
 import { CloudCategoryDoc } from "../../cloudCategory/infraestructure/db.schema";
 import { CustomerFactory } from "../../customer/domain/CustomerFactory";
 import { CustomerEntity } from "../../customer/domain/customer.entity";
@@ -48,7 +49,8 @@ export class CuotaMongoRepository implements CuotaRepository {
       },
       {
         $set: {
-          cuotas: customer.getCuotas(),
+          cuotas: customer.getCuotas().map(mapCuota),
+          pagos: customer.getPagos().map(mapPago),
         },
       },
       {
@@ -74,4 +76,25 @@ export class CuotaMongoRepository implements CuotaRepository {
     }
     return CustomerFactory.fromPersistence(customer);
   }
+}
+function mapPago(pago: Pago) {
+  return {
+    uuid: pago.getId(),
+    cuotas: pago.getCuotas().map(mapCuota),
+    total: pago.getTotal(),
+    serie: pago.getSerie(),
+    createdAt: pago.getCreatedAt(),
+  };
+}
+
+function mapCuota(cuota: Cuota): any {
+  return {
+    uuid: cuota.getId(),
+    amount: cuota.getAmount(),
+    year: cuota.getYear(),
+    month: cuota.getMonth(),
+    createdAt: cuota.getCreatedAt(),
+    serie: cuota.getSerie(),
+    status: cuota.getStatus(),
+  };
 }

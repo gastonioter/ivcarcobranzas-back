@@ -1,3 +1,4 @@
+import { Pago } from "../../customer/domain/pago.entity";
 import { CustomerRepository } from "../../customer/domain/interfaces/CustomerRepository";
 import { CreateCuotaDTO } from "../adapters/inputCuotaDTO";
 import { CuotaDTO, cuotaDTO } from "../adapters/outputCuotaDTO";
@@ -46,6 +47,16 @@ export class CuotaUseCases {
     status: CuotaStatus,
   ) {
     const customer = await this.customerRepository.getCustomer(customerId);
+
+    if (status === CuotaStatus.PAID) {
+      const cuotas = customer
+        .getCuotas()
+        .filter((c) => cuotasId.includes(c.getId()));
+      const newPago = Pago.new(cuotas, customer.getPagos().length);
+      customer.addPago(newPago);
+    }
+
+    
     cuotasId.forEach((cuotaId) => {
       const cuota = customer.getCuotas().find((c) => c.getId() === cuotaId);
       if (!cuota) {
@@ -53,6 +64,7 @@ export class CuotaUseCases {
       }
       cuota.setState(status);
     });
+
 
     await this.cuotaRepository.update(customer);
 
