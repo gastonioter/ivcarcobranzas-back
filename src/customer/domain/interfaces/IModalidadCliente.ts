@@ -11,4 +11,5 @@ export interface IModalidadCliente {
   updateCuota(cuotaId: string, status: string): void;
   addPago(pago: Pago): void;
   getPagos(): Pago[];
+  getCuotasPtesPago(): Cuota[];
 }

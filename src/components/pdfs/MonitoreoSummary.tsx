@@ -1,26 +1,31 @@
+import { Cuota } from "@/cuota/domain/cuota.entity";
 import { PrintableTransaction } from "@/prints/types";
 import { formattedCurrency } from "../utils/formattedCurrency";
 import { formattedDate } from "../utils/formattedDate";
-import { formattedFullname } from "../utils/formattedFullname";
 
 const loadPDFRenderer = async () => {
   const pdfRenderer = await import("@react-pdf/renderer");
   return pdfRenderer;
 };
 
-export const Budget = async ({
+type PrintableMonitoreoSummary = Omit<
+  PrintableTransaction,
+  "details" | "transaction"
+> & {
+  cuotas: Cuota[];
+  totalAmount: number;
+};
+export const MonitoreoSummaryCmp = async ({
   company,
   customer,
-  details,
-  transaction,
-}: PrintableTransaction) => {
+  cuotas,
+  totalAmount,
+}: PrintableMonitoreoSummary) => {
   const { Document, Page, Text, View, StyleSheet, Image } =
     await loadPDFRenderer();
-  console.log(
-    formattedFullname(customer.firstName, customer.lastName),
-    formattedCurrency(details[0].price),
-  );
 
+  const { uuid = "" } = customer;
+  const accountId = uuid.split("-")[0];
   const styles = StyleSheet.create({
     page: {
       padding: 30,
@@ -35,11 +40,12 @@ export const Budget = async ({
       display: "flex",
       flexDirection: "row",
       gap: 4,
-      alignItems: "center",
+      alignItems: "flex-start",
     },
     logo: {
-      width: 60,
-      height: 60,
+      marginLeft: 2,
+      width: 65,
+      height: 56,
       objectFit: "cover",
     },
     companyContainer: {
@@ -73,7 +79,7 @@ export const Budget = async ({
     divider: {
       borderBottom: "1px solid #a9a9a9",
       marginBottom: 20,
-      width: "50%",
+      width: "55%",
     },
 
     /* ************* */
@@ -87,7 +93,7 @@ export const Budget = async ({
       marginBottom: 5,
     },
     text: {
-      fontSize: 12,
+      fontSize: 11,
       marginBottom: 2,
     },
     footer: {
@@ -134,25 +140,29 @@ export const Budget = async ({
       // borderStyle: "solid",
       // borderWidth: 1,
       // borderColor: "#383838",
+      borderBottom: "1px solid #1d1d1d",
     },
     tableRow: {
       flexDirection: "row",
+      borderBottom: "1px solid #cacaca",
     },
+
     tableColHeader: {
-      width: "25%",
-      borderBottom: "1px solid #383838",
-      // borderStyle: "solid",
-      // borderWidth: 1,
-      // borderColor: "#000",
+      width: "33.33%",
+      //   borderBottom: "1px solid #383838",
+      //   borderStyle: "solid",
+      //   borderWidth: 1,
+      //   borderColor: "#000",
       color: "#fff",
       backgroundColor: "#0A3B9C",
       padding: 5,
     },
+
     tableCol: {
-      width: "25%",
-      // borderStyle: "solid",
-      // borderWidth: 1,
-      // borderColor: "#383838",
+      width: "33.33%",
+      //   borderStyle: "solid",
+      //   borderWidth: 1,
+      //   borderColor: "#383838",
       padding: 5,
     },
     tableCellHeader: {
@@ -165,23 +175,25 @@ export const Budget = async ({
       fontSize: 10,
       textAlign: "center",
     },
+    tableColSummary: {},
+    tableColHeaderSummary: {},
 
     summary: {
-      borderTop: "1px solid #1d1d1d",
       padding: 5,
+
       color: "#000",
-      marginTop: 5,
+      marginTop: 10,
       display: "flex",
       flexDirection: "row",
-      justifyContent: "flex-end",
+      alignItems: "center",
+      justifyContent: "center",
       flexWrap: "wrap",
-      gap: 4,
+      gap: 6,
     },
     summaryItem: {
       fontWeight: "bold",
       padding: 5,
       textAlign: "center",
-      width: "25%",
       border: "1px solid #383838",
     },
   });
@@ -203,117 +215,99 @@ export const Budget = async ({
 
           {/* Datos del Recibo (ID, Fecha, etc.) */}
           <View style={styles.tipoComprobanteContainer}>
-            <Text style={styles.tipoComprobanteText}>PRESUPUESTO</Text>
-            <Text style={{ marginBottom: 2 }}>ID: {transaction.id}</Text>
-            <Text>Fecha: {formattedDate(transaction.date)}</Text>
+            <Text style={styles.tipoComprobanteText}>RESUMEN DE MONITOREO</Text>
+            <Text style={{ marginBottom: 2 }}>
+              CUENTA: {accountId.toUpperCase()}
+            </Text>
+            <Text>A la fecha: {formattedDate(new Date().toISOString())}</Text>
           </View>
         </View>
         <View style={styles.divider}></View>
         {/* Datos del Cliente */}
         <View style={styles.customerSection}>
-          <Text style={styles.text}>
-            CLIENTE: {customer.firstName.toUpperCase()}{" "}
+          <Text
+            style={{
+              backgroundColor: "#0A3B9C",
+              color: "#FFF",
+              padding: 2,
+              marginBottom: 3,
+            }}
+          >
+            Datos del cliente
+          </Text>
+          <Text style={{ ...styles.text }}>
+            Nombre: {customer.firstName.toUpperCase()}{" "}
             {customer.lastName.toUpperCase()}
           </Text>
 
-          <Text style={styles.text}>CELULAR: {customer.phone}</Text>
-          <Text style={styles.text}>EMAIL: {customer.email}</Text>
+          <Text style={styles.text}>Celular: {customer.phone}</Text>
+          <Text style={styles.text}>Email: {customer.email}</Text>
         </View>
         {/* Detalle de la Venta */}
         <View style={tableStyles.table}>
           {/* Encabezado de la tabla */}
           <View style={tableStyles.tableRow}>
-            <View style={tableStyles.tableColHeader}>
-              <Text style={tableStyles.tableCellHeader}>Cantidad</Text>
+            <View style={{ ...tableStyles.tableColHeader, width: "10%" }}>
+              <Text style={tableStyles.tableCellHeader}>#</Text>
             </View>
             <View style={tableStyles.tableColHeader}>
-              <Text style={tableStyles.tableCellHeader}>Descripción</Text>
+              <Text style={tableStyles.tableCellHeader}>Concepto</Text>
             </View>
             <View style={tableStyles.tableColHeader}>
-              <Text style={tableStyles.tableCellHeader}>Precio Unitario</Text>
+              <Text style={tableStyles.tableCellHeader}>Monto</Text>
             </View>
             <View style={tableStyles.tableColHeader}>
-              <Text style={tableStyles.tableCellHeader}>Total</Text>
+              <Text style={tableStyles.tableCellHeader}>Debe Total</Text>
             </View>
           </View>
 
           {/* Filas de la tabla */}
-          {details.map((item, index) => (
+          {cuotas.map((item, index) => (
             <View style={tableStyles.tableRow} key={index}>
-              <View style={tableStyles.tableCol}>
-                <Text style={tableStyles.tableCell}>{item.quantity}</Text>
+              <View style={{ ...tableStyles.tableCol, width: "10%" }}>
+                <Text style={tableStyles.tableCell}>{index + 1}</Text>
               </View>
               <View style={tableStyles.tableCol}>
                 <Text style={tableStyles.tableCell}>
-                  {item.description.toUpperCase()}
+                  {`CUOTA - ${String(item.getMonth()).padStart(2, "0")}/${item.getYear()}`}
                 </Text>
               </View>
               <View style={tableStyles.tableCol}>
                 <Text style={tableStyles.tableCell}>
-                  {formattedCurrency(item.price)}
+                  {formattedCurrency(item.getAmount())}
                 </Text>
               </View>
               <View style={tableStyles.tableCol}>
-                <Text style={tableStyles.tableCell}>
-                  {formattedCurrency(item.total)}
-                </Text>
+                <Text style={tableStyles.tableCell}></Text>
               </View>
             </View>
           ))}
-        </View>
-        {/* Totals Section */}
-        <View style={tableStyles.summary}>
-          <Text style={tableStyles.summaryItem}>
-            Subtotal: {formattedCurrency(transaction.subtotal)}
-          </Text>
-          <Text style={tableStyles.summaryItem}>
-            IVA ({transaction.iva}):
-            {formattedCurrency((transaction.subtotal * transaction.iva) / 100)}
-          </Text>
-          <Text style={{ ...tableStyles.summaryItem, width: "50.5%" }}>
-            Total: {formattedCurrency(transaction.total)}
-          </Text>
-        </View>
-
-        <View style={aclarationsStyles.section}>
-          <View style={aclarationsStyles.box}>
-            <Text style={aclarationsStyles.title}>Formas de Pago</Text>
-            <Text style={aclarationsStyles.text}>Pago en efectivo</Text>
-            <Text style={aclarationsStyles.text}>Transferencia bancaria</Text>
-            <Text style={aclarationsStyles.text}>
-              Pago con QR o billetera virtual
-            </Text>
-          </View>
-          <View style={aclarationsStyles.box}>
-            <Text style={aclarationsStyles.title}>Aclaraciones</Text>
-            <View style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              <Text style={aclarationsStyles.text}>
-                <Text style={{ textDecoration: "underline" }}>
-                  Tiempo de entrega
-                </Text>
-                : "El plazo estimado de entrega es de [X] días hábiles desde la
-                confirmación del pago."
-              </Text>
-              <Text style={aclarationsStyles.text}>
-                <Text style={{ textDecoration: "underline" }}>
-                  Costos de envío:
-                </Text>
-                "El envío dentro de [zona] es sin cargo. Para otras localidades,
-                consulte costos adicionales."
-              </Text>
-              <Text style={aclarationsStyles.text}>
-                "Todos nuestros productos/servicios cuentan con una garantía de
-                [X] meses/años contra defectos de fabricación."
-              </Text>
-              <Text style={aclarationsStyles.text}>
-                <Text style={{ textDecoration: "underline" }}>
-                  Seña o anticipo:
-                </Text>
-                "Para confirmar el pedido, se requiere un anticipo del [X]%. El
-                saldo se abonará antes de la entrega."
+          <View style={tableStyles.tableRow}>
+            <View style={{ ...tableStyles.tableCol, width: "10%" }}>
+              <Text style={tableStyles.tableCell}></Text>
+            </View>
+            <View style={tableStyles.tableCol}>
+              <Text style={tableStyles.tableCell}></Text>
+            </View>
+            <View style={tableStyles.tableCol}>
+              <Text style={tableStyles.tableCell}></Text>
+            </View>
+            <View style={tableStyles.tableCol}>
+              <Text
+                style={{
+                  ...tableStyles.tableCell,
+                  fontWeight: 900,
+                  fontSize: 18,
+                  padding: 2,
+                }}
+              >
+                {formattedCurrency(totalAmount)}
               </Text>
             </View>
           </View>
+        </View>
+
+        <View style={aclarationsStyles.section}>
           <View style={aclarationsStyles.box}>
             <Text style={aclarationsStyles.title}>Contacto</Text>
             <Text style={aclarationsStyles.text}>alarmasivcar@hotmail.com</Text>
@@ -322,11 +316,7 @@ export const Budget = async ({
           </View>
         </View>
         {/* Mensaje de Agradecimiento */}
-        <Text style={styles.footer}>
-          Estamos a su disposición para cualquier consulta o ajuste que
-          necesite. Para confirmar su aceptación, por favor comuníquese con
-          nosotros. Gracias por elegirnos!.
-        </Text>
+        <Text style={styles.footer}>Gracias por elegirnos!</Text>
       </Page>
     </Document>
   );

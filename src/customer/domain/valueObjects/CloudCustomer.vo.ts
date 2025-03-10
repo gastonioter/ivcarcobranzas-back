@@ -32,6 +32,13 @@ export class CloudCustomer implements IModalidadCliente {
     return this.cuotas;
   }
 
+  getCuotasPtesPago(): Cuota[] {
+    return this.cuotas.filter(
+      (cuota) =>
+        cuota.getStatus() === CuotaStatus.PENDING ||
+        cuota.getStatus() === CuotaStatus.LATE,
+    );
+  }
   getPagos(): Pago[] {
     return this.pagos;
   }

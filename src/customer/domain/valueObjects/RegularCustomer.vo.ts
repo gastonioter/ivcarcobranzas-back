@@ -17,6 +17,9 @@ export class RegularCustomer implements IModalidadCliente {
   getCuotas() {
     return [];
   }
+  getCuotasPtesPago(): Cuota[] {
+    return [];
+  }
   updateCuota(cuotaId: string, status: string): void {
     throw new Error("Regular customers cannot have cuotas");
   }

@@ -1,12 +1,10 @@
-import { PrintableTransaction } from "@/prints/types";
-import { formattedCurrency } from "../utils/formattedCurrency";
-import { formattedDate } from "../utils/formattedDate";
-import { formattedFullName } from "../utils/formattedFullname";
 import {
   AccountSummary,
   SummaryDetail,
 } from "@/customer/domain/customer.entity";
-import path from "path";
+import { PrintableTransaction } from "@/prints/types";
+import { formattedCurrency } from "../utils/formattedCurrency";
+import { formattedDate } from "../utils/formattedDate";
 
 const loadPDFRenderer = async () => {
   const pdfRenderer = await import("@react-pdf/renderer");

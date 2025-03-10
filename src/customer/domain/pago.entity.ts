@@ -38,7 +38,7 @@ export class Pago extends Entity {
     return new Pago(
       EntityId.fromExisting(pago.uuid),
       pago.cuotas.map((cuota: any) => Cuota.fromPersistence(cuota)),
-      pago.amount,
+      pago.total,
       pago.serie,
       pago.createdAt,
     );

@@ -90,6 +90,9 @@ export class CustomerEntity extends Entity {
   updateCuota(cuotaId: string, status: CuotaStatus) {
     this.modalidad.updateCuota(cuotaId, status);
   }
+  getCuotasPtesPago(): Cuota[] {
+    return this.modalidad.getCuotasPtesPago();
+  }
 }
 
 export interface AccountSummary {

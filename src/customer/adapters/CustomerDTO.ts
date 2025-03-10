@@ -1,6 +1,7 @@
 import { CuotaDTO, cuotaDTO } from "../../cuota/adapters/outputCuotaDTO";
 import { CustomerEntity } from "../domain/customer.entity";
 import { CustomerModalidad, CustomerStatus } from "../domain/types";
+import { PagoDTO } from "./pagoDTO";
 
 type ModalidadData =
   | {
@@ -11,6 +12,7 @@ type ModalidadData =
         uuid: string;
       };
       cuotas: CuotaDTO[];
+      pagos: PagoDTO[];
     }
   | {
       modalidad: CustomerModalidad.REGULAR;
@@ -45,6 +47,7 @@ export class CustomerDTO {
           uuid: customer.getPriceCategory()!.getId(),
         },
         cuotas: customer.getCuotas().map(cuotaDTO),
+        pagos: customer.getPagos().map(PagoDTO),
       };
     } else if (customer.getModalidad() === CustomerModalidad.REGULAR) {
       this.modalidadData = {
