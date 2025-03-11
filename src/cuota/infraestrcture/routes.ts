@@ -18,3 +18,8 @@ router.get("/:customerId", asyncHandler(ctrl.getCuotas.bind(ctrl)));
 router.post("/", asyncHandler(ctrl.createCuota.bind(ctrl)));
 
 router.patch("/", asyncHandler(ctrl.updateCuotasStatus.bind(ctrl)));
+router.patch("/:uuid", asyncHandler(ctrl.updateCuota.bind(ctrl)));
+
+
+router.post("/generateAll", asyncHandler(ctrl.generateAllCuotas.bind(ctrl)));
+

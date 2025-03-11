@@ -30,6 +30,7 @@ export const ReciboMonitoreo = async ({
   const { Document, Page, Text, View, StyleSheet, Image } =
     await loadPDFRenderer();
 
+  const debetotal = cuotasPtes.reduce((acc, item) => acc + item.getAmount(), 0);
   const { uuid = "" } = customer;
   const accountId = uuid.split("-")[0];
   const styles = StyleSheet.create({
@@ -373,7 +374,7 @@ export const ReciboMonitoreo = async ({
                       padding: 2,
                     }}
                   >
-                    {formattedCurrency(reciboData.totalAmount)}
+                    {formattedCurrency(debetotal)}
                   </Text>
                 </View>
               </View>

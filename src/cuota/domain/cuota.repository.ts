@@ -5,5 +5,6 @@ export interface CuotaRepository {
   save(customerId: string, cuota: Cuota): Promise<void>;
   update(customer: CustomerEntity): Promise<CustomerEntity>;
   findCustomerCuotas(customerId: string): Promise<CustomerEntity>;
+  updateCuota(customerId: string, cuota: Cuota): Promise<Cuota>;
   // countCuotas(customerId: string): Promise<number>;
 }

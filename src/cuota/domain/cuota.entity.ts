@@ -40,24 +40,27 @@ export class Cuota extends Entity {
     year,
     month,
     status,
+    facturaId,
   }: {
     amount: number;
     secuence: number;
     year: number;
     month: number;
     status: CuotaStatus.PENDING | CuotaStatus.NO_SERVICE;
+    facturaId?: string;
   }): Cuota {
     if (amount <= 0) throw new Error("El monto de la cuota es invalido");
 
-    const initialStatus = CuotaStatus.PENDING;
     const createdAt = new Date();
-    const serie = `CUOTA-${Cuota.generateSerie(secuence)}`;
+    const serie = facturaId
+      ? facturaId
+      : `CUOTA-${Cuota.generateSerie(secuence)}`;
     return new Cuota(
       EntityId.create(),
       month,
       year,
       amount,
-      initialStatus,
+      status,
       createdAt,
       serie,
     );
@@ -106,7 +109,15 @@ export class Cuota extends Entity {
     return this.serie;
   }
   setState(status: CuotaStatus) {
+    if (this.getStatus() === CuotaStatus.PAID) {
+      throw new Error("La cuota ya esta paga");
+    }
+
+    
     this.status = status;
+  }
+  setSerie(serie: string) {
+    this.serie = serie;
   }
 }
 

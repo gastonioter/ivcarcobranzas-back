@@ -4,13 +4,14 @@ import { CuotaUseCases } from "../application/cuotaUseCases";
 export class CuotaController {
   constructor(private readonly cuotaUseCases: CuotaUseCases) {}
   async createCuota(req: Request, res: Response) {
-    const { amount, customerId, month, year, status } = req.body;
+    const { amount, customerId, month, year, status, facturaId } = req.body;
     const cuota = await this.cuotaUseCases.addCuotaToCustomer({
       amount,
       customerId,
       month,
       year,
       status,
+      facturaId,
     });
     res.status(201).json(cuota);
   }
@@ -29,5 +30,20 @@ export class CuotaController {
       status,
     );
     res.status(200).json(cuotas);
+  }
+
+  async updateCuota(req: Request, res: Response) {
+    const { status, serie, customerId } = req.body;
+    const cuota = await this.cuotaUseCases.updateCuota(req.params.uuid, {
+      status,
+      serie,
+      customerId,
+    });
+    res.status(200).json(cuota);
+  }
+
+  async generateAllCuotas(req: Request, res: Response) {
+    const result = await this.cuotaUseCases.generateCurrentMonthCuotas();
+    res.status(200).json(result);
   }
 }

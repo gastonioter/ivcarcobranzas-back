@@ -61,6 +61,22 @@ export class CuotaMongoRepository implements CuotaRepository {
     return customer;
   }
 
+  async updateCuota(customerId: string, cuota: Cuota): Promise<Cuota> {
+    await CloudCustomerModel.findOneAndUpdate(
+      {
+        uuid: customerId,
+        "cuotas.uuid": cuota.getId(),
+      },
+      {
+        $set: {
+          "cuotas.$.status": cuota.getStatus(),
+          "cuotas.$.serie": cuota.getSerie(),
+        },
+      },
+    );
+    return cuota;
+  }
+
   async findCustomerCuotas(customerId: string): Promise<CustomerEntity> {
     const customer = await CustomerModel.findOne({ uuid: customerId })
       .populate<{

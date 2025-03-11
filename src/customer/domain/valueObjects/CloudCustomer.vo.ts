@@ -28,6 +28,18 @@ export class CloudCustomer implements IModalidadCliente {
     this.cuotas.push(newCuota);
   }
 
+  generateCuotaForCurrentMonth() {
+    const cuota = Cuota.new({
+      amount: this.getCategoriaPago().getPrice(),
+      status: CuotaStatus.PENDING,
+      month: new Date().getMonth() + 1,
+      year: new Date().getFullYear(),
+      secuence: this.getCuotas().length,
+    });
+
+    this.addCuota(cuota);
+  }
+
   getCuotas(): Cuota[] {
     return this.cuotas;
   }

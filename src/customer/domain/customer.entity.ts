@@ -93,6 +93,10 @@ export class CustomerEntity extends Entity {
   getCuotasPtesPago(): Cuota[] {
     return this.modalidad.getCuotasPtesPago();
   }
+
+  generateCuotaForCurrentMonth() {
+    this.modalidad.generateCuotaForCurrentMonth();
+  }
 }
 
 export interface AccountSummary {

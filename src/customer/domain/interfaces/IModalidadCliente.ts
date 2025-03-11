@@ -12,4 +12,5 @@ export interface IModalidadCliente {
   addPago(pago: Pago): void;
   getPagos(): Pago[];
   getCuotasPtesPago(): Cuota[];
+  generateCuotaForCurrentMonth(): void;
 }

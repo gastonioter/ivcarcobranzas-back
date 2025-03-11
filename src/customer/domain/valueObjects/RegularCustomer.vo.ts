@@ -30,4 +30,7 @@ export class RegularCustomer implements IModalidadCliente {
   getPagos() {
     return [];
   }
+  generateCuotaForCurrentMonth() {
+    throw new Error("Regular customers cannot have cuotas");
+  }
 }
