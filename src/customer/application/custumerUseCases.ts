@@ -17,6 +17,7 @@ import {
 } from "../domain/customer.entity";
 import { SaleMongoRepository } from "@/transaction/sale/infraestructure/sale.mongo";
 import { getCustomerSummaryAccount } from "../domain/services/AccountSummary";
+import connectDB from "@/config/mongo";
 
 export class CustomerUseCases {
   constructor(

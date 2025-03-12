@@ -12,10 +12,13 @@ import {
   CustomerModel,
   RegularCustomerModel,
 } from "../models/customer.schema";
+import { MongoDB } from "@/config/db";
 
 export class CustomerMongoRepository implements CustomerRepository {
+  constructor() {}
   async createCustomer(customer: CustomerEntity): Promise<CustomerEntity> {
     try {
+      await MongoDB.getInstance();
       const baseCustomerData = {
         uuid: customer.getId(),
         firstName: customer.getFirstName(),
