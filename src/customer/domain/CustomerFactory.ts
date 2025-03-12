@@ -17,6 +17,7 @@ export class CustomerFactory {
     phone: string;
     modalidad: CustomerModalidad;
     category?: CloudCategory | null;
+    cuit: string;
   }): CustomerEntity {
     let modalidad: IModalidadCliente;
 
@@ -36,6 +37,7 @@ export class CustomerFactory {
       data.email.getEmail(),
       data.phone,
       modalidad,
+      data.cuit,
     );
   }
 
@@ -65,23 +67,7 @@ export class CustomerFactory {
       status: data.status,
       modalidad,
       createdAt: data.createdAt,
+      cuit: data.cuit,
     });
   }
-}
-
-export interface IPersistedCustomer {
-  uuid: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  status: string;
-  modalidad: string;
-  modalidadData?: {
-    uuid: string;
-    name: string;
-    price: number;
-    description: string;
-  };
-  createdAt: Date;
 }

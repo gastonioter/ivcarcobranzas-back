@@ -21,6 +21,7 @@ export const createCustomerSchema = z.object({
   firstName: z.string().min(2),
   lastName: z.string().min(2),
   email: z.string().email(),
+  cuit: z.string().optional(),
   phone: phoneSchema,
   modalidadData: z.discriminatedUnion("modalidad", [
     LocalCustomerSchema,
@@ -28,10 +29,7 @@ export const createCustomerSchema = z.object({
   ]),
 });
 
-export const editCustomerSchema = createCustomerSchema.extend({
-  uuid: z.string().uuid(),
-  status: z.nativeEnum(CustomerStatus),
-});
+export const editCustomerSchema = createCustomerSchema.extend({});
 
 export const updateCustomerStatusSchema = z.object({
   status: z.nativeEnum(CustomerStatus),

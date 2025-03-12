@@ -13,6 +13,7 @@ export class CustomerEntity extends Entity {
   private lastName: string;
   private email: Email;
   private phone: string;
+  private cuit: string;
   private status: CustomerStatus;
   private modalidad: IModalidadCliente;
   private createdAt: Date;
@@ -25,6 +26,7 @@ export class CustomerEntity extends Entity {
     this.phone = customer.phone;
     this.status = customer.status;
     this.modalidad = customer.modalidad;
+    this.cuit = customer.cuit;
     this.createdAt = customer.createdAt;
   }
 
@@ -34,6 +36,7 @@ export class CustomerEntity extends Entity {
     email: string,
     phone: string,
     modalidad: IModalidadCliente,
+    cuit: string,
   ): CustomerEntity {
     return new CustomerEntity({
       uuid: EntityId.create(),
@@ -44,6 +47,7 @@ export class CustomerEntity extends Entity {
       status: CustomerStatus.ACTIVE,
       createdAt: new Date(),
       modalidad,
+      cuit: cuit || "-",
     });
   }
 
@@ -76,6 +80,9 @@ export class CustomerEntity extends Entity {
   }
   addCuota(newCuota: Cuota): void {
     this.modalidad.addCuota(newCuota);
+  }
+  getCuit() {
+    return this.cuit;
   }
   getCuotas() {
     return this.modalidad.getCuotas();

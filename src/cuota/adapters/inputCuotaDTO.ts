@@ -19,6 +19,7 @@ const UpdateCuotasSchema = z.object({
 const updateCuotaSchema = z.object({
   status: z.nativeEnum(CuotaStatus),
   serie: z.string(),
+  monto: z.number(),
   customerId: z.string().uuid(),
 });
 

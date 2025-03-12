@@ -33,11 +33,12 @@ export class CuotaController {
   }
 
   async updateCuota(req: Request, res: Response) {
-    const { status, serie, customerId } = req.body;
+    const { status, serie, customerId, monto } = req.body;
     const cuota = await this.cuotaUseCases.updateCuota(req.params.uuid, {
       status,
       serie,
       customerId,
+      monto,
     });
     res.status(200).json(cuota);
   }

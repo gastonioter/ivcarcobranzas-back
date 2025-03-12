@@ -25,6 +25,6 @@ export class Email extends ValueObject<EmailValueProps> {
   }
 
   private static isValidEmail(email: string): boolean {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    return email.includes("@");
   }
 }

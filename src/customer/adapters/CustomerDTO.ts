@@ -20,6 +20,8 @@ type ModalidadData =
 
 export class CustomerDTO {
   public readonly uuid: string;
+  public readonly cuit: string;
+
   public readonly firstName: string;
   public readonly lastName: string;
   public readonly email: string;
@@ -36,6 +38,7 @@ export class CustomerDTO {
     this.phone = customer.getPhone();
     this.status = customer.getStatus();
     this.createdAt = customer.getCreatedAt();
+    this.cuit = customer.getCuit();
 
     /* Inject the specific depending on the Customer */
     if (customer.getModalidad() === CustomerModalidad.CLOUD) {

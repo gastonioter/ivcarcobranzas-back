@@ -71,6 +71,7 @@ export class CuotaMongoRepository implements CuotaRepository {
         $set: {
           "cuotas.$.status": cuota.getStatus(),
           "cuotas.$.serie": cuota.getSerie(),
+          "cuotas.$.amount": cuota.getAmount(),
         },
       },
     );

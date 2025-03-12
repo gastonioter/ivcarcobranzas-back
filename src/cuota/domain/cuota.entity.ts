@@ -113,8 +113,10 @@ export class Cuota extends Entity {
       throw new Error("La cuota ya esta paga");
     }
 
-    
     this.status = status;
+  }
+  setAmount(amount: number) {
+    this.amount = amount;
   }
   setSerie(serie: string) {
     this.serie = serie;

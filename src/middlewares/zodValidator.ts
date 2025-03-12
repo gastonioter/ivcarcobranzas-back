@@ -6,6 +6,7 @@ export function zodValidator(zodSchema: z.Schema) {
     try {
       console.log(req.body);
       await zodSchema.parseAsync(req.body);
+
       next();
     } catch (err) {
       if (err instanceof z.ZodError) {

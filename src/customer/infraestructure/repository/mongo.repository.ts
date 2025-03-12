@@ -22,6 +22,7 @@ export class CustomerMongoRepository implements CustomerRepository {
         lastName: customer.getLastName(),
         email: customer.getEmail(),
         phone: customer.getPhone(),
+        cuit: customer.getCuit(),
         modalidad: customer.getModalidad(),
         status: customer.getStatus(),
         createdAt: customer.getCreatedAt(),
@@ -63,6 +64,7 @@ export class CustomerMongoRepository implements CustomerRepository {
         firstName: customer.firstName,
         lastName: customer.lastName,
         email: customer.email,
+        cuit: customer.cuit || "-",
         phone: customer.phone,
         modalidad: customer.modalidadData.modalidad,
       };
@@ -84,7 +86,7 @@ export class CustomerMongoRepository implements CustomerRepository {
             uuid,
             status: current.status,
             createdAt: current.createdAt,
-            categoryPriceId: customer.modalidadData.cloudCategoryId,
+            cloudCategoryId: customer.modalidadData.cloudCategoryId,
           });
         } else {
           await RegularCustomerModel.create({
@@ -121,6 +123,7 @@ export class CustomerMongoRepository implements CustomerRepository {
       }
       return CustomerFactory.fromPersistence(toReturn);
     } catch (e) {
+      console.log(e);
       if (
         e instanceof mongo.MongoServerError &&
         e.code === 11000 &&
@@ -152,9 +155,11 @@ export class CustomerMongoRepository implements CustomerRepository {
         .populate<{ cloudCategory?: CloudCategoryDoc }>("cloudCategory")
         .exec();
 
-      const toReturn = this.findByIdAndPopulate(uuid);
+      const toReturn = await this.findByIdAndPopulate(uuid);
+      console.log(toReturn);
       return CustomerFactory.fromPersistence(toReturn);
     } catch (e) {
+      console.log(e);
       if (e instanceof mongoose.Error.DocumentNotFoundError) {
         throw new CustomerNotFoundError();
       }

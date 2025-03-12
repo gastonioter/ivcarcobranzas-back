@@ -4,6 +4,7 @@ import { CreateCuotaDTO, UpdateCuotaDTO } from "../adapters/inputCuotaDTO";
 import { CuotaDTO, cuotaDTO } from "../adapters/outputCuotaDTO";
 import { Cuota, CuotaStatus } from "../domain/cuota.entity";
 import { CuotaRepository } from "../domain/cuota.repository";
+import { CustomerStatus } from "../../customer/domain/types";
 
 export class CuotaUseCases {
   constructor(
@@ -73,26 +74,23 @@ export class CuotaUseCases {
 
   async updateCuota(
     cuotaId: string,
-    { serie, status, customerId }: UpdateCuotaDTO,
+    { serie, status, customerId, monto }: UpdateCuotaDTO,
   ) {
     const customer = await this.cuotaRepository.findCustomerCuotas(customerId);
     if (!customer) {
       throw new Error("Customer not found");
     }
-    console.log(cuotaId);
-    console.log(customer.getCuotas()[0].getId());
 
     const cuotaToUpdate = customer
       .getCuotas()
       .find((c) => c.getId() === cuotaId);
-
-    console.log(cuotaToUpdate);
 
     if (!cuotaToUpdate) {
       throw new Error("Cuota not found");
     }
     cuotaToUpdate.setSerie(serie);
     cuotaToUpdate.setState(status);
+    cuotaToUpdate.setAmount(monto);
 
     await this.cuotaRepository.updateCuota(customerId, cuotaToUpdate);
 
@@ -104,8 +102,10 @@ export class CuotaUseCases {
 
     customers.forEach((customer) => {
       try {
-        customer.generateCuotaForCurrentMonth();
-        this.cuotaRepository.update(customer);
+        if (customer.getStatus() == CustomerStatus.ACTIVE) {
+          customer.generateCuotaForCurrentMonth();
+          this.cuotaRepository.update(customer);
+        }
       } catch {
         // puede que el cliente ya tenga la cuota generada
         // puede que ese cliente no sea cloud

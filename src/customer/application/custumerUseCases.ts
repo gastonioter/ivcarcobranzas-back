@@ -70,6 +70,7 @@ export class CustomerUseCases {
       modalidad: customer.modalidadData.modalidad,
       email: Email.fromExisting(customer.email),
       category: categoriaPago,
+      cuit: customer.cuit || "-",
     });
 
     const saved = await this.customerRepository.createCustomer(customerEntity);
