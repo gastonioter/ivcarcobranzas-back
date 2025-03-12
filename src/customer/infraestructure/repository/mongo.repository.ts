@@ -170,7 +170,6 @@ export class CustomerMongoRepository implements CustomerRepository {
 
   async deleteCustomer(uuid: string): Promise<void> {
     await CustomerModel.findOneAndDelete({ uuid });
-    throw new Error("Method not implemented.");
   }
 
   async getCustomer(uuid: string): Promise<CustomerEntity> {

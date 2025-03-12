@@ -1,7 +1,8 @@
-import { MongoPriceCategoryRepository } from "../../../cloudCategory/infraestructure/db.mongo";
 import { Router } from "express";
+import { MongoPriceCategoryRepository } from "../../../cloudCategory/infraestructure/db.mongo";
 import { asyncHandler } from "../../../middlewares/asyncHandlerMiddleware";
 import { zodValidator } from "../../../middlewares/zodValidator";
+import { SaleMongoRepository } from "../../../transaction/sale/infraestructure/sale.mongo";
 import {
   createCustomerSchema,
   editCustomerSchema,
@@ -10,8 +11,6 @@ import {
 import { CustomerUseCases } from "../../application/custumerUseCases";
 import { CustomerController } from "../controllers/customer.ctrl";
 import { CustomerMongoRepository } from "../repository/mongo.repository";
-import { SaleMongoRepository } from "../../../transaction/sale/infraestructure/sale.mongo";
-import { route } from "@/user/infraestructure/routes/user.route";
 
 export const routes = Router();
 
@@ -47,4 +46,4 @@ routes.post(
   asyncHandler(customerController.updateStatus),
 );
 
-routes.delete("/:uuid", asynCustomerEntitycHandler(customerController.delete));
+routes.delete("/:uuid", asyncHandler(customerController.delete));

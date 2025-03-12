@@ -1,7 +1,6 @@
-import { CustomerEntity } from "../customer.entity";
 import { EditCustomerDTO } from "../../adapters/CreateCustomerDTO";
+import { CustomerEntity } from "../customer.entity";
 import { CustomerStatus } from "../types";
-import { Cuota } from "../../../cuota/domain/cuota.entity";
 
 export interface CustomerRepository {
   createCustomer(customer: CustomerEntity): Promise<CustomerEntity>;
