@@ -1,4 +1,4 @@
-import { MongoDB } from "../../../config/db";
+import connectDB from "../../../config/mongo";
 import mongoose, { mongo } from "mongoose";
 import { CloudCategoryDoc } from "../../../cloudCategory/infraestructure/db.schema";
 import { EditCustomerDTO } from "../../adapters/CreateCustomerDTO";
@@ -17,7 +17,7 @@ export class CustomerMongoRepository implements CustomerRepository {
   constructor() {}
   async createCustomer(customer: CustomerEntity): Promise<CustomerEntity> {
     try {
-      await MongoDB.getInstance();
+      await connectDB();
       const baseCustomerData = {
         uuid: customer.getId(),
         firstName: customer.getFirstName(),

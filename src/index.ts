@@ -6,7 +6,6 @@ import { userRoutes } from "./user";
 
 import morgan from "morgan";
 import { categoriesRoutes } from "./category";
-import { MongoDB } from "./config/db";
 import { customerRoutes } from "./customer";
 import { authorizationMiddleware } from "./middlewares/authorizationMiddleware";
 import errorHandler from "./middlewares/errorHandlerMiddleware";
@@ -57,7 +56,7 @@ app.use("/api/cuotas", cuotaRoutes);
 
 app.use(errorHandler);
 
-MongoDB.getInstance().then(() => {
+connectDB().then(() => {
   app.listen(API_PORT, () => {
     console.log(`🚀 Server is running on port ${API_PORT} `);
   });

@@ -1,23 +1,17 @@
+import { SaleMongoRepository } from "@/transaction/sale/infraestructure/sale.mongo";
+import { CloudCategory } from "../../cloudCategory/domain/cloudCategory.entity";
 import { MongoPriceCategoryRepository } from "../../cloudCategory/infraestructure/db.mongo";
+import { Email } from "../../shared/valueObjects/email.vo";
 import {
   CreateCustomerDTO,
   EditCustomerDTO,
 } from "../adapters/CreateCustomerDTO";
 import { CustomerDTO } from "../adapters/CustomerDTO";
-import { CustomerRepository } from "../domain/interfaces/CustomerRepository";
-import { CustomerModalidad, CustomerStatus } from "../domain/types";
+import { AccountSummary } from "../domain/customer.entity";
 import { CustomerFactory } from "../domain/CustomerFactory";
-import { EntityId } from "../../shared/valueObjects/entityId.vo";
-import { Email } from "../../shared/valueObjects/email.vo";
-import { CloudCategory } from "../../cloudCategory/domain/cloudCategory.entity";
-import {
-  CustomerEntity,
-  AccountSummary,
-  SummaryDetail,
-} from "../domain/customer.entity";
-import { SaleMongoRepository } from "@/transaction/sale/infraestructure/sale.mongo";
+import { CustomerRepository } from "../domain/interfaces/CustomerRepository";
 import { getCustomerSummaryAccount } from "../domain/services/AccountSummary";
-import connectDB from "@/config/mongo";
+import { CustomerModalidad, CustomerStatus } from "../domain/types";
 
 export class CustomerUseCases {
   constructor(
