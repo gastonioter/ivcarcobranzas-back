@@ -39,6 +39,10 @@ export class CustomerUseCases {
     return customers.map((customer) => new CustomerDTO(customer));
   };
 
+  deleteCustomer = async (uuid: string) => {
+    await this.customerRepository.deleteCustomer(uuid);
+  };
+
   createCustomer = async (
     customer: CreateCustomerDTO,
   ): Promise<CustomerDTO> => {

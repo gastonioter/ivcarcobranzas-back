@@ -34,6 +34,11 @@ export class CustomerController {
     res.status(200).json(customer);
   };
 
+  public delete = async (req: Request, res: Response) => {
+    const { uuid } = req.params;
+    await this.customerUseCases.deleteCustomer(uuid);
+    res.status(204).send();
+  }
   public accountSummary = async (req: Request, res: Response) => {
     const { uuid } = req.params;
     const summary = await this.customerUseCases.accountSummary(uuid);

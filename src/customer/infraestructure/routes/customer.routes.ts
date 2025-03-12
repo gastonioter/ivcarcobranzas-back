@@ -11,6 +11,7 @@ import { CustomerUseCases } from "../../application/custumerUseCases";
 import { CustomerController } from "../controllers/customer.ctrl";
 import { CustomerMongoRepository } from "../repository/mongo.repository";
 import { SaleMongoRepository } from "../../../transaction/sale/infraestructure/sale.mongo";
+import { route } from "@/user/infraestructure/routes/user.route";
 
 export const routes = Router();
 
@@ -45,3 +46,5 @@ routes.post(
   zodValidator(updateCustomerStatusSchema),
   asyncHandler(customerController.updateStatus),
 );
+
+routes.delete("/:uuid", asynCustomerEntitycHandler(customerController.delete));

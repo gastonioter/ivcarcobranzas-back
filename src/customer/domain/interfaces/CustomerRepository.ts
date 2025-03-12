@@ -9,7 +9,7 @@ export interface CustomerRepository {
     uuid: string,
     customer: EditCustomerDTO,
   ): Promise<CustomerEntity>;
-  deleteCustomer(uuid: string): Promise<CustomerEntity>;
+  deleteCustomer(uuid: string): Promise<void>;
   getCustomer(uuid: string): Promise<CustomerEntity>;
   checkIfExistsOne(email: string, phone: string): Promise<boolean>;
   updateStatus(
