@@ -1,7 +1,7 @@
-import { Email } from "@/shared/valueObjects/email.vo";
+import { Email } from "../../../shared/valueObjects/email.vo";
 import { CustomerStatus } from "../types";
 import { IModalidadCliente } from "./IModalidadCliente";
-import { EntityId } from "@/shared/valueObjects/entityId.vo";
+import { EntityId } from "../../../shared/valueObjects/entityId.vo";
 
 export type Customer = {
   uuid: EntityId;

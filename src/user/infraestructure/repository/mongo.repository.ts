@@ -1,7 +1,6 @@
 import { UserEntity } from "user/domain/user.entity";
 import { UserRepository } from "user/domain/user.repository";
 import { UserModel } from "../models/user.schema";
-import { UserValue } from "@/user/domain/user.value";
 
 export class MongoRepository implements UserRepository {
   constructor() {}

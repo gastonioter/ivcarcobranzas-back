@@ -9,6 +9,7 @@ const EnvVariablesSchema = z.object({
   MONGO_HOST: z.string(),
   MONGO_PORT: z.string(),
   MONGO_DB: z.string(),
+  MONGO_URL: z.string().optional(),
   JWT_SECRET: z.string(),
   RESEND_API_KEY: z.string(),
   ULTRAMSG_TOKEN: z.string(),
