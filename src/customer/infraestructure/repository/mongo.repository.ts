@@ -50,6 +50,7 @@ export class CustomerMongoRepository implements CustomerRepository {
   }
 
   async checkIfExistsOne(email: string, phone: string): Promise<boolean> {
+    await connectDB();
     const customer = await CustomerModel.findOne({
       $or: [{ email }, { phone }],
     });
@@ -62,6 +63,7 @@ export class CustomerMongoRepository implements CustomerRepository {
     customer: EditCustomerDTO,
   ): Promise<CustomerEntity> {
     try {
+      await connectDB();
       const baseCustomerData = {
         firstName: customer.firstName,
         lastName: customer.lastName,
@@ -142,6 +144,7 @@ export class CustomerMongoRepository implements CustomerRepository {
     status: CustomerStatus,
   ): Promise<CustomerEntity | null> {
     try {
+      await connectDB();
       await CustomerModel.findOneAndUpdate(
         {
           uuid,
@@ -175,6 +178,7 @@ export class CustomerMongoRepository implements CustomerRepository {
   }
 
   async getCustomer(uuid: string): Promise<CustomerEntity> {
+    await connectDB();
     const customer = await this.findByIdAndPopulate(uuid);
     if (!customer) {
       throw new CustomerNotFoundError();
@@ -183,6 +187,8 @@ export class CustomerMongoRepository implements CustomerRepository {
   }
 
   async getCustomers(): Promise<CustomerEntity[]> {
+    await connectDB();
+
     const customersDoc = await CustomerModel.find({})
       .populate<{ cloudCategory?: CloudCategoryDoc }>("cloudCategory")
       .lean()
@@ -194,6 +200,7 @@ export class CustomerMongoRepository implements CustomerRepository {
   }
 
   private async findByIdAndPopulate(uuid: string) {
+    await connectDB();
     return await CustomerModel.findOne({ uuid })
       // solo existe si es un cliente cloud, sino es null
       .populate<{
