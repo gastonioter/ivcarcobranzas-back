@@ -1,4 +1,4 @@
-import { Cuota } from "../../../cuota/domain/cuota.entity";
+import { MongoDB } from "../../../config/db";
 import mongoose, { mongo } from "mongoose";
 import { CloudCategoryDoc } from "../../../cloudCategory/infraestructure/db.schema";
 import { EditCustomerDTO } from "../../adapters/CreateCustomerDTO";
@@ -12,7 +12,6 @@ import {
   CustomerModel,
   RegularCustomerModel,
 } from "../models/customer.schema";
-import { MongoDB } from "@/config/db";
 
 export class CustomerMongoRepository implements CustomerRepository {
   constructor() {}
