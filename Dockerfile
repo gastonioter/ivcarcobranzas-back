@@ -1,11 +1,31 @@
-# Usa la imagen oficial de MongoDB como base
-FROM mongo:latest
+FROM node:20
 
-# Copia tu archivo de configuración mongod.conf al contenedor
-COPY mongod.conf /etc/mongod.conf
+WORKDIR /home/node/app
 
-# Expone el puerto estándar de MongoDB
-EXPOSE 27017
+COPY package*.json ./
 
-# Inicia MongoDB usando el archivo de configuración
-CMD ["mongod", "--config", "/etc/mongod.conf"]
+COPY tsconfig.json ./
+
+RUN npm ci
+
+COPY . .
+
+RUN npm run build
+
+EXPOSE 3001
+
+CMD ["npm", "run", "start"]
+
+
+
+# # Usa la imagen oficial de MongoDB como base
+# FROM mongo:latest
+
+# # Copia tu archivo de configuración mongod.conf al contenedor
+# COPY mongod.conf /etc/mongod.conf
+
+# # Expone el puerto estándar de MongoDB
+# EXPOSE 27017
+
+# # Inicia MongoDB usando el archivo de configuración
+# CMD ["mongod", "--config", "/etc/mongod.conf"]

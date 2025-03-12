@@ -21,6 +21,7 @@ export class MongoDB {
         ? `${process.env.MONGO_URL}`
         : `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
 
+      console.log(MONGO_URI);
       const db = await mongoose.connect(MONGO_URI);
 
       MongoDB.connection = db.connection;
@@ -31,4 +32,3 @@ export class MongoDB {
     }
   }
 }
-
