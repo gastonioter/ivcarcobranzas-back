@@ -7,6 +7,7 @@ const userSchema = new Schema({
   email: { type: String, required: true, unique: true },
   role: { type: String, required: true, enum: Object.values(Roles) },
   uuid: { type: String, required: true, unique: true },
+  fullname: { type: String, required: true },
   createdAt: { type: Date, required: true },
 });
 

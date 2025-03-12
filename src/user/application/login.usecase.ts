@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { LoginError } from "../domain/user.exceptions";
 import { UserRepository } from "../domain/user.repository";
-import { LoginRequestDTO } from "../domain/user.value";
+import { LoginRequestDTO } from "../domain/user.validations";
 
 export class LoginUseCase {
   constructor(private readonly userRepository: UserRepository) {}
@@ -21,9 +21,9 @@ export class LoginUseCase {
     }
 
     const token = jwt.sign(
-      { id: user.uuid, role: user.role },
+      { userId: user.uuid, role: user.role },
       process.env.JWT_SECRET!,
-      { expiresIn: "1d" }
+      { expiresIn: "1d" },
     );
     return token;
   }
