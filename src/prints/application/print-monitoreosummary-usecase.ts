@@ -1,26 +1,55 @@
+import { formattedFullname } from "../../components/utils/formattedFullname";
+import { MonitoreoSummaryCmp } from "../../components/pdfs/MonitoreoSummary";
 import { Cuota } from "../../cuota/domain/cuota.entity";
 import { CustomerRepository } from "../../customer/domain/interfaces/CustomerRepository";
+import { sendDocument } from "../../shared/infraestructure/sendDocument";
+import { base64 } from "../../shared/utils/base64";
+import { generatePdfFile } from "../../shared/utils/generatePdf";
 import { companyInfo } from "../constants";
-import { MonitoreoSummaryCmp } from "../../components/pdfs/MonitoreoSummary";
-let renderToStream: any;
+import { formattedCurrency } from "../../components/utils/formattedCurrency";
 
 export interface MonitoreoSummary {
   cuotas: Cuota[];
   totalAmount: number;
 }
+
+export enum SendMethods {
+  WPP = "WPP",
+  EMAIL = "EMAIL",
+}
+
+type Result = Promise<{
+  result: string;
+  data?: any;
+}>;
+
+//📅 *Fecha límite:* [Fecha]
+//🔔 * Recuerda que puede
+
+const generateCaption = (
+  meses: Cuota[],
+  monto: number,
+  cantCuotas: number,
+) => `Hola 👋  
+Queremos recordarte que tienes *${cantCuotas} cuota(s) pendiente(s)* de tu servicio de automonitoreo.  
+
+📌 *Meses adeudados:*\n ${meses.map((m) => `- ${m.getMonth()}/${m.getYear()}`).join("\n")}
+💰 *Total a pagar:* ${formattedCurrency(monto)}
+
+✨ *SALUDOS, IVCAR*`;
+
+// TODO: implement Strategy Pattern
 export class PrintMonitoreoSummaryUseCase {
   constructor(private readonly customerRepo: CustomerRepository) {}
 
-  async print(customerId: string) {
+  async print(customerId: string, sendMethod?: SendMethods): Result {
     const customer = await this.customerRepo.getCustomer(customerId);
+
     if (!customer) {
       throw new Error("Customer not found");
     }
 
-    if (!renderToStream) {
-      renderToStream = (await import("@react-pdf/renderer")).renderToStream;
-    }
-
+    // DATA
     const monitoreoSummary: MonitoreoSummary = {
       cuotas: customer.getCuotasPtesPago(),
       totalAmount: customer
@@ -28,25 +57,73 @@ export class PrintMonitoreoSummaryUseCase {
         .reduce((acc, cuota) => acc + cuota.getAmount(), 0),
     };
 
-    const date = new Date();
-    const pdfStream = await renderToStream(
-      await MonitoreoSummaryCmp({
-        company: companyInfo,
-        customer: {
-          email: customer.getEmail(),
-          firstName: customer.getFirstName(),
-          lastName: customer.getLastName(),
-          phone: customer.getPhone(),
-          uuid: customer.getId(),
-        },
-        cuotas: monitoreoSummary.cuotas,
-        totalAmount: monitoreoSummary.totalAmount,
-      }),
+    // HTML
+    const document = await MonitoreoSummaryCmp({
+      company: companyInfo,
+      customer: {
+        email: customer.getEmail(),
+        firstName: customer.getFirstName(),
+        lastName: customer.getLastName(),
+        phone: customer.getPhone(),
+        uuid: customer.getId(),
+      },
+      cuotas: monitoreoSummary.cuotas,
+      totalAmount: monitoreoSummary.totalAmount,
+    });
+
+    const today = new Date().toLocaleDateString();
+    const fullname = formattedFullname(
+      customer.getFirstName(),
+      customer.getLastName(),
     );
+    // SPECIFIC IMPLEMENTATIONS
+
+    if (!sendMethod) {
+      // render to stream
+
+      const { renderToStream } = await import("@react-pdf/renderer");
+
+      const pdfStream = await renderToStream(document);
+      return {
+        result: "success",
+        data: {
+          pdfStream,
+          filename: `RSM_MONIT-${fullname.trim()}-${today}`.toUpperCase(),
+        },
+      };
+    }
+
+    if (sendMethod === SendMethods.WPP) {
+      // send wpp
+      const { pdfBuffer } = await generatePdfFile(
+        "RESUMENT-MONITOREO",
+        document,
+      );
+      const pdfBase64 = base64(pdfBuffer);
+
+      await sendDocument({
+        pdf: pdfBase64,
+        to: customer.getPhone(),
+        caption: generateCaption(
+          monitoreoSummary.cuotas,
+          monitoreoSummary.totalAmount,
+          monitoreoSummary.cuotas.length,
+        ),
+        filename: `RSM_MONITOREO-${fullname.trim()}-${today}`.toUpperCase(),
+      });
+      return {
+        result: "success",
+      };
+    }
+
+    if (sendMethod === SendMethods.EMAIL) {
+      return {
+        result: "success",
+      };
+    }
+
     return {
-      pdfStream,
-      filename:
-        `RSM-MONITOREO-${date.getDate()}/${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}-${customer.getId().split("-")[0]}`.toUpperCase(),
+      result: "error",
     };
   }
 }

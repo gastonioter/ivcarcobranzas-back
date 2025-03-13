@@ -1,8 +1,17 @@
 import axios from "axios";
 
-export const sendDocument = async (pdf: string, to: string) => {
-
-  
+interface SendDocumentProps {
+  pdf: string;
+  to: string;
+  caption: string;
+  filename: string;
+}
+export const sendDocument = async ({
+  pdf,
+  to,
+  caption,
+  filename,
+}: SendDocumentProps) => {
   const instanceId = process.env.ULTRAMSG_INSTANCE_ID;
   const token = process.env.ULTRAMSG_TOKEN;
 
@@ -11,9 +20,9 @@ export const sendDocument = async (pdf: string, to: string) => {
   const payload = {
     token,
     to,
-    filename: "documento.pdf",
+    filename,
     document: pdf,
-    caption: "Aquí tienes tu documento PDF.",
+    caption,
   };
 
   try {

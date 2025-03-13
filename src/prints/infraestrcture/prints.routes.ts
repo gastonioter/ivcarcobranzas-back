@@ -51,3 +51,8 @@ router.get(
   "/monit-recipt/:customerId/:paymentId",
   asyncHandler(ctrl.printReciboMonitore.bind(ctrl)),
 );
+
+router.post(
+  "/rsmmonit/:uuid",
+  asyncHandler(ctrl.printMonitoreoSummary.bind(ctrl)),
+);

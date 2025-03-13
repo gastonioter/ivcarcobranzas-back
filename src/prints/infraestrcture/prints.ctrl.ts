@@ -37,20 +37,25 @@ export class PrintsController {
 
   async printSale(req: Request, res: Response) {
     const { uuid } = req.params;
+    const { sendMethod } = req.body;
 
-    const { pdfStream, filename } = await this.printSaleUseCase.printSale(uuid);
+    if (!sendMethod) {
+      const { pdfStream, filename } =
+        await this.printSaleUseCase.printSale(uuid);
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=${filename}.pdf`,
+      );
+      pdfStream.pipe(res);
+      pdfStream.on("end", () => res.end());
+      pdfStream.on("error", (error: any) => {
+        console.error(error);
+        res.status(500).end();
+      });
 
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=${filename}.pdf`,
-    );
-    pdfStream.pipe(res);
-    pdfStream.on("end", () => res.end());
-    pdfStream.on("error", (error: any) => {
-      console.error(error);
-      res.status(500).end();
-    });
+      return;
+    }
   }
 
   async printRecibo(req: Request, res: Response) {
@@ -76,6 +81,10 @@ export class PrintsController {
 
   async printAccountSummary(req: Request, res: Response) {
     const { uuid } = req.params;
+    const { sendMethod } = req.body;
+
+    if (!sendMethod) {
+    }
     const { pdfStream, filename } =
       await this.printAccountSummaryUseCase.print(uuid);
     res.setHeader("Content-Type", "application/pdf");
@@ -93,19 +102,35 @@ export class PrintsController {
 
   async printMonitoreoSummary(req: Request, res: Response) {
     const { uuid } = req.params;
-    const { pdfStream, filename } =
-      await this.printMonitoreoSummaryUseCase.print(uuid);
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=${filename}.pdf`,
+    const { sendMethod } = req.body;
+
+    if (!sendMethod) {
+      const { data } = await this.printMonitoreoSummaryUseCase.print(uuid);
+
+      const { pdfStream, filename } = data;
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=${filename}.pdf`,
+      );
+      pdfStream.pipe(res);
+      pdfStream.on("end", () => res.end());
+      pdfStream.on("error", (error: any) => {
+        console.error(error);
+        res.status(500).end();
+      });
+
+      return;
+    }
+
+    
+    const { result } = await this.printMonitoreoSummaryUseCase.print(
+      uuid,
+      sendMethod,
     );
-    pdfStream.pipe(res);
-    pdfStream.on("end", () => res.end());
-    pdfStream.on("error", (error: any) => {
-      console.error(error);
-      res.status(500).end();
-    });
+
+    res.send(result);
+    return;
   }
 
   async printReciboMonitore(req: Request, res: Response) {
