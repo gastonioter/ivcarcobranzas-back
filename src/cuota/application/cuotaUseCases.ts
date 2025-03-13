@@ -1,10 +1,9 @@
-import { Pago } from "../../customer/domain/pago.entity";
 import { CustomerRepository } from "../../customer/domain/interfaces/CustomerRepository";
+import { Pago } from "../../customer/domain/pago.entity";
 import { CreateCuotaDTO, UpdateCuotaDTO } from "../adapters/inputCuotaDTO";
 import { CuotaDTO, cuotaDTO } from "../adapters/outputCuotaDTO";
 import { Cuota, CuotaStatus } from "../domain/cuota.entity";
 import { CuotaRepository } from "../domain/cuota.repository";
-import { CustomerStatus } from "../../customer/domain/types";
 
 export class CuotaUseCases {
   constructor(

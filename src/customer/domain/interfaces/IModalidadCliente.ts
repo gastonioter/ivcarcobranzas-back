@@ -1,7 +1,7 @@
 import { Cuota } from "@/cuota/domain/cuota.entity";
 import { CloudCategory } from "../../../cloudCategory/domain/cloudCategory.entity";
-import { CustomerModalidad, CustomerStatus } from "../types";
 import { Pago } from "../pago.entity";
+import { CustomerModalidad, CustomerStatus } from "../types";
 
 export interface IModalidadCliente {
   getModalidad(): CustomerModalidad;
