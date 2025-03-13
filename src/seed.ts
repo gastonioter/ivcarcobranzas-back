@@ -1,5 +1,6 @@
 import fs from "fs";
-
+import dotenv from "dotenv";
+dotenv.config();
 import { CustomerFactory } from "./customer/domain/CustomerFactory";
 import { CustomerModalidad } from "./customer/domain/types";
 import { CloudCustomerModel } from "./customer/infraestructure/models/customer.schema";
@@ -12,8 +13,8 @@ const data = fs.readFileSync("cloudclients.json", "utf8");
 const jsonData = JSON.parse(data);
 
 async function connect() {
-  const MONGO_URI = `mongodb://${"localhost"}:${"27017"}/${"ivcarventas"}`;
-  const db = await mongoose.connect(MONGO_URI);
+  const MONGO_URI = `${process.env.MONGO_PUBLIC}`;
+  await mongoose.connect(MONGO_URI);
 }
 
 connect()
@@ -33,7 +34,7 @@ connect()
           firstName: customer.nombre || "nameee",
           lastName: customer.apellido || "apellido",
           email: Email.create(customer.user_email),
-          phone: customer.phone_number,
+          phone: customer.phone_number || "0000000000",
           modalidad: CustomerModalidad.CLOUD,
           category,
           cuit: customer.cuit ?? "-",

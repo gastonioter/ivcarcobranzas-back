@@ -6,3 +6,4 @@ assets/
 cloudclients.json
 .vercel
 .env
+src/seed.ts

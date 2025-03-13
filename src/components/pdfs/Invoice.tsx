@@ -200,7 +200,7 @@ export const Invoice = async ({
 
           {/* Datos del Recibo (ID, Fecha, etc.) */}
           <View style={styles.tipoComprobanteContainer}>
-            <Text style={styles.tipoComprobanteText}>COMPORBANTE DE VENTA</Text>
+            <Text style={styles.tipoComprobanteText}>COMPROBANTE DE VENTA</Text>
             <Text style={{ marginBottom: 2 }}>ID: {transaction.id}</Text>
             <Text>Fecha: {formattedDate(transaction.date)}</Text>
           </View>
