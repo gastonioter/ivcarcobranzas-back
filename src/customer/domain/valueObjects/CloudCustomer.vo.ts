@@ -1,9 +1,8 @@
 import { CloudCategory } from "../../../cloudCategory/domain/cloudCategory.entity";
-import { IModalidadCliente } from "../interfaces/IModalidadCliente";
-import { CustomerModalidad } from "../types";
 import { Cuota, CuotaStatus } from "../../../cuota/domain/cuota.entity";
-import { EntityId } from "@/shared/valueObjects/entityId.vo";
+import { IModalidadCliente } from "../interfaces/IModalidadCliente";
 import { Pago } from "../pago.entity";
+import { CustomerModalidad, CustomerStatus } from "../types";
 
 export class CloudCustomer implements IModalidadCliente {
   private category: CloudCategory;
@@ -28,10 +27,15 @@ export class CloudCustomer implements IModalidadCliente {
     this.cuotas.push(newCuota);
   }
 
-  generateCuotaForCurrentMonth() {
+  generateCuotaForCurrentMonth(customerStatus: CustomerStatus) {
+    const status =
+    customerStatus == CustomerStatus.ACTIVE
+        ? CuotaStatus.PENDING
+        : CuotaStatus.NO_SERVICE;
+
     const cuota = Cuota.new({
       amount: this.getCategoriaPago().getPrice(),
-      status: CuotaStatus.PENDING,
+      status,
       month: new Date().getMonth() + 1,
       year: new Date().getFullYear(),
       secuence: this.getCuotas().length,

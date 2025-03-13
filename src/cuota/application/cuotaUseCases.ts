@@ -102,10 +102,8 @@ export class CuotaUseCases {
 
     customers.forEach((customer) => {
       try {
-        if (customer.getStatus() == CustomerStatus.ACTIVE) {
-          customer.generateCuotaForCurrentMonth();
-          this.cuotaRepository.update(customer);
-        }
+        customer.generateCuotaForCurrentMonth();
+        this.cuotaRepository.update(customer);
       } catch {
         // puede que el cliente ya tenga la cuota generada
         // puede que ese cliente no sea cloud

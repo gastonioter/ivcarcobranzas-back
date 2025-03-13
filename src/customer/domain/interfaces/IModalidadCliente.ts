@@ -1,6 +1,6 @@
 import { Cuota } from "@/cuota/domain/cuota.entity";
 import { CloudCategory } from "../../../cloudCategory/domain/cloudCategory.entity";
-import { CustomerModalidad } from "../types";
+import { CustomerModalidad, CustomerStatus } from "../types";
 import { Pago } from "../pago.entity";
 
 export interface IModalidadCliente {
@@ -12,5 +12,5 @@ export interface IModalidadCliente {
   addPago(pago: Pago): void;
   getPagos(): Pago[];
   getCuotasPtesPago(): Cuota[];
-  generateCuotaForCurrentMonth(): void;
+  generateCuotaForCurrentMonth(customerStatus: CustomerStatus): void;
 }

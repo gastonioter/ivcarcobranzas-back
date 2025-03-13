@@ -1,12 +1,12 @@
-import { Email } from "../../shared/valueObjects/email.vo";
-import { CustomerModalidad, CustomerStatus } from "./types";
-import { IModalidadCliente } from "./interfaces/IModalidadCliente";
-import { Entity } from "../../shared/domain/Entity";
-import { EntityId } from "../../shared/valueObjects/entityId.vo";
-import { Customer } from "./interfaces/Customer";
 import { CloudCategory } from "../../cloudCategory/domain/cloudCategory.entity";
 import { Cuota, CuotaStatus } from "../../cuota/domain/cuota.entity";
+import { Entity } from "../../shared/domain/Entity";
+import { Email } from "../../shared/valueObjects/email.vo";
+import { EntityId } from "../../shared/valueObjects/entityId.vo";
+import { Customer } from "./interfaces/Customer";
+import { IModalidadCliente } from "./interfaces/IModalidadCliente";
 import { Pago } from "./pago.entity";
+import { CustomerModalidad, CustomerStatus } from "./types";
 
 export class CustomerEntity extends Entity {
   private firstName: string;
@@ -102,7 +102,7 @@ export class CustomerEntity extends Entity {
   }
 
   generateCuotaForCurrentMonth() {
-    this.modalidad.generateCuotaForCurrentMonth();
+    this.modalidad.generateCuotaForCurrentMonth(this.getStatus());
   }
 }
 
