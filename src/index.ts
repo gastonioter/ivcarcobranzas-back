@@ -27,7 +27,9 @@ app.use(cors());
 
 const API_PORT = process.env.API_PORT || 3000;
 
-app.use("/api/auth", userRoutes);
+
+
+app.use("/app/api/auth", userRoutes);
 
 /* private routes */
 
