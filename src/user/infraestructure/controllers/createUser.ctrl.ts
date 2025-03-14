@@ -9,12 +9,6 @@ export class CreateUserController {
     const user = req.body;
     const createdUser = await this.userUseCase.createUser(user);
 
-    const response: APIResponse<typeof createdUser> = {
-      message: "User created",
-      data: createdUser,
-      status: "success",
-    };
-
-    res.status(201).json(response);
+    res.status(200).json(createdUser);
   };
 }
