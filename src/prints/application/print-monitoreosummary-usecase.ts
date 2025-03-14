@@ -30,11 +30,11 @@ const generateCaption = (
   cantCuotas: number,
 ) =>
   `Estimado usuario:
-   Se adjunta resumen de cuenta del servicio *ALARMAS IVCAR*.
+  Se adjunta resumen de cuenta del servicio *ALARMAS IVCAR*.
    
-   Por favor, enviar comporbante. 
+  Por favor, enviar comporbante. 
    
-   Gracias por elegirnos!
+  _¡Gracias por elegirnos!_
    
    `;
 
