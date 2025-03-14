@@ -1,5 +1,5 @@
 import cors from "cors";
-import express, { Request, Response } from "express";
+import express from "express";
 
 import "./config/env";
 import { userRoutes } from "./user";
@@ -7,17 +7,16 @@ import { userRoutes } from "./user";
 import morgan from "morgan";
 import { categoriesRoutes } from "./category";
 import { customerRoutes } from "./customer";
-import { authorizationMiddleware } from "./middlewares/authorizationMiddleware";
 import errorHandler from "./middlewares/errorHandlerMiddleware";
 import { paymentRoutes } from "./payments";
 import { productRoutes } from "./product";
 import { SalesRoutes } from "./transaction/sale";
 
 import { CloudCategoryRoutes } from "./cloudCategory";
+import { MongoDB } from "./config/db";
+import { cuotaRoutes } from "./cuota";
 import { PrintRoutes } from "./prints";
 import { BudgetRoutes } from "./transaction/budget";
-import { cuotaRoutes } from "./cuota";
-import { MongoDB } from "./config/db";
 
 const app = express();
 
@@ -34,7 +33,6 @@ app.use("/api/auth", userRoutes);
 //app.use(authorizationMiddleware);
 
 app.use("/api/prints", PrintRoutes);
-
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/customers", customerRoutes);

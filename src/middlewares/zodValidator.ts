@@ -9,6 +9,7 @@ export function zodValidator(zodSchema: z.Schema) {
 
       next();
     } catch (err) {
+      
       if (err instanceof z.ZodError) {
         const message = Object.values(err.flatten().fieldErrors)
           .flat()
