@@ -28,19 +28,15 @@ const generateCaption = (
   meses: Cuota[],
   monto: number,
   cantCuotas: number,
-) => `*${name.toUpperCase()}* 👋  
-Le informamos que tiene *${cantCuotas} cuota(s) pendiente(s)* del servicio de automonitoreo.  
-
-📌 *Meses adeudados:*\n ${meses.map((m) => `- ${m.getMonth()}/${m.getYear()}`).join("\n")}
-💰 *Total a abonar:* ${formattedCurrency(monto)}
-
-🔔 Recuerda que puedes abonar a través de los siguientes métodos:
-- *Transferencia bancaria* alias: MANO.FECHA.PATIN
-- *Mercado Pago* alias: ivcar.mary.mp
-- *Efectivo*: en España 252, Laboulaye
-
-Cualquier consulta estamos a disposición.
-✨ *SALUDOS, IVCAR*`;
+) =>
+  `Estimado usuario:
+   Se adjunta resumen de cuenta del servicio *ALARMAS IVCAR*.
+   
+   Por favor, enviar comporbante. 
+   
+   Gracias por elegirnos!
+   
+   `;
 
 // TODO: implement Strategy Pattern
 export class PrintMonitoreoSummaryUseCase {
@@ -114,7 +110,7 @@ export class PrintMonitoreoSummaryUseCase {
           monitoreoSummary.totalAmount,
           monitoreoSummary.cuotas.length,
         ),
-        filename: `RSM_MONITOREO-${fullname.trim()}-${today}`.toUpperCase(),
+        filename: `RESUMEN_IVCAR-${fullname.trim()}-${today}`.toUpperCase(),
       });
       return {
         result: "success",
