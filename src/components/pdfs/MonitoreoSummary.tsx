@@ -311,17 +311,17 @@ export const MonitoreoSummaryCmp = async ({
           <View style={aclarationsStyles.box}>
             <Text style={aclarationsStyles.title}>Contacto</Text>
             <Text style={aclarationsStyles.text}>
-              Reclamos administrativos: 3385448574
+              Reclamos administrativos: 3385448575
             </Text>
             <Text style={aclarationsStyles.text}>
-              Reclamos tecnicos: 3385448580
+              Reclamos técnicos: 3385448580
             </Text>
             <Text style={aclarationsStyles.text}>www.ivcaralarmas.com</Text>
           </View>
           <View style={aclarationsStyles.box}>
             <Text style={aclarationsStyles.title}>Medios de Pago</Text>
             <Text style={aclarationsStyles.text}>
-              Transferencia Bancaria(Alias): MANO.FECHA.PATIN
+              Transferencia Bancaria (Alias): MANO.FECHA.PATIN
             </Text>
             <Text style={aclarationsStyles.text}>
               Mercado Pago (Alias): ivcar.mary.mp
