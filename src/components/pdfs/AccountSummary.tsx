@@ -310,7 +310,7 @@ export const AccountSummaryCmp = async ({
         <Text style={styles.footer}>
           Estamos a su disposición para cualquier consulta o ajuste que
           necesite. Para confirmar su aceptación, por favor comuníquese con
-          nosotros. Gracias por elegirnos!.
+          nosotros. ¡Gracias por elegirnos!
         </Text>
       </Page>
     </Document>

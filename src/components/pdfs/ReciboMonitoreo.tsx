@@ -396,7 +396,7 @@ export const ReciboMonitoreo = async ({
           </View>
         </View>
         {/* Mensaje de Agradecimiento */}
-        <Text style={styles.footer}>Gracias por elegirnos!</Text>
+        <Text style={styles.footer}>¡Gracias por elegirnos!</Text>
       </Page>
     </Document>
   );

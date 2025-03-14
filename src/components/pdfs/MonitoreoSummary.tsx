@@ -310,13 +310,27 @@ export const MonitoreoSummaryCmp = async ({
         <View style={aclarationsStyles.section}>
           <View style={aclarationsStyles.box}>
             <Text style={aclarationsStyles.title}>Contacto</Text>
-            <Text style={aclarationsStyles.text}>alarmasivcar@hotmail.com</Text>
-            <Text style={aclarationsStyles.text}>3385448583</Text>
+            <Text style={aclarationsStyles.text}>
+              Reclamos administrativos: 3385448574
+            </Text>
+            <Text style={aclarationsStyles.text}>
+              Reclamos tecnicos: 3385448580
+            </Text>
             <Text style={aclarationsStyles.text}>www.ivcaralarmas.com</Text>
+          </View>
+          <View style={aclarationsStyles.box}>
+            <Text style={aclarationsStyles.title}>Medios de Pago</Text>
+            <Text style={aclarationsStyles.text}>
+              Transferencia Bancaria(Alias): MANO.FECHA.PATIN
+            </Text>
+            <Text style={aclarationsStyles.text}>
+              Mercado Pago (Alias): ivcar.mary.mp
+            </Text>
+            <Text style={aclarationsStyles.text}>Efectivo: España 252</Text>
           </View>
         </View>
         {/* Mensaje de Agradecimiento */}
-        <Text style={styles.footer}>Gracias por elegirnos!</Text>
+        <Text style={styles.footer}>¡Gracias por elegirnos!</Text>
       </Page>
     </Document>
   );
