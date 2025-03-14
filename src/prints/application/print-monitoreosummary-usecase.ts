@@ -23,19 +23,23 @@ type Result = Promise<{
   data?: any;
 }>;
 
-//📅 *Fecha límite:* [Fecha]
-//🔔 * Recuerda que puede
-
 const generateCaption = (
+  name: string,
   meses: Cuota[],
   monto: number,
   cantCuotas: number,
-) => `Hola 👋  
-Queremos recordarte que tienes *${cantCuotas} cuota(s) pendiente(s)* de tu servicio de automonitoreo.  
+) => `*${name.toUpperCase()}* 👋  
+Le informamos que tiene *${cantCuotas} cuota(s) pendiente(s)* del servicio de automonitoreo.  
 
 📌 *Meses adeudados:*\n ${meses.map((m) => `- ${m.getMonth()}/${m.getYear()}`).join("\n")}
-💰 *Total a pagar:* ${formattedCurrency(monto)}
+💰 *Total a abonar:* ${formattedCurrency(monto)}
 
+🔔 Recuerda que puedes abonar a través de los siguientes métodos:
+- *Transferencia bancaria* al CBU: 1234567890123456789012
+- *Mercado Pago* alias: ivcar.mary.mp
+- *Efectivo*: en España 252, Laboulaye
+
+Cualquier consulta estamos a disposición.
 ✨ *SALUDOS, IVCAR*`;
 
 // TODO: implement Strategy Pattern
@@ -105,6 +109,7 @@ export class PrintMonitoreoSummaryUseCase {
         pdf: pdfBase64,
         to: customer.getPhone(),
         caption: generateCaption(
+          customer.getFirstName(),
           monitoreoSummary.cuotas,
           monitoreoSummary.totalAmount,
           monitoreoSummary.cuotas.length,
