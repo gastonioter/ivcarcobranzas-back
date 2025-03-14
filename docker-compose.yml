@@ -1,17 +1,22 @@
 version: "3.8"
 
 services:
+  
   backend:
-    image: node:20
-    build: .
+    
+    restart: always
     container_name: backend
+    
+    build:
+      context: .
+      dockerfile: Dockerfile
+
     links:
       - mongodb
-    volumes:
-      - ./src:/home/node/app/src # Solo montar el código fuente, no sobrescribir todo
+    
     ports:
       - "${API_PORT}:3001"
-    command: npm run start
+
     environment:
       - ULTRAMSG_TOKEN=${ULTRAMSG_TOKEN}
       - ULTRAMSG_INSTANCE_ID=${ULTRAMSG_INSTANCE_ID}
@@ -26,12 +31,18 @@ services:
       - mongodb
 
   mongodb:
-    image: mongo:latest
+    image: mongo:8
     container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
     ports:
       - ${MONGO_PORT}:27017
     volumes:
-      - mongodb_data:/data/db # Persistencia de datos
+      - mongodb_data:/data/db
 
 volumes:
-  mongodb_data: # Volumen para guardar los datos de MongoDB
+  mongodb_data:
+
+

@@ -1,31 +1,13 @@
-FROM node:20
-
-WORKDIR /home/node/app
-
-COPY package*.json ./
-
-COPY tsconfig.json ./
-
+# Etapa 1: Compilación
+FROM node:20-slim AS builder
+WORKDIR /app
+COPY package.json package-lock.json ./
 RUN npm ci
-
 COPY . .
-
 RUN npm run build
 
-EXPOSE 3001
-
+# Etapa 2: Ejecución 
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app ./
 CMD ["npm", "run", "start"]
-
-
-
-# # Usa la imagen oficial de MongoDB como base
-# FROM mongo:latest
-
-# # Copia tu archivo de configuración mongod.conf al contenedor
-# COPY mongod.conf /etc/mongod.conf
-
-# # Expone el puerto estándar de MongoDB
-# EXPOSE 27017
-
-# # Inicia MongoDB usando el archivo de configuración
-# CMD ["mongod", "--config", "/etc/mongod.conf"]
