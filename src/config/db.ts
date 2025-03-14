@@ -17,11 +17,8 @@ export class MongoDB {
   private static async connect(): Promise<void> {
     try {
       // MONGO_URL es la de production, si no está definida, se usa la conexión local
-      const MONGO_URI = process.env.MONGO_URL
-        ? `${process.env.MONGO_URL}`
-        : `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
+      const MONGO_URI = `mongodb://${process.env.MONGO_ROOT_USERNAME}:${process.env.MONGO_ROOT_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
 
-      
       const db = await mongoose.connect(MONGO_URI);
 
       MongoDB.connection = db.connection;
