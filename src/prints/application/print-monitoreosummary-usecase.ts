@@ -29,14 +29,11 @@ const generateCaption = (
   monto: number,
   cantCuotas: number,
 ) =>
-  `Estimado usuario:
-  Se adjunta resumen de cuenta del servicio *ALARMAS IVCAR*.
+  `Estimado usuario, se adjunta resumen de cuenta del servicio *ALARMAS IVCAR*.
    
-  Por favor, enviar comporbante. 
+Por favor, enviar comporbante. 
    
-  _¡Gracias por elegirnos!_
-   
-   `;
+_¡Gracias por elegirnos!_`;
 
 // TODO: implement Strategy Pattern
 export class PrintMonitoreoSummaryUseCase {
