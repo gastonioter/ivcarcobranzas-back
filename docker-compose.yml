@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   backend:
-    restart: always
+    #restart: always
     container_name: backend
 
     build:
@@ -31,7 +31,7 @@ services:
   mongodb:
     image: mongo:8
     container_name: mongodb
-    restart: always
+    #restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}

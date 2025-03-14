@@ -1,19 +1,19 @@
-import fs from "fs";
 import dotenv from "dotenv";
-dotenv.config();
+import fs from "fs";
+import mongoose from "mongoose";
+import { CloudCategory } from "./cloudCategory/domain/cloudCategory.entity";
+import { CloudCategoryModel } from "./cloudCategory/infraestructure/db.schema";
 import { CustomerFactory } from "./customer/domain/CustomerFactory";
 import { CustomerModalidad } from "./customer/domain/types";
 import { CloudCustomerModel } from "./customer/infraestructure/models/customer.schema";
-import { CloudCategory } from "./cloudCategory/domain/cloudCategory.entity";
 import { Email } from "./shared/valueObjects/email.vo";
-import mongoose from "mongoose";
-import { CloudCategoryModel } from "./cloudCategory/infraestructure/db.schema";
+dotenv.config();
 
 const data = fs.readFileSync("cloudclients.json", "utf8");
 const jsonData = JSON.parse(data);
 
 async function connect() {
-  const MONGO_URI = `${process.env.MONGO_PUBLIC}`;
+  const MONGO_URI = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${"212.85.2.215"}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
   await mongoose.connect(MONGO_URI);
 }
 
@@ -31,8 +31,8 @@ connect()
     jsonData.forEach(async (customer: any) => {
       try {
         const newCustomer = CustomerFactory.createCustomer({
-          firstName: customer.nombre || "nameee",
-          lastName: customer.apellido || "apellido",
+          firstName: customer.nombre || "sin nombre",
+          lastName: customer.apellido || "sin apellido",
           email: Email.create(customer.user_email),
           phone: customer.phone_number || "0000000000",
           modalidad: CustomerModalidad.CLOUD,

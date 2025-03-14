@@ -7,3 +7,4 @@ cloudclients.json
 .env
 src/seed.ts
 init-mongo.js
+./src/seed.ts
