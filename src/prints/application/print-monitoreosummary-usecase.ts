@@ -35,7 +35,7 @@ Le informamos que tiene *${cantCuotas} cuota(s) pendiente(s)* del servicio de au
 💰 *Total a abonar:* ${formattedCurrency(monto)}
 
 🔔 Recuerda que puedes abonar a través de los siguientes métodos:
-- *Transferencia bancaria* al CBU: 1234567890123456789012
+- *Transferencia bancaria* alias: MANO.FECHA.PATIN
 - *Mercado Pago* alias: ivcar.mary.mp
 - *Efectivo*: en España 252, Laboulaye
 
