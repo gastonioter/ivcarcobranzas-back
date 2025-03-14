@@ -6,3 +6,4 @@ cloudclients.json
 .vercel
 .env
 src/seed.ts
+init-mongo.js
