@@ -29,7 +29,8 @@ const generateCaption = (
   monto: number,
   cantCuotas: number,
 ) =>
-  `Estimado usuario, se adjunta resumen de cuenta del servicio *ALARMAS IVCAR*.
+  `Estimado usuario:
+Se adjunta resumen de cuenta del servicio *ALARMAS IVCAR*.
    
 Por favor, enviar comporbante. 
    
