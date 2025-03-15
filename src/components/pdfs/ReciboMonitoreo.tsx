@@ -390,8 +390,12 @@ export const ReciboMonitoreo = async ({
         >
           <View style={aclarationsStyles.box}>
             <Text style={aclarationsStyles.title}>Contacto</Text>
-            <Text style={aclarationsStyles.text}>alarmasivcar@hotmail.com</Text>
-            <Text style={aclarationsStyles.text}>3385448583</Text>
+            <Text style={aclarationsStyles.text}>
+              Reclamos administrativos: 3385448575
+            </Text>
+            <Text style={aclarationsStyles.text}>
+              Reclamos técnicos: 3385448580
+            </Text>
             <Text style={aclarationsStyles.text}>www.ivcaralarmas.com</Text>
           </View>
         </View>

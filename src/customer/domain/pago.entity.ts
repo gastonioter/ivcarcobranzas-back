@@ -29,7 +29,7 @@ export class Pago extends Entity {
 
     const uuid = EntityId.create();
     const total = cuotas.reduce((acc, cuota) => acc + cuota.getAmount(), 0);
-    const serie = `PAGO-${secuence + 1000}`.padStart(5, "0");
+    const serie = `RECIBO-${secuence + 1000}`.padStart(5, "0");
     const createdAt = new Date();
     return new Pago(uuid, cuotas, total, serie, createdAt);
   }

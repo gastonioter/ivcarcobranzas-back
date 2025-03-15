@@ -52,6 +52,12 @@ router.get(
   asyncHandler(ctrl.printReciboMonitore.bind(ctrl)),
 );
 
+// para enviar wpps
+router.post(
+  "/monit-recipt/:customerId/:paymentId",
+  asyncHandler(ctrl.printReciboMonitore.bind(ctrl)),
+);
+
 router.post(
   "/rsmmonit/:uuid",
   asyncHandler(ctrl.printMonitoreoSummary.bind(ctrl)),

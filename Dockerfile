@@ -1,15 +1,17 @@
-# Etapa 1: Compilación
-FROM node:20-slim AS builder
-RUN mkdir /app
-WORKDIR /app
-COPY package.json package-lock.json ./
+FROM node:20
+
+WORKDIR /home/node/app
+
+COPY package.json ./
+
+COPY tsconfig.json ./
+
 RUN npm ci
+
 COPY . .
+
 RUN npm run build
 
-# Etapa 2: Ejecución 
-FROM node:20-alpine
-RUN mkdir /app
-WORKDIR /app
-COPY --from=builder /app ./
+EXPOSE 3001
+
 CMD ["npm", "run", "start"]

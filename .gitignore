@@ -5,6 +5,4 @@ temp/
 cloudclients.json
 .vercel
 .env
-src/seed.ts
-init-mongo.js
-./src/seed.ts
+docker-compose.local.yml

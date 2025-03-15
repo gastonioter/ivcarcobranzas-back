@@ -104,9 +104,40 @@ export class PrintsController {
     const { uuid } = req.params;
     const { sendMethod } = req.body;
 
-    if (!sendMethod) {
-      const { data } = await this.printMonitoreoSummaryUseCase.print(uuid);
+    const { data, result } = await this.printMonitoreoSummaryUseCase.print(
+      uuid,
+      sendMethod,
+    );
 
+    if (!sendMethod) {
+      const { pdfStream, filename } = data;
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=${filename}.pdf`,
+      );
+      pdfStream.pipe(res);
+      pdfStream.on("end", () => res.end());
+      pdfStream.on("error", (error: any) => {
+        res.status(500).end();
+      });
+
+      return;
+    }
+
+    res.send(result);
+  }
+
+  async printReciboMonitore(req: Request, res: Response) {
+    const { customerId, paymentId } = req.params;
+    const { sendMethod } = req.body;
+    const { result, data } = await this.printReciboMonitoreUseCase.print(
+      customerId,
+      paymentId,
+      sendMethod,
+    );
+
+    if (!sendMethod) {
       const { pdfStream, filename } = data;
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
@@ -123,32 +154,6 @@ export class PrintsController {
       return;
     }
 
-    
-    const { result } = await this.printMonitoreoSummaryUseCase.print(
-      uuid,
-      sendMethod,
-    );
-
     res.send(result);
-    return;
-  }
-
-  async printReciboMonitore(req: Request, res: Response) {
-    const { customerId, paymentId } = req.params;
-    const { pdfStream, filename } = await this.printReciboMonitoreUseCase.print(
-      customerId,
-      paymentId,
-    );
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=${filename}.pdf`,
-    );
-    pdfStream.pipe(res);
-    pdfStream.on("end", () => res.end());
-    pdfStream.on("error", (error: any) => {
-      console.error(error);
-      res.status(500).end();
-    });
   }
 }

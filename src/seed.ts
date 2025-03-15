@@ -13,7 +13,7 @@ const data = fs.readFileSync("cloudclients.json", "utf8");
 const jsonData = JSON.parse(data);
 
 async function connect() {
-  const MONGO_URI = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${"212.85.2.215"}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
+  const MONGO_URI = `mongodb://${"212.85.2.215"}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
   await mongoose.connect(MONGO_URI);
 }
 

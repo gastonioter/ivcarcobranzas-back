@@ -1,12 +1,11 @@
-import { formattedFullname } from "../../components/utils/formattedFullname";
 import { MonitoreoSummaryCmp } from "../../components/pdfs/MonitoreoSummary";
+import { formattedFullname } from "../../components/utils/formattedFullname";
 import { Cuota } from "../../cuota/domain/cuota.entity";
 import { CustomerRepository } from "../../customer/domain/interfaces/CustomerRepository";
 import { sendDocument } from "../../shared/infraestructure/sendDocument";
 import { base64 } from "../../shared/utils/base64";
 import { generatePdfFile } from "../../shared/utils/generatePdf";
 import { companyInfo } from "../constants";
-import { formattedCurrency } from "../../components/utils/formattedCurrency";
 
 export interface MonitoreoSummary {
   cuotas: Cuota[];
@@ -18,17 +17,12 @@ export enum SendMethods {
   EMAIL = "EMAIL",
 }
 
-type Result = Promise<{
+export type Result = Promise<{
   result: string;
   data?: any;
 }>;
 
-const generateCaption = (
-  name: string,
-  meses: Cuota[],
-  monto: number,
-  cantCuotas: number,
-) =>
+const generateCaption = () =>
   `Estimado usuario:
 Se adjunta resumen de cuenta del servicio *ALARMAS IVCAR*.
    
@@ -93,21 +87,13 @@ export class PrintMonitoreoSummaryUseCase {
 
     if (sendMethod === SendMethods.WPP) {
       // send wpp
-      const { pdfBuffer } = await generatePdfFile(
-        "RESUMENT-MONITOREO",
-        document,
-      );
+      const { pdfBuffer } = await generatePdfFile("rsm-monit", document);
       const pdfBase64 = base64(pdfBuffer);
 
       await sendDocument({
         pdf: pdfBase64,
         to: customer.getPhone(),
-        caption: generateCaption(
-          customer.getFirstName(),
-          monitoreoSummary.cuotas,
-          monitoreoSummary.totalAmount,
-          monitoreoSummary.cuotas.length,
-        ),
+        caption: generateCaption(),
         filename: `RESUMEN_IVCAR-${fullname.trim()}-${today}`.toUpperCase(),
       });
       return {
