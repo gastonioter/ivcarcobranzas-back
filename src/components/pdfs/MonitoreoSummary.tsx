@@ -265,7 +265,9 @@ export const MonitoreoSummaryCmp = async ({
           {cuotas.map((item, index) => (
             <View style={tableStyles.tableRow} key={index}>
               <View style={{ ...tableStyles.tableCol, width: "10%" }}>
-                <Text style={tableStyles.tableCell}>{index + 1}</Text>
+                <Text style={tableStyles.tableCell}>
+                  {item.getSerie().split("-")[0]}
+                </Text>
               </View>
               <View style={tableStyles.tableCol}>
                 <Text style={tableStyles.tableCell}>
