@@ -67,13 +67,12 @@ export const MonitoreoSummaryCmp = async ({
     tipoComprobanteContainer: {
       // marginLeft: "auto",
       border: "3px solid #8e8e8e",
-      padding: 15,
-      fontSize: 12,
-      flex: 1,
+      padding: 10,
+      flex: 1.2,
     },
     tipoComprobanteText: {
       fontSize: 18,
-      marginBottom: 4,
+      marginBottom: 8,
       fontWeight: "bold",
     },
     divider: {
@@ -219,7 +218,7 @@ export const MonitoreoSummaryCmp = async ({
             <Text style={{ marginBottom: 2 }}>
               CUENTA: {accountId.toUpperCase()}
             </Text>
-            <Text>A la fecha: {formattedDate(new Date().toISOString())}</Text>
+            <Text>FECHA: {formattedDate(new Date().toISOString())}</Text>
           </View>
         </View>
         <View style={styles.divider}></View>
@@ -248,7 +247,7 @@ export const MonitoreoSummaryCmp = async ({
           {/* Encabezado de la tabla */}
           <View style={tableStyles.tableRow}>
             <View style={{ ...tableStyles.tableColHeader, width: "10%" }}>
-              <Text style={tableStyles.tableCellHeader}>#</Text>
+              <Text style={tableStyles.tableCellHeader}>Nro</Text>
             </View>
             <View style={tableStyles.tableColHeader}>
               <Text style={tableStyles.tableCellHeader}>Concepto</Text>
@@ -266,7 +265,7 @@ export const MonitoreoSummaryCmp = async ({
             <View style={tableStyles.tableRow} key={index}>
               <View style={{ ...tableStyles.tableCol, width: "10%" }}>
                 <Text style={tableStyles.tableCell}>
-                  {item.getSerie().split("-")[0]}
+                  {item.getSerie().split("-")[1]}
                 </Text>
               </View>
               <View style={tableStyles.tableCol}>
