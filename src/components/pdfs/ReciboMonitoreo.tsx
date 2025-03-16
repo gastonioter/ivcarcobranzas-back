@@ -315,7 +315,8 @@ export const ReciboMonitoreo = async ({
         {cuotasPtes.length > 0 && (
           <View style={{ marginTop: "auto" }}>
             <Text>
-              Usted tiene {cuotasPtes.length} cuota(s) pendiente(s) de pago
+              Resumen de cuenta a la fecha{" "}
+              {formattedDate(new Date().toLocaleDateString())}
             </Text>
             <View style={tableStyles.table}>
               {/* Encabezado de la tabla */}

@@ -215,7 +215,7 @@ export const MonitoreoSummaryCmp = async ({
 
           {/* Datos del Recibo (ID, Fecha, etc.) */}
           <View style={styles.tipoComprobanteContainer}>
-            <Text style={styles.tipoComprobanteText}>RESUMEN DE MONITOREO</Text>
+            <Text style={styles.tipoComprobanteText}>RESUMEN IVCAR</Text>
             <Text style={{ marginBottom: 2 }}>
               CUENTA: {accountId.toUpperCase()}
             </Text>
