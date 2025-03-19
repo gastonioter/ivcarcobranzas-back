@@ -191,6 +191,11 @@ export class CustomerMongoRepository implements CustomerRepository {
     );
   }
 
+  async countByStatus(status: CustomerStatus): Promise<number> {
+    const total = await CustomerModel.find({ status }).countDocuments();
+    return total;
+  }
+
   private async findByIdAndPopulate(uuid: string) {
     return await CustomerModel.findOne({ uuid })
       // solo existe si es un cliente cloud, sino es null
