@@ -15,6 +15,8 @@ import { SalesRoutes } from "./transaction/sale";
 import { CloudCategoryRoutes } from "./cloudCategory";
 import { MongoDB } from "./config/db";
 import { cuotaRoutes } from "./cuota";
+import { metricsRoutes } from "./metrics";
+import { authorizationMiddleware } from "./middlewares/authorizationMiddleware";
 import { PrintRoutes } from "./prints";
 import { BudgetRoutes } from "./transaction/budget";
 
@@ -41,7 +43,7 @@ app.use("/api/budgets", BudgetRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/cloudcategories", CloudCategoryRoutes);
 app.use("/api/cuotas", cuotaRoutes);
-
+app.use("/api/metrics", metricsRoutes);
 app.use(errorHandler);
 
 MongoDB.getInstance().then(() => {

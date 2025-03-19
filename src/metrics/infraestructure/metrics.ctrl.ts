@@ -7,7 +7,7 @@ export class MetricsController {
   ) {}
 
   async generateDashboardMetrics(req: Request, res: Response) {
-    const metrics = this.metricsUseCase.execute();
-    res.status(200).json({ metrics });
+    const metrics = await this.metricsUseCase.execute();
+    res.status(200).json(metrics);
   }
 }

@@ -1,4 +1,4 @@
-import { CustomerMongoRepository } from "@/customer/infraestructure/repository/mongo.repository";
+import { CustomerMongoRepository } from "../../customer/infraestructure/repository/mongo.repository";
 import { Router } from "express";
 import { GenerateDashboardMetricsUseCase } from "../application/metrics-usecase";
 import { MetricsController } from "./metrics.ctrl";
@@ -9,7 +9,7 @@ const metricsController = new MetricsController(usercase);
 
 export const router = Router();
 
-router.post(
-  "/metrics",
+router.get(
+  "/",
   metricsController.generateDashboardMetrics.bind(metricsController),
 );

@@ -104,6 +104,9 @@ export class CustomerEntity extends Entity {
   generateCuotaForCurrentMonth() {
     this.modalidad.generateCuotaForCurrentMonth(this.getStatus());
   }
+  isActive() {
+    return this.status === CustomerStatus.ACTIVE;
+  }
 }
 
 export interface AccountSummary {
