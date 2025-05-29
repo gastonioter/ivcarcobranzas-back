@@ -83,7 +83,7 @@ export class CuotaMongoRepository implements CuotaRepository {
       .populate<{
         cloudCategory?: CloudCategoryDoc;
       }>("cloudCategory")
-      .lean();
+      .lean()
 
     if (!customer) {
       throw new CustomerNotFoundError();

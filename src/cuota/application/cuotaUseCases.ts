@@ -40,7 +40,19 @@ export class CuotaUseCases {
 
   async getCuotas(customerId: string): Promise<CuotaDTO[]> {
     const customer = await this.cuotaRepository.findCustomerCuotas(customerId);
-    return customer.getCuotas().map(cuotaDTO);
+    return customer
+      .getCuotas()
+      .sort((c1, c2) => {
+        const a1 = c1.getYear();
+        const m1 = c1.getMonth();
+        const a2 = c2.getYear();
+        const m2 = c2.getMonth();
+
+        // Compara primero por año (descendente), luego por mes (descendente)
+        if (a2 !== a1) return a2 - a1;
+        return m2 - m1;
+      })
+      .map(cuotaDTO);
   }
 
   async updateCuotasStatus(
