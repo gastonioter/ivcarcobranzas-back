@@ -13,4 +13,5 @@ export interface IModalidadCliente {
   getPagos(): Pago[];
   getCuotasPtesPago(): Cuota[];
   generateCuotaForCurrentMonth(customerStatus: CustomerStatus): void;
+  existsCuotaForMonthAndYear(month: number, year: number): boolean;
 }

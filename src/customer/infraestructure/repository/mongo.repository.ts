@@ -156,7 +156,6 @@ export class CustomerMongoRepository implements CustomerRepository {
         .exec();
 
       const toReturn = await this.findByIdAndPopulate(uuid);
-      console.log(toReturn);
       return CustomerFactory.fromPersistence(toReturn);
     } catch (e) {
       console.log(e);

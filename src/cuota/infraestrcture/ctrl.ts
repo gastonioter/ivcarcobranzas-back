@@ -3,12 +3,13 @@ import { CuotaUseCases } from "../application/cuotaUseCases";
 
 export class CuotaController {
   constructor(private readonly cuotaUseCases: CuotaUseCases) {}
-  async createCuota(req: Request, res: Response) {
-    const { amount, customerId, month, year, status, facturaId } = req.body;
-    const cuota = await this.cuotaUseCases.addCuotaToCustomer({
+
+  async createCuotas(req: Request, res: Response) {
+    const { amount, customerId, months, year, status, facturaId } = req.body;
+    const cuota = await this.cuotaUseCases.addCuotasToCustomer({
       amount,
       customerId,
-      month,
+      months,
       year,
       status,
       facturaId,
@@ -21,7 +22,6 @@ export class CuotaController {
     res.status(200).json(cuotas);
   }
 
-  
   async updateCuotasStatus(req: Request, res: Response) {
     const { cuotasId, customerId, status } = req.body;
 

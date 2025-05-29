@@ -94,6 +94,10 @@ export class CustomerEntity extends Entity {
     return this.modalidad.getPagos();
   }
 
+  existsCuotaForMonthAndYear(month: number, year: number): boolean {
+    return this.modalidad.existsCuotaForMonthAndYear(month, year);
+  }
+
   updateCuota(cuotaId: string, status: CuotaStatus) {
     this.modalidad.updateCuota(cuotaId, status);
   }

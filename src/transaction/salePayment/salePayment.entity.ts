@@ -79,7 +79,6 @@ export class SalePayment extends Entity {
 
   deactivate() {
     if (this.isCuponPayment()) {
-      console.log(this.isCuponPayment());
       throw new Error("No se puede anular un cupon de descuento");
     }
     this.status = SalePaymentStatus.CANCELLED;

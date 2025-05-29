@@ -29,7 +29,7 @@ export class CloudCustomer implements IModalidadCliente {
 
   generateCuotaForCurrentMonth(customerStatus: CustomerStatus) {
     const status =
-    customerStatus == CustomerStatus.ACTIVE
+      customerStatus == CustomerStatus.ACTIVE
         ? CuotaStatus.PENDING
         : CuotaStatus.NO_SERVICE;
 
@@ -61,7 +61,6 @@ export class CloudCustomer implements IModalidadCliente {
 
   addPago(pago: Pago) {
     this.pagos.push(pago);
-    console.log(this.pagos);
   }
 
   updateCuota(cuotaId: string, status: CuotaStatus) {
@@ -76,5 +75,11 @@ export class CloudCustomer implements IModalidadCliente {
   }
   getCategoriaPago(): CloudCategory {
     return this.category;
+  }
+
+  existsCuotaForMonthAndYear(month: number, year: number): boolean {
+    return this.cuotas.some(
+      (cuota) => cuota.getMonth() === month && cuota.getYear() === year,
+    );
   }
 }

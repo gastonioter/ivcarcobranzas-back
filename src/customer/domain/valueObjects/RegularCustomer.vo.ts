@@ -4,6 +4,9 @@ import { CustomerModalidad } from "../types";
 
 export class RegularCustomer implements IModalidadCliente {
   constructor() {}
+  existsCuotaForMonthAndYear(month: number, year: number): boolean {
+    throw new Error("Regular customers cannot have cuotas");
+  }
 
   getModalidad(): CustomerModalidad {
     return CustomerModalidad.REGULAR;

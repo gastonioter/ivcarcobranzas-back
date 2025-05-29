@@ -1,8 +1,8 @@
 import { CustomerRepository } from "../../customer/domain/interfaces/CustomerRepository";
 import { Pago } from "../../customer/domain/pago.entity";
-import { CreateCuotaDTO, UpdateCuotaDTO } from "../adapters/inputCuotaDTO";
+import { BulkCreateCuotasDTO, UpdateCuotaDTO } from "../adapters/inputCuotaDTO";
 import { CuotaDTO, cuotaDTO } from "../adapters/outputCuotaDTO";
-import { Cuota, CuotaStatus } from "../domain/cuota.entity";
+import { Cuota, CuotaStatus, mesesMap } from "../domain/cuota.entity";
 import { CuotaRepository } from "../domain/cuota.repository";
 
 export class CuotaUseCases {
@@ -11,32 +11,43 @@ export class CuotaUseCases {
     private readonly customerRepository: CustomerRepository,
   ) {}
 
-  async addCuotaToCustomer({
+  async addCuotasToCustomer({
     amount,
     customerId,
-    month,
+    months,
     year,
     status,
     facturaId,
-  }: CreateCuotaDTO) {
+  }: BulkCreateCuotasDTO) {
     const customer = await this.cuotaRepository.findCustomerCuotas(customerId);
 
-    const totalCuotas = customer.getCuotas().length;
+    const cuotasCliente = customer.getCuotas();
 
-    const cuota = Cuota.new({
-      amount,
-      secuence: totalCuotas,
-      month,
-      year,
-      status,
-      facturaId,
+    const cuotasAGenerar = months
+      .filter(
+        (cuotaMonth) =>
+          !customer.existsCuotaForMonthAndYear(mesesMap[cuotaMonth], year),
+      )
+      .map((month, i) => {
+        return Cuota.new({
+          amount,
+          secuence: cuotasCliente.length + i,
+          month: mesesMap[month], // from string to number
+          year,
+          status,
+          facturaId,
+        });
+      });
+
+    cuotasAGenerar.forEach(async (cuota) => {
+      customer.addCuota(cuota);
+      await this.cuotaRepository.save(customer.getId(), cuota);
     });
 
-    customer.addCuota(cuota);
-
-    await this.cuotaRepository.save(customer.getId(), cuota);
-    return cuotaDTO(cuota);
+    return cuotasAGenerar.map(cuotaDTO);
   }
+
+  async bulkCreateCuotas() {}
 
   async getCuotas(customerId: string): Promise<CuotaDTO[]> {
     const customer = await this.cuotaRepository.findCustomerCuotas(customerId);

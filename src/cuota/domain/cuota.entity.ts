@@ -129,3 +129,33 @@ export enum CuotaStatus {
   LATE = "ATRASADA",
   NO_SERVICE = "SIN SERVICIO",
 }
+
+export enum CuotaMonths {
+  ENERO = "Enero",
+  FEBRERO = "Febrero",
+  MARZO = "Marzo",
+  ABRIL = "Abril",
+  MAYO = "Mayo",
+  JUNIO = "Junio",
+  JULIO = "Julio",
+  AGOSTO = "Agosto",
+  SEPTIEMBRE = "Septiembre",
+  OCTUBRE = "Octubre",
+  NOVIEMBRE = "Noviembre",
+  DICIEMBRE = "Diciembre",
+}
+
+export const mesesMap = {
+  [CuotaMonths.ENERO]: 1,
+  [CuotaMonths.FEBRERO]: 2,
+  [CuotaMonths.MARZO]: 3,
+  [CuotaMonths.ABRIL]: 4,
+  [CuotaMonths.MAYO]: 5,
+  [CuotaMonths.JUNIO]: 6,
+  [CuotaMonths.JULIO]: 7,
+  [CuotaMonths.AGOSTO]: 8,
+  [CuotaMonths.SEPTIEMBRE]: 9,
+  [CuotaMonths.OCTUBRE]: 10,
+  [CuotaMonths.NOVIEMBRE]: 11,
+  [CuotaMonths.DICIEMBRE]: 12,
+};

@@ -29,8 +29,6 @@ export class GenerateDashboardMetricsUseCase {
         );
     }).length;
 
-    console.log(totalGeneratedCuotasForCurrentMonth);
-
     const totalPaidAmounthForCurrentMonth = customers.reduce(
       (acc, customer) => {
         const currentCuota = customer
