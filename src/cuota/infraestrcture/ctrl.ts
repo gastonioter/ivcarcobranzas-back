@@ -21,6 +21,7 @@ export class CuotaController {
     res.status(200).json(cuotas);
   }
 
+  
   async updateCuotasStatus(req: Request, res: Response) {
     const { cuotasId, customerId, status } = req.body;
 

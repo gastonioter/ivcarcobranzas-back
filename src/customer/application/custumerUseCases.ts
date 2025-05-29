@@ -12,6 +12,7 @@ import { CustomerFactory } from "../domain/CustomerFactory";
 import { CustomerRepository } from "../domain/interfaces/CustomerRepository";
 import { getCustomerSummaryAccount } from "../domain/services/AccountSummary";
 import { CustomerModalidad, CustomerStatus } from "../domain/types";
+import { PagoDTO } from "../adapters/pagoDTO";
 
 export class CustomerUseCases {
   constructor(
@@ -34,6 +35,17 @@ export class CustomerUseCases {
     return new CustomerDTO(customer);
   };
 
+  getRecibosCustomer = async (uuid: string) => {
+    const customer = await this.customerRepository.getCustomer(uuid);
+    const recibos = customer
+      .getPagos()
+      .sort(
+        (a, b) =>
+          new Date(b.getCreatedAt()).getTime() -
+          new Date(a.getCreatedAt()).getTime(),
+      );
+    return recibos.map(PagoDTO);
+  };
   getCustomers = async (): Promise<CustomerDTO[]> => {
     const customers = await this.customerRepository.getCustomers();
     return customers.map((customer) => new CustomerDTO(customer));
