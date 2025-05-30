@@ -1,4 +1,4 @@
-import z, { array } from "zod";
+import z from "zod";
 import { CuotaMonths, CuotaStatus } from "../domain/cuota.entity";
 
 const baseCuotaSchema = z.object({
