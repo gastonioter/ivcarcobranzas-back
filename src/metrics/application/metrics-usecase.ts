@@ -1,4 +1,4 @@
-import { CustomerDTO } from "@/customer/adapters/CustomerDTO";
+import { CustomerDTO } from "../../customer/adapters/CustomerDTO";
 import { CustomerStatus } from "../../customer/domain/types";
 import { CustomerMongoRepository } from "../../customer/infraestructure/repository/mongo.repository";
 
