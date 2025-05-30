@@ -82,4 +82,7 @@ export class CloudCustomer implements IModalidadCliente {
       (cuota) => cuota.getMonth() === month && cuota.getYear() === year,
     );
   }
+  esDeudor(): boolean {
+    return this.getCuotasPtesPago().length >= 3;
+  }
 }

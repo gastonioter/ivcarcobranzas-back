@@ -7,6 +7,9 @@ export class RegularCustomer implements IModalidadCliente {
   existsCuotaForMonthAndYear(month: number, year: number): boolean {
     throw new Error("Regular customers cannot have cuotas");
   }
+  esDeudor(): boolean {
+    return false; // Regular customers do not have cuotas, so they cannot be debtors
+  }
 
   getModalidad(): CustomerModalidad {
     return CustomerModalidad.REGULAR;

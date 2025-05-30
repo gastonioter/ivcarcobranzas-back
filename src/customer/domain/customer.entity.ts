@@ -104,6 +104,9 @@ export class CustomerEntity extends Entity {
   getCuotasPtesPago(): Cuota[] {
     return this.modalidad.getCuotasPtesPago();
   }
+  esDeudor(){
+    return this.modalidad.esDeudor();
+  }
 
   generateCuotaForCurrentMonth() {
     this.modalidad.generateCuotaForCurrentMonth(this.getStatus());

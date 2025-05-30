@@ -1,4 +1,4 @@
-import { CuotaStatus } from "@/cuota/domain/cuota.entity";
+import { CustomerDTO } from "@/customer/adapters/CustomerDTO";
 import { CustomerStatus } from "../../customer/domain/types";
 import { CustomerMongoRepository } from "../../customer/infraestructure/repository/mongo.repository";
 
@@ -7,6 +7,7 @@ export class GenerateDashboardMetricsUseCase {
 
   async execute() {
     const customers = await this.customerRepository.getCustomers();
+
     const actives = await this.customerRepository.countByStatus(
       CustomerStatus.ACTIVE,
     );
@@ -44,11 +45,17 @@ export class GenerateDashboardMetricsUseCase {
       },
       0,
     );
+
+    const deudores = customers
+      .filter((c) => c.esDeudor())
+      .map((c) => new CustomerDTO(c));
+
     return {
       actives,
       inactives,
       generatedCutoas: totalGeneratedCuotasForCurrentMonth,
       totalPaidAmounth: totalPaidAmounthForCurrentMonth,
+      deudores,
     };
   }
 }

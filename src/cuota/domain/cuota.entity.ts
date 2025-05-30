@@ -78,6 +78,7 @@ export class Cuota extends Entity {
     );
   }
 
+  
   getYear() {
     return this.year;
   }
