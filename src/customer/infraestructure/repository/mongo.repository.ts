@@ -183,6 +183,8 @@ export class CustomerMongoRepository implements CustomerRepository {
     const customersDoc = await CustomerModel.find({})
       .populate<{ cloudCategory?: CloudCategoryDoc }>("cloudCategory")
       .lean()
+      .collation({ locale: "es", strength: 1 })
+      .sort({ lastName: 1, firstName: 1 })
       .exec();
 
     return customersDoc.map((customer) =>
