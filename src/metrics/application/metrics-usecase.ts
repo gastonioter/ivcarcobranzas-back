@@ -44,44 +44,6 @@ export class GenerateDashboardMetricsUseCase {
       },
     );
 
-    // const totalGeneratedCuotasForCurrentMonth = activeCustomers.filter((c) => {
-    //   return c
-
-    //     .getCuotas()
-    //     .some(
-    //       (cuota) =>
-    //         cuota.getMonth() == currentMonth && cuota.getYear() == currentYear,
-    //     );
-    // }).length;
-
-    // const totalPaiedCuotasForCurrentMonth = activeCustomers.filter((c) => {
-    //   return c
-
-    //     .getCuotas()
-    //     .some(
-    //       (cuota) =>
-    //         cuota.getMonth() == currentMonth &&
-    //         cuota.getYear() == currentYear &&
-    //         cuota.isPaid(),
-    //     );
-    // }).length;
-
-    // const totalPaidAmounthForCurrentMonth = customers.reduce(
-    //   (acc, customer) => {
-    //     const currentCuota = customer
-    //       .getCuotas()
-    //       .find(
-    //         (cuota) =>
-    //           cuota.getMonth() === currentMonth &&
-    //           cuota.getYear() === currentYear,
-    //       );
-    //     return currentCuota && currentCuota.isPaid()
-    //       ? acc + currentCuota.getAmount()
-    //       : acc;
-    //   },
-    //   0,
-    // );
-
     const deudores = customers
       .filter((c) => c.esDeudor())
       .map((c) => new CustomerDTO(c));
