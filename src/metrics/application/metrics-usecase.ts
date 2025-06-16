@@ -47,14 +47,7 @@ export class GenerateDashboardMetricsUseCase {
     const deudores = customers
       .filter((c) => c.esDeudor())
       .map((c) => new CustomerDTO(c));
-    console.log({
-      actives,
-      inactives,
-      totalGeneratedCutoas: currentCuotas.length,
-      totalRevenue: reducedCuotas.totalRevenue,
-      totalPaidCuotas: reducedCuotas.totalPaidCuotas,
-      deudores,
-    });
+
     return {
       actives,
       inactives,
