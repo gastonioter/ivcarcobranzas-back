@@ -20,41 +20,85 @@ export class GenerateDashboardMetricsUseCase {
     const currentYear = new Date().getFullYear();
 
     const activeCustomers = customers.filter((c) => c.isActive());
-    const totalGeneratedCuotasForCurrentMonth = activeCustomers.filter((c) => {
-      return c
 
-        .getCuotas()
-        .some(
-          (cuota) =>
-            cuota.getMonth() == currentMonth && cuota.getYear() == currentYear,
-        );
-    }).length;
-
-    const totalPaidAmounthForCurrentMonth = customers.reduce(
-      (acc, customer) => {
-        const currentCuota = customer
-          .getCuotas()
-          .find(
-            (cuota) =>
-              cuota.getMonth() === currentMonth &&
-              cuota.getYear() === currentYear,
-          );
-        return currentCuota && currentCuota.isPaid()
-          ? acc + currentCuota.getAmount()
-          : acc;
+    const currentCuotas = activeCustomers
+      .flatMap((c) => c.getCuotas())
+      .filter(
+        (cuota) =>
+          cuota.getMonth() == currentMonth && cuota.getYear() == currentYear,
+      );
+    const reducedCuotas = currentCuotas.reduce(
+      (acc, cuota) => {
+        return {
+          ...acc,
+          totalPaidCuotas: cuota.isPaid()
+            ? ++acc.totalPaidCuotas
+            : acc.totalPaidCuotas,
+          totalRevenue:
+            acc.totalRevenue + (cuota.isPaid() ? cuota.getAmount() : 0),
+        };
       },
-      0,
+      {
+        totalPaidCuotas: 0,
+        totalRevenue: 0,
+      },
     );
+
+    // const totalGeneratedCuotasForCurrentMonth = activeCustomers.filter((c) => {
+    //   return c
+
+    //     .getCuotas()
+    //     .some(
+    //       (cuota) =>
+    //         cuota.getMonth() == currentMonth && cuota.getYear() == currentYear,
+    //     );
+    // }).length;
+
+    // const totalPaiedCuotasForCurrentMonth = activeCustomers.filter((c) => {
+    //   return c
+
+    //     .getCuotas()
+    //     .some(
+    //       (cuota) =>
+    //         cuota.getMonth() == currentMonth &&
+    //         cuota.getYear() == currentYear &&
+    //         cuota.isPaid(),
+    //     );
+    // }).length;
+
+    // const totalPaidAmounthForCurrentMonth = customers.reduce(
+    //   (acc, customer) => {
+    //     const currentCuota = customer
+    //       .getCuotas()
+    //       .find(
+    //         (cuota) =>
+    //           cuota.getMonth() === currentMonth &&
+    //           cuota.getYear() === currentYear,
+    //       );
+    //     return currentCuota && currentCuota.isPaid()
+    //       ? acc + currentCuota.getAmount()
+    //       : acc;
+    //   },
+    //   0,
+    // );
 
     const deudores = customers
       .filter((c) => c.esDeudor())
       .map((c) => new CustomerDTO(c));
-
+    console.log({
+      actives,
+      inactives,
+      totalGeneratedCutoas: currentCuotas.length,
+      totalRevenue: reducedCuotas.totalRevenue,
+      totalPaidCuotas: reducedCuotas.totalPaidCuotas,
+      deudores,
+    });
     return {
       actives,
       inactives,
-      generatedCutoas: totalGeneratedCuotasForCurrentMonth,
-      totalPaidAmounth: totalPaidAmounthForCurrentMonth,
+      totalGeneratedCutoas: currentCuotas.length,
+      totalRevenue: reducedCuotas.totalRevenue,
+      totalPaidCuotas: reducedCuotas.totalPaidCuotas,
       deudores,
     };
   }
