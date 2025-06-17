@@ -8,11 +8,18 @@ export class CloudCustomer implements IModalidadCliente {
   private category: CloudCategory;
   private cuotas: Cuota[];
   private pagos: Pago[];
+  private resumenEnviado: boolean;
 
-  constructor(category: CloudCategory, cuotas?: Cuota[], pagos?: Pago[]) {
+  constructor(
+    category: CloudCategory,
+    cuotas?: Cuota[],
+    pagos?: Pago[],
+    resumenEnviado?: boolean,
+  ) {
     this.category = category;
     this.cuotas = cuotas || [];
     this.pagos = pagos || [];
+    this.resumenEnviado = resumenEnviado ?? false;
   }
 
   addCuota(newCuota: Cuota): void {
@@ -63,6 +70,10 @@ export class CloudCustomer implements IModalidadCliente {
     this.pagos.push(pago);
   }
 
+  seEnvioResumen() {
+    return this.resumenEnviado;
+  }
+
   updateCuota(cuotaId: string, status: CuotaStatus) {
     const cuota = this.cuotas.find((cuota) => cuota.getId() === cuotaId);
     if (!cuota) {
@@ -81,6 +92,12 @@ export class CloudCustomer implements IModalidadCliente {
     return this.cuotas.some(
       (cuota) => cuota.getMonth() === month && cuota.getYear() === year,
     );
+  }
+  setResumenEnviado(enviado: boolean): void {
+    this.resumenEnviado = enviado;
+  }
+  getResumenEnviado() {
+    return this.resumenEnviado;
   }
   esDeudor(): boolean {
     return this.getCuotasPtesPago().length >= 3;

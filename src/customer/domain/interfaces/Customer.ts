@@ -11,6 +11,6 @@ export type Customer = {
   phone: string;
   status: CustomerStatus;
   modalidad: IModalidadCliente;
-  cuit:string;
+  cuit: string;
   createdAt: Date;
 };

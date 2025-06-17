@@ -11,6 +11,7 @@ const LocalCustomerSchema = z.object({
 
 const CloudCustomerSchema = z.object({
   modalidad: z.literal(CustomerModalidad.CLOUD),
+  resumenEnviado: z.boolean().default(false),
   cloudCategoryId: z
     .string()
     .uuid()

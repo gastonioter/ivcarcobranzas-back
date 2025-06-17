@@ -104,12 +104,19 @@ export class CustomerEntity extends Entity {
   getCuotasPtesPago(): Cuota[] {
     return this.modalidad.getCuotasPtesPago();
   }
-  esDeudor(){
+  esDeudor() {
     return this.modalidad.esDeudor();
   }
 
   generateCuotaForCurrentMonth() {
     this.modalidad.generateCuotaForCurrentMonth(this.getStatus());
+  }
+
+  setResumenEnviado(enviado: boolean) {
+    this.modalidad.setResumenEnviado(enviado);
+  }
+  getResumenEnviado() {
+    return this.modalidad.getResumenEnviado();
   }
   isActive() {
     return this.status === CustomerStatus.ACTIVE;

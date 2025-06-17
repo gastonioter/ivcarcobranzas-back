@@ -15,4 +15,6 @@ export interface IModalidadCliente {
   generateCuotaForCurrentMonth(customerStatus: CustomerStatus): void;
   existsCuotaForMonthAndYear(month: number, year: number): boolean;
   esDeudor(): boolean;
+  setResumenEnviado(enviado: boolean): void;
+  getResumenEnviado(): boolean;
 }

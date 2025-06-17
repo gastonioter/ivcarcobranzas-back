@@ -10,7 +10,13 @@ export class RegularCustomer implements IModalidadCliente {
   esDeudor(): boolean {
     return false; // Regular customers do not have cuotas, so they cannot be debtors
   }
+  setResumenEnviado(enviado: boolean): void {
+    throw new Error("Regular customers cannot have resumenes");
+  }
 
+  getResumenEnviado(): boolean {
+    throw new Error("Regular customers cannot have resumenes");
+  }
   getModalidad(): CustomerModalidad {
     return CustomerModalidad.REGULAR;
   }

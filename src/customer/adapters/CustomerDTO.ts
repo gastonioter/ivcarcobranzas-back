@@ -13,6 +13,7 @@ type ModalidadData =
       };
       cuotas: CuotaDTO[];
       pagos: PagoDTO[];
+      resumenEnviado: boolean;
     }
   | {
       modalidad: CustomerModalidad.REGULAR;
@@ -43,6 +44,7 @@ export class CustomerDTO {
     /* Inject the specific depending on the Customer */
     if (customer.getModalidad() === CustomerModalidad.CLOUD) {
       this.modalidadData = {
+        resumenEnviado: customer.getResumenEnviado(),
         modalidad: CustomerModalidad.CLOUD,
         cloudCategory: {
           name: customer.getPriceCategory()!.getName(),

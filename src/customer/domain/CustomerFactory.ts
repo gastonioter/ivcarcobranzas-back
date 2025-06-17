@@ -53,6 +53,7 @@ export class CustomerFactory {
         }),
         data.cuotas?.map(Cuota.fromPersistence) || [],
         data.pagos?.map(Pago.fromPersistence) || [],
+        data.resumenEnviado ?? false,
       );
     } else {
       modalidad = new RegularCustomer();

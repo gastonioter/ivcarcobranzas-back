@@ -87,6 +87,21 @@ export class PrintMonitoreoSummaryUseCase {
 
     if (sendMethod === SendMethods.WPP) {
       // send wpp
+      // actualizar CUSTOMER
+      customer.setResumenEnviado(true);
+
+      this.customerRepo.editCustomer(customer.getId(), {
+        email: customer.getEmail(),
+        firstName: customer.getFirstName(),
+        lastName: customer.getLastName(),
+        phone: customer.getPhone(),
+        cuit: customer.getCuit(),
+        modalidadData: {
+          cloudCategoryId: customer.getPriceCategory()?.getId() ?? "",
+          modalidad: customer.getModalidad(),
+          resumenEnviado: customer.getResumenEnviado(),
+        },
+      });
       const { pdfBuffer } = await generatePdfFile("rsm-monit", document);
       const pdfBase64 = base64(pdfBuffer);
 

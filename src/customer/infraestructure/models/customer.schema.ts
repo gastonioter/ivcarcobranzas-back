@@ -27,7 +27,7 @@ const CustomerSchema = new Schema<ICustomer>(
     lastName: { type: String, required: true },
     email: { type: String, required: true },
     phone: { type: String, required: true },
-    cuit: { type: String, required:true},
+    cuit: { type: String, required: true },
     status: {
       type: String,
       enum: Object.values(CustomerStatus),
@@ -51,6 +51,7 @@ export interface ICloudCustomer extends ICustomer {
   cloudCategoryId: string;
   cuotas?: CuotaPersistence[];
   pagos?: IPagoPersistence[];
+  resumenEnviado: boolean;
 }
 
 export interface IRegularCustomer extends ICustomer {}
@@ -58,6 +59,7 @@ export interface IRegularCustomer extends ICustomer {}
 const CloudCustomerSchema = new Schema<ICloudCustomer>({
   cloudCategoryId: { type: String, required: true },
   cuotas: [CuotaSchema],
+  resumenEnviado: { type: Boolean, default: false },
   pagos: [PagoSchema],
 });
 
