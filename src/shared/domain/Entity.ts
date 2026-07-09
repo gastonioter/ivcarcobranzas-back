@@ -11,6 +11,10 @@ export abstract class Entity {
     return this.uuid.getId();
   }
 
+  get id(): string {
+    return this.uuid.getId();
+  }
+
   equals(entity: Entity): boolean {
     if (this === entity) {
       return true;
