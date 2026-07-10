@@ -2,6 +2,7 @@ import { Entity } from "../../shared/domain/Entity";
 import { Email } from "../../shared/valueObjects/email.vo";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { CustomerModalidad, CustomerStatus } from "../../customer/domain/types";
+import { CustomerDTO } from "../application/list.usecase";
 
 export interface CustomerProps {
   uuid: EntityId;
@@ -89,6 +90,21 @@ export class Customer extends Entity {
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     });
+  }
+
+  toDTO(): CustomerDTO {
+    return {
+      uuid: this.getId(),
+      firstName: this.firstName,
+      lastName: this.lastName,
+      email: this.email,
+      phone: this.phone,
+      cuit: this.cuit,
+      status: this.status,
+      type: this.type,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
   }
 
   get firstName(): string {

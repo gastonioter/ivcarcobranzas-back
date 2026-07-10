@@ -20,6 +20,7 @@ import { metricsRoutes } from "./metrics";
 import { authorizationMiddleware } from "./middlewares/authorizationMiddleware";
 import { PrintRoutes } from "./prints";
 import { BudgetRoutes } from "./transaction/budget";
+import { customerV2Router } from "./customerV2";
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/cloudcategories", CloudCategoryRoutes);
 app.use("/api/cuotas", cuotaRoutes);
 app.use("/api/v2/cuotas", cuotaV2Router);
+app.use("/api/v2/customers", customerV2Router);
 app.use("/api/metrics", metricsRoutes);
 app.use(errorHandler);
 

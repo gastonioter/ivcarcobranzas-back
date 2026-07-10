@@ -1,6 +1,7 @@
 import { Customer } from "../domain/customer.entity.";
 import { CustomerRepository } from "../domain/customer.repository";
 import { CustomerModalidad } from "../../customer/domain/types";
+import { CustomerDTO } from "./list.usecase";
 
 export interface CreateCustomerDTO {
   firstName: string;
@@ -14,7 +15,7 @@ export interface CreateCustomerDTO {
 export class CreateCustomerUseCase {
   constructor(private readonly customerRepository: CustomerRepository) {}
 
-  async execute(dto: CreateCustomerDTO): Promise<Customer> {
+  async execute(dto: CreateCustomerDTO): Promise<CustomerDTO> {
     const customer = Customer.create(
       dto.firstName,
       dto.lastName,
@@ -26,7 +27,6 @@ export class CreateCustomerUseCase {
 
     await this.customerRepository.save(customer.getId(), customer);
 
-    return customer;
+    return customer.toDTO();
   }
 }
-
