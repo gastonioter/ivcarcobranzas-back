@@ -2,6 +2,7 @@ import { Cuota, CuotaStatus } from "./cuota.entity";
 
 export interface CuotaFilters {
   customerId?: string;
+  uuids?: string[];
   month?: number;
   year?: number;
   status?: CuotaStatus;

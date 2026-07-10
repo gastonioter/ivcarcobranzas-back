@@ -10,8 +10,9 @@ export class MongoCuotaRepository implements CuotaRepository {
   }
 
   async findAll(filters: CuotaFilters = {}): Promise<Cuota[]> {
-    const query: Partial<ICuota> = {};
+    const query: Record<string, unknown> = {};
     if (filters.customerId) query.customerId = filters.customerId;
+    if (filters.uuids)      query.uuid = { $in: filters.uuids };
     if (filters.month)      query.month = filters.month;
     if (filters.year)       query.year = filters.year;
     if (filters.status)     query.status = filters.status;
