@@ -1,4 +1,3 @@
-import { CustomerRepository } from "@/customerV2/infra/mongo.repository";
 import { Cuota, CuotaMonths, CuotaStatus, mesesMap } from "../domain/cuota.entity";
 import { CuotaRepository } from "../domain/cuota.repository";
 

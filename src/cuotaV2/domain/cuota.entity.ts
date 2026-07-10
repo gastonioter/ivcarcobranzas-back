@@ -122,6 +122,18 @@ export class Cuota extends Entity {
     }
     this._status = status;
   }
+
+  markAsNoService(): void {
+    if (this._status === CuotaStatus.PAID)
+      throw new Error("Una cuota pagada no puede marcarse como sin servicio");
+    this._status = CuotaStatus.NO_SERVICE;
+  }
+
+  reactivate(): void {
+    if (this._status === CuotaStatus.NO_SERVICE)
+      throw new Error("Solo se puede reactivar una cuota en estado sin servicio");
+    this._status = CuotaStatus.PENDING;
+  }
 }
 
 export enum CuotaStatus {

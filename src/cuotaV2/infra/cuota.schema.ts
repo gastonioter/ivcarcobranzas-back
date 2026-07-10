@@ -7,7 +7,6 @@ export interface ICuota {
   month: number;
   year: number;
   amount: number;
-  serie: string;
   status: CuotaStatus;
   createdAt: Date;
 }
@@ -18,7 +17,6 @@ export const CuotaSchema = new Schema<ICuota>({
   month: { type: Number, required: true },
   year: { type: Number, required: true },
   amount: { type: Number, required: true },
-  serie: { type: String, required: true },
   status: { type: String, enum: Object.values(CuotaStatus), required: true },
   createdAt: { type: Date, required: true },
 });

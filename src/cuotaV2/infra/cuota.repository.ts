@@ -36,7 +36,6 @@ export class MongoCuotaRepository implements CuotaRepository {
       month: cuota.month,
       year: cuota.year,
       amount: cuota.amount,
-      serie: cuota.serie,
       status: cuota.status,
       createdAt: cuota.createdAt,
     };
@@ -49,7 +48,6 @@ export class MongoCuotaRepository implements CuotaRepository {
       month: doc.month,
       year: doc.year,
       amount: doc.amount,
-      serie: doc.serie,
       status: doc.status,
       createdAt: doc.createdAt,
     });
