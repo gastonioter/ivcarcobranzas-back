@@ -1,9 +1,8 @@
-import { CategoryEntity } from "./category.entity";
+import { Category } from "./category.entity";
 
-/* Usar la CategoryEntity */
 export interface CategoryRepository {
-  save(category: CategoryEntity): Promise<CategoryEntity | null>;
-  findAll(): Promise<CategoryEntity[]>;
-  findByName(uuid: string): Promise<CategoryEntity | null>;
-  findById(uuid: string): Promise<CategoryEntity | null>;
+  save(id:string, category: Category): Promise<void>;
+  findAll(): Promise<Category[]>;
+  findByName(uuid: string): Promise<Category | null>;
+  findById(uuid: string): Promise<Category | null>;
 }

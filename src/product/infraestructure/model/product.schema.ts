@@ -1,4 +1,4 @@
-import { CategoryDoc } from "@/category/infraestructure/model/category.schema";
+import { CategoryDoc } from "@/category/infraestructure/category.schema";
 import { InferSchemaType, model, Schema } from "mongoose";
 
 const ProductSchema = new Schema({

@@ -1,19 +1,7 @@
 import { InferSchemaType, model, Schema } from "mongoose";
 import { CustomerModalidad, CustomerStatus } from "../../customer/domain/types";
 
-export interface ICustomer extends Document {
-  uuid: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  cuit: string;
-  status: CustomerStatus;
-  type: CustomerModalidad;
-  createdAt: Date;
-}
-
-const CustomerSchema = new Schema<ICustomer>(
+const CustomerSchema = new Schema(
   {
     uuid: { type: String, required: true, unique: true },
     firstName: { type: String, required: true },
@@ -30,4 +18,4 @@ const CustomerSchema = new Schema<ICustomer>(
 
 export type CustomerDoc = InferSchemaType<typeof CustomerSchema>;
 
-export const CustomerModel = model<ICustomer>("CustomerV2", CustomerSchema);
+export const CustomerModel = model<CustomerDoc>("CustomerV2", CustomerSchema);

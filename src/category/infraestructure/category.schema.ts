@@ -1,6 +1,12 @@
 import { InferSchemaType, model, Schema } from "mongoose";
 
-const CategorySchema = new Schema({
+export interface ICategory extends Document {
+  uuid: string;
+  name: string;
+  description: string;
+  createdAt: string;
+}
+const CategorySchema = new Schema<ICategory>({
   uuid: { type: String, required: true, unique: true },
   name: { type: String, required: true, unique: true },
   description: { type: String, default: "" },

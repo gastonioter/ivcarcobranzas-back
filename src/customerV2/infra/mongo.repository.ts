@@ -1,5 +1,5 @@
 import { Customer } from "../domain/customer.entity.";
-import { CustomerModel, ICustomer } from "./customer.schema";
+import { CustomerModel, CustomerDoc } from "./customer.schema";
 
 export interface CustomerRepository {
   findById(uuid: string): Promise<null | Customer>
@@ -15,7 +15,7 @@ export class MongoCustomerRepository implements CustomerRepository {
 
   async findAll(): Promise<Customer[]> {
     const docs = await CustomerModel.find();
-    return docs.map((doc: ICustomer) => this.toDomain(doc));
+    return docs.map((doc: CustomerDoc) => this.toDomain(doc));
   }
 
   async save(uuid: string, data: Customer): Promise<void> {
@@ -26,7 +26,7 @@ export class MongoCustomerRepository implements CustomerRepository {
     );
   }
 
-  private toPersistence(customer: Customer): ICustomer {
+  private toPersistence(customer: Customer): CustomerDoc {
     return {
       uuid: customer.getId(),
       firstName: customer.firstName,
@@ -37,10 +37,10 @@ export class MongoCustomerRepository implements CustomerRepository {
       status: customer.status,
       type: customer.type,
       createdAt: customer.createdAt,
-    } as ICustomer;
+    };
   }
 
-  private toDomain(doc: ICustomer): Customer {
+  private toDomain(doc: CustomerDoc): Customer {
     return Customer.fromPersistence({
       uuid: doc.uuid,
       firstName: doc.firstName,

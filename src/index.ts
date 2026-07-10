@@ -15,6 +15,7 @@ import { SalesRoutes } from "./transaction/sale";
 import { CloudCategoryRoutes } from "./cloudCategory";
 import { MongoDB } from "./config/db";
 import { cuotaRoutes } from "./cuota";
+import { cuotaV2Router } from "./cuotaV2/infra/cuota.routes";
 import { metricsRoutes } from "./metrics";
 import { authorizationMiddleware } from "./middlewares/authorizationMiddleware";
 import { PrintRoutes } from "./prints";
@@ -43,6 +44,7 @@ app.use("/api/budgets", BudgetRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/cloudcategories", CloudCategoryRoutes);
 app.use("/api/cuotas", cuotaRoutes);
+app.use("/api/v2/cuotas", cuotaV2Router);
 app.use("/api/metrics", metricsRoutes);
 app.use(errorHandler);
 

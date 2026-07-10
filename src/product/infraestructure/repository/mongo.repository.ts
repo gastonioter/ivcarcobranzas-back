@@ -1,4 +1,4 @@
-import { CategoryDoc } from "../../../category/infraestructure/model/category.schema";
+import { CategoryDoc } from "../../../category/infraestructure/category.schema";
 import { ProductEntity } from "../../domain/product.entity";
 import { ProductNotFoundError } from "../../domain/product.exceptions";
 import { ProductRepository } from "../../domain/product.repository";
