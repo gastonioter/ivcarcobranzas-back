@@ -2,6 +2,14 @@ import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { Price } from "../../shared/valueObjects/price.vo";
 
+export interface ProductDTO {
+  uuid: string;
+  name: string;
+  code: string;
+  price: number;
+  categoryId: string;
+}
+
 interface ProductProps {
   uuid: EntityId;
   name: string;
@@ -39,8 +47,10 @@ export class Product extends Entity {
     code: string;
   }): Product {
     if (!categoryId) throw new Error("El producto debe tener una categoria.");
-    if (!name || name.trim().length === 0) throw new Error("El nombre del producto no puede estar vacío");
-    if (!code || code.trim().length === 0) throw new Error("El código del producto no puede estar vacío");
+    if (!name || name.trim().length === 0)
+      throw new Error("El nombre del producto no puede estar vacío");
+    if (!code || code.trim().length === 0)
+      throw new Error("El código del producto no puede estar vacío");
 
     return new Product({
       uuid: EntityId.create(),
@@ -50,6 +60,16 @@ export class Product extends Entity {
       categoryId,
       createdAt: new Date(),
     });
+  }
+
+  toDTO(): ProductDTO {
+    return {
+      uuid: this.getId(),
+      name: this.name,
+      price: this.price.value,
+      code: this.code,
+      categoryId: this.categoryId,
+    };
   }
 
   static fromPersistence(obj: any): Product {
@@ -67,7 +87,8 @@ export class Product extends Entity {
     return this._name;
   }
   set name(value: string) {
-    if (!value || value.trim().length === 0) throw new Error("El nombre del producto no puede estar vacío");
+    if (!value || value.trim().length === 0)
+      throw new Error("El nombre del producto no puede estar vacío");
     this._name = value.trim();
   }
 
@@ -85,7 +106,8 @@ export class Product extends Entity {
     return this._categoryId;
   }
   set categoryId(value: string) {
-    if (!value || value.trim().length === 0) throw new Error("El producto debe tener una categoria.");
+    if (!value || value.trim().length === 0)
+      throw new Error("El producto debe tener una categoria.");
     this._categoryId = value.trim();
   }
 

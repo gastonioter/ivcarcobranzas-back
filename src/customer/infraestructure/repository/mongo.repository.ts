@@ -187,8 +187,6 @@ export class CustomerMongoRepository implements CustomerRepository {
       .sort({ lastName: 1, firstName: 1 })
       .exec();
 
-    console.log(customersDoc);
-
     return customersDoc.map((customer) =>
       CustomerFactory.fromPersistence(customer),
     );

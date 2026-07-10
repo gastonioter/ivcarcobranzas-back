@@ -1,6 +1,14 @@
 import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { CreateCategoryDTO } from "../application/create.usecase";
+import { CategoryDoc } from "../infraestructure/category.schema";
+
+export interface CategoryDTO {
+  uuid: string;
+  name: string;
+  description: string;
+  createdAt: Date;
+}
 
 interface CategoryProps {
   uuid: EntityId;
@@ -21,7 +29,7 @@ export class Category extends Entity {
   }
 
   public static new({ name, description }: CreateCategoryDTO): Category {
-    if(!name) throw new Error("La categoria debe tener nombre");
+    if (!name) throw new Error("La categoria debe tener nombre");
     const createdAt = new Date();
     description = description || "sin descripción";
 
@@ -33,13 +41,22 @@ export class Category extends Entity {
     });
   }
 
-  static fromPersistence(doc: any): Category {
+  static fromPersistence(doc: CategoryDoc): Category {
     return new Category({
       name: doc.name,
       description: doc.description,
       createdAt: doc.createdAt,
       uuid: EntityId.fromExisting(doc.uuid),
     });
+  }
+
+  toDTO(): CategoryDTO {
+    return {
+      uuid: this.id,
+      name: this.name,
+      description: this.description,
+      createdAt: this.createdAt,
+    };
   }
 
   get name(): string {

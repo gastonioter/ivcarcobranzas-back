@@ -6,23 +6,22 @@ import { CategoryDoc, CategoryModel } from "./category.schema";
 
 export class CategoryMongoRepository implements CategoryRepository {
   async save(uuid: string, data: Category): Promise<void> {
-    try{
-        await CategoryModel.findOneAndUpdate(
-        { uuid },
-        this.toPersistence(data),
-        { upsert: true, new: true },
-        )
-      } catch (err: MongoServerError) {
-        if (err.code === 11000){ 
-          throw new CategoryAlreadyExists();
-        }
-        throw err;
+    try {
+      await CategoryModel.findOneAndUpdate({ uuid }, this.toPersistence(data), {
+        upsert: true,
+        new: true,
+      });
+    } catch (err) {
+      if (err instanceof MongoServerError && err.code === 11000) {
+        throw new CategoryAlreadyExists();
       }
+      throw err;
     }
+  }
 
   async findAll(): Promise<Category[]> {
     const docs = await CategoryModel.find().lean();
-    return docs.map((doc:CategoryDoc) => this.toDomain(doc));
+    return docs.map((doc: CategoryDoc) => this.toDomain(doc));
   }
 
   async findByName(name: string): Promise<Category | null> {
@@ -35,16 +34,16 @@ export class CategoryMongoRepository implements CategoryRepository {
     return doc ? this.toDomain(doc) : null;
   }
 
-  private toPersistence(c:Category):CategoryDoc{
+  private toPersistence(c: Category): CategoryDoc {
     return {
       uuid: c.id,
       name: c.name,
       description: c.description,
       createdAt: c.createdAt,
-    }
+    };
   }
 
-  private toDomain(doc:CategoryDoc):Category{
-    return Category.fromPersistence(doc)
+  private toDomain(doc: CategoryDoc): Category {
+    return Category.fromPersistence(doc);
   }
 }

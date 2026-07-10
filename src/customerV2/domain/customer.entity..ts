@@ -12,7 +12,8 @@ export interface CustomerProps {
   cuit: string;
   status: CustomerStatus;
   createdAt: Date;
-  type: CustomerModalidad
+  updatedAt: Date;
+  type: CustomerModalidad;
 }
 
 export class Customer extends Entity {
@@ -23,6 +24,7 @@ export class Customer extends Entity {
   private _cuit: string;
   private _status: CustomerStatus;
   private _createdAt: Date;
+  private _updatedAt: Date;
   private _type: CustomerModalidad;
 
   private constructor(props: CustomerProps) {
@@ -34,6 +36,7 @@ export class Customer extends Entity {
     this._cuit = props.cuit;
     this._status = props.status;
     this._createdAt = props.createdAt;
+    this._updatedAt = props.updatedAt;
     this._type = props.type;
   }
 
@@ -58,6 +61,7 @@ export class Customer extends Entity {
       status: CustomerStatus.ACTIVE,
       type,
       createdAt: new Date(),
+      updatedAt: new Date(),
     });
   }
 
@@ -71,6 +75,7 @@ export class Customer extends Entity {
     status: string;
     type: string;
     createdAt: Date;
+    updatedAt: Date;
   }): Customer {
     return new Customer({
       uuid: EntityId.fromExisting(data.uuid),
@@ -82,9 +87,9 @@ export class Customer extends Entity {
       status: data.status as CustomerStatus,
       type: data.type as CustomerModalidad,
       createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
     });
   }
-
 
   get firstName(): string {
     return this._firstName;
@@ -118,11 +123,15 @@ export class Customer extends Entity {
     return this._createdAt;
   }
 
-  get type(): CustomerModalidad{
+  get type(): CustomerModalidad {
     return this._type;
   }
 
-  isCloud(): boolean{
+  get updatedAt(): Date {
+    return this._updatedAt ?? this.createdAt;
+  }
+
+  isCloud(): boolean {
     return this._type === CustomerModalidad.CLOUD;
   }
 

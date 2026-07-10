@@ -9,9 +9,18 @@ const CustomerSchema = new Schema(
     email: { type: String, required: true },
     phone: { type: String, required: true },
     cuit: { type: String, required: true },
-    status: { type: String, enum: Object.values(CustomerStatus), required: true },
-    type: { type: String, enum: Object.values(CustomerModalidad), required: true },
+    status: {
+      type: String,
+      enum: Object.values(CustomerStatus),
+      required: true,
+    },
+    type: {
+      type: String,
+      enum: Object.values(CustomerModalidad),
+      required: true,
+    },
     createdAt: { type: Date, required: true },
+    updatedAt: { type: Date },
   },
   { timestamps: true },
 );

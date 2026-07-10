@@ -23,7 +23,9 @@ export class CuotaController {
   };
 
   generate = async (req: Request, res: Response) => {
-    const cuotas = await this.generateUseCase.generateCuotasForCustomer(req.body);
+    const cuotas = await this.generateUseCase.generateCuotasForCustomer(
+      req.body,
+    );
     res.status(201).json(cuotas);
   };
 

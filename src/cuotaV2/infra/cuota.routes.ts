@@ -11,9 +11,9 @@ import { ReactivateCuotaUseCase } from "../application/reactivate-cuota.usecase"
 import { PayCuotasUseCase } from "../../cuota-payment/application/pay-cuotas.usecase";
 import { CuotaController } from "./cuota.controller";
 
-const cuotaRepository      = new MongoCuotaRepository();
-const customerRepository   = new MongoCustomerRepository();
-const paymentRepository    = new MongoCuotaPaymentRepository();
+const cuotaRepository = new MongoCuotaRepository();
+const customerRepository = new MongoCustomerRepository();
+const paymentRepository = new MongoCuotaPaymentRepository();
 
 const controller = new CuotaController(
   new ListUseCase(cuotaRepository, customerRepository),
@@ -26,9 +26,12 @@ const controller = new CuotaController(
 
 export const cuotaV2Router = Router();
 
-cuotaV2Router.get("/:customerId",              asyncHandler(controller.list));
-cuotaV2Router.post("/generate",                asyncHandler(controller.generate));
-cuotaV2Router.patch("/:id/amount",             asyncHandler(controller.edit));
-cuotaV2Router.post("/:id/mark-no-service",     asyncHandler(controller.markAsNoService));
-cuotaV2Router.post("/:id/reactivate",          asyncHandler(controller.reactivate));
-cuotaV2Router.post("/pay",                     asyncHandler(controller.pay));
+cuotaV2Router.get("/:customerId", asyncHandler(controller.list));
+cuotaV2Router.post("/generate", asyncHandler(controller.generate));
+cuotaV2Router.patch("/:id/amount", asyncHandler(controller.edit));
+cuotaV2Router.post(
+  "/:id/mark-no-service",
+  asyncHandler(controller.markAsNoService),
+);
+cuotaV2Router.post("/:id/reactivate", asyncHandler(controller.reactivate));
+cuotaV2Router.post("/pay", asyncHandler(controller.pay));

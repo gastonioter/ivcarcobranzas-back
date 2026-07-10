@@ -35,7 +35,9 @@ export class CustomerController {
   };
 
   public getRecibosCustomer = async (req: Request, res: Response) => {
-    const recibos = await this.customerUseCases.getRecibosCustomer(req.params.uuid);
+    const recibos = await this.customerUseCases.getRecibosCustomer(
+      req.params.uuid,
+    );
     res.status(200).json(recibos);
   };
 
@@ -47,7 +49,6 @@ export class CustomerController {
   public accountSummary = async (req: Request, res: Response) => {
     const { uuid } = req.params;
     const summary = await this.customerUseCases.accountSummary(uuid);
-    console.log(summary);
     res.status(200).json(summary);
   };
 }

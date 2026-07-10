@@ -1,7 +1,7 @@
 import { Product } from "./product.entity";
 
 export interface ProductWithCategory extends Product {
-  category: { uuid: string; name: string; description: string };
+  category: { name: string };
 }
 
 export interface ProductRepository {

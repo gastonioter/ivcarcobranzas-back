@@ -1,17 +1,7 @@
-import { model, Schema } from "mongoose";
+import { InferSchemaType, model, Schema } from "mongoose";
 import { CuotaStatus } from "../domain/cuota.entity";
 
-export interface ICuota {
-  uuid: string;
-  customerId: string;
-  month: number;
-  year: number;
-  amount: number;
-  status: CuotaStatus;
-  createdAt: Date;
-}
-
-export const CuotaSchema = new Schema<ICuota>({
+export const CuotaSchema = new Schema({
   uuid: { type: String, required: true, unique: true },
   customerId: { type: String, required: true },
   month: { type: Number, required: true },
@@ -24,4 +14,5 @@ export const CuotaSchema = new Schema<ICuota>({
 CuotaSchema.index({ customerId: 1, year: 1 });
 CuotaSchema.index({ customerId: 1, month: 1, year: 1 });
 
-export const CuotaModel = model<ICuota>("CuotaV2", CuotaSchema);
+export type CuotaDoc = InferSchemaType<typeof CuotaSchema>;
+export const CuotaModel = model("CuotaV2", CuotaSchema);

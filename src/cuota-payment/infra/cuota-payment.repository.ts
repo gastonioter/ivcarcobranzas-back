@@ -19,21 +19,21 @@ export class MongoCuotaPaymentRepository implements CuotaPaymentRepository {
 
   private toPersistence(payment: CuotaPayment): ICuotaPayment {
     return {
-      uuid:       payment.getId(),
+      uuid: payment.getId(),
       customerId: payment.customerId,
-      lines:      payment.lines,
-      serie:      payment.serie,
-      createdAt:  payment.createdAt,
+      lines: payment.lines,
+      serie: payment.serie,
+      createdAt: payment.createdAt,
     };
   }
 
   private toDomain(doc: ICuotaPayment): CuotaPayment {
     return CuotaPayment.fromPersistence({
-      uuid:       doc.uuid,
+      uuid: doc.uuid,
       customerId: doc.customerId,
-      lines:      doc.lines,
-      serie:      doc.serie,
-      createdAt:  doc.createdAt,
+      lines: doc.lines,
+      serie: doc.serie,
+      createdAt: doc.createdAt,
     });
   }
 }

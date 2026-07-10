@@ -1,7 +1,7 @@
 import { generateSecuence } from "../../shared/utils/generateSecuence";
 import { ProducAlreadyExistsError } from "../domain/product.exceptions";
 import { ProductRepository } from "../domain/product.repository";
-import { Product } from "../domain/product.entity";
+import { Product, ProductDTO } from "../domain/product.entity";
 
 export interface CreateProductDTO {
   name: string;
@@ -12,7 +12,7 @@ export interface CreateProductDTO {
 export class CreateProductUseCase {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  async execute(dto: CreateProductDTO): Promise<Product> {
+  async execute(dto: CreateProductDTO): Promise<ProductDTO> {
     const exists = await this.productRepository.findByName(dto.name);
     if (exists) throw new ProducAlreadyExistsError();
 
@@ -27,6 +27,6 @@ export class CreateProductUseCase {
     });
 
     await this.productRepository.save(product.getId(), product);
-    return product;
+    return product.toDTO();
   }
 }

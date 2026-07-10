@@ -2,12 +2,12 @@ import { Customer } from "../domain/customer.entity.";
 import { CustomerModel, CustomerDoc } from "./customer.schema";
 
 export interface CustomerRepository {
-  findById(uuid: string): Promise<null | Customer>
-  save(uuid: string, data: Customer): Promise<void>
+  findById(uuid: string): Promise<null | Customer>;
+  save(uuid: string, data: Customer): Promise<void>;
 }
 
 export class MongoCustomerRepository implements CustomerRepository {
-  async findById(uuid: string): Promise< null | Customer > {
+  async findById(uuid: string): Promise<null | Customer> {
     const doc = await CustomerModel.findOne({ uuid });
     if (!doc) return null;
     return this.toDomain(doc);
@@ -19,11 +19,10 @@ export class MongoCustomerRepository implements CustomerRepository {
   }
 
   async save(uuid: string, data: Customer): Promise<void> {
-    await CustomerModel.findOneAndUpdate(
-      { uuid },
-      this.toPersistence(data),
-      { upsert: true, new: true },
-    );
+    await CustomerModel.findOneAndUpdate({ uuid }, this.toPersistence(data), {
+      upsert: true,
+      new: true,
+    });
   }
 
   private toPersistence(customer: Customer): CustomerDoc {
@@ -37,6 +36,7 @@ export class MongoCustomerRepository implements CustomerRepository {
       status: customer.status,
       type: customer.type,
       createdAt: customer.createdAt,
+      updatedAt: customer.updatedAt,
     };
   }
 
@@ -51,6 +51,7 @@ export class MongoCustomerRepository implements CustomerRepository {
       status: doc.status,
       type: doc.type,
       createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
     });
   }
 }

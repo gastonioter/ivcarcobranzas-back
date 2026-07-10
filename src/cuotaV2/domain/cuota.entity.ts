@@ -1,15 +1,15 @@
 import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
-import { ICuota } from "../infra/cuota.schema";
+import { CuotaDoc } from "../infra/cuota.schema";
 
 export interface CuotaProps {
-    uuid: EntityId;
-    customerId: string;
-    year: number;
-    month: number;
-    amount: number;
-    status: CuotaStatus;
-    createdAt: Date;
+  uuid: EntityId;
+  customerId: string;
+  year: number;
+  month: number;
+  amount: number;
+  status: CuotaStatus;
+  createdAt: Date;
 }
 
 export class Cuota extends Entity {
@@ -20,9 +20,7 @@ export class Cuota extends Entity {
   private _status: CuotaStatus;
   private _createdAt: Date;
 
-  private constructor(
-    props:CuotaProps
-  ) {
+  private constructor(props: CuotaProps) {
     super(props.uuid);
     this._customerId = props.customerId;
     this._amount = props.amount;
@@ -48,7 +46,7 @@ export class Cuota extends Entity {
     facturaId?: string;
   }): Cuota {
     if (amount <= 0) throw new Error("El monto de la cuota es invalido");
-    if(!year || !month) throw new Error("El mes y anio son obligatorios");
+    if (!year || !month) throw new Error("El mes y anio son obligatorios");
 
     return new Cuota({
       customerId,
@@ -58,10 +56,10 @@ export class Cuota extends Entity {
       amount,
       status,
       createdAt: new Date(),
-  });
+    });
   }
 
-  public static fromPersistence(persisted: ICuota): Cuota {
+  public static fromPersistence(persisted: CuotaDoc): Cuota {
     return new Cuota({
       customerId: persisted.customerId,
       uuid: EntityId.fromExisting(persisted.uuid),
@@ -73,7 +71,7 @@ export class Cuota extends Entity {
     });
   }
 
-  get customerId(): string{
+  get customerId(): string {
     return this._customerId;
   }
 
@@ -131,7 +129,9 @@ export class Cuota extends Entity {
 
   reactivate(): void {
     if (this._status === CuotaStatus.NO_SERVICE)
-      throw new Error("Solo se puede reactivar una cuota en estado sin servicio");
+      throw new Error(
+        "Solo se puede reactivar una cuota en estado sin servicio",
+      );
     this._status = CuotaStatus.PENDING;
   }
 }

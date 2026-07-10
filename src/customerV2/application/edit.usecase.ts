@@ -26,6 +26,7 @@ export class EditCustomerUseCase {
       status: customer.status,
       type: customer.type,
       createdAt: customer.createdAt,
+      updatedAt: new Date(),
     });
 
     await this.customerRepository.save(uuid, updated);
