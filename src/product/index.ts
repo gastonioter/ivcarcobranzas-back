@@ -1,1 +1,1 @@
-export { router as productRoutes } from "./infraestructure/routes/product.routes";
+export { router as productRoutes } from "./infraestructure/product.routes";

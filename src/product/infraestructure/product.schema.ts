@@ -22,8 +22,4 @@ ProductSchema.set("toJSON", { virtuals: true });
 
 export type ProductDoc = InferSchemaType<typeof ProductSchema>;
 
-export type ProductWithCategoryDoc = ProductDoc & {
-  category: CategoryDoc;
-};
-
 export const ProductModel = model<ProductDoc>("Product", ProductSchema);
