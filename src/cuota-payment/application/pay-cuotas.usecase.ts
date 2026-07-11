@@ -2,6 +2,7 @@ import { CuotaPayment } from "../domain/cuota-payment.entity";
 import { CuotaPaymentRepository } from "../domain/cuota-payment.repository";
 import { CuotaStatus } from "../../cuotaV2/domain/cuota.entity";
 import { CuotaRepository } from "../../cuotaV2/domain/cuota.repository";
+import { CuotaPaymentDTO, toDTO } from "./cuota-payment.dto";
 
 interface PayCuotasDTO {
   customerId: string;
@@ -14,13 +15,21 @@ export class PayCuotasUseCase {
     private readonly cuotaPaymentRepository: CuotaPaymentRepository,
   ) {}
 
-  async execute(dto: PayCuotasDTO): Promise<CuotaPayment> {
+  async execute(dto: PayCuotasDTO): Promise<CuotaPaymentDTO> {
     const { customerId, cuotaIds } = dto;
 
-    const cuotas = await this.cuotaRepository.findAll({ customerId, uuids: cuotaIds });
+    if (!customerId || !cuotaIds || cuotaIds.length === 0)
+      throw new Error("Datos inválidos.");
+
+    const cuotas = await this.cuotaRepository.findAll({
+      customerId,
+      uuids: cuotaIds,
+    });
 
     if (cuotas.length !== cuotaIds.length)
-      throw new Error("Cuotas inexistentes.");
+      throw new Error(
+        `Cuotas inexistentes: ${cuotaIds.length} !== ${cuotas.length}`,
+      );
 
     const alreadyPaid = cuotas.find((c) => c.isPaid());
     if (alreadyPaid)
@@ -30,11 +39,11 @@ export class PayCuotasUseCase {
 
     const payment = CuotaPayment.new(
       customerId,
-      cuotas.map((c) => ({ 
-        uuid: c.id, 
-        month: c.month, 
-        year: c.year, 
-        amount: c.amount 
+      cuotas.map((c) => ({
+        uuid: c.id,
+        month: c.month,
+        year: c.year,
+        amount: c.amount,
       })),
     );
 
@@ -46,6 +55,6 @@ export class PayCuotasUseCase {
       this.cuotaPaymentRepository.save(payment.getId(), payment),
     ]);
 
-    return payment;
+    return toDTO(payment);
   }
 }

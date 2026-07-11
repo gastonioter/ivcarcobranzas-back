@@ -17,5 +17,5 @@ const controller = new CustomerController(
 export const routes = Router();
 
 routes.get("/", asyncHandler(controller.list));
-routes.patch("/", asyncHandler(controller.edit));
+routes.patch("/:uuid", asyncHandler(controller.edit));
 routes.post("/", asyncHandler(controller.create));

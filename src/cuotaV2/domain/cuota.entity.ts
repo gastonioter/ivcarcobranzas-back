@@ -1,3 +1,4 @@
+import { Price } from "../../shared/valueObjects/price.vo";
 import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 import { CuotaDoc } from "../infra/cuota.schema";
@@ -7,8 +8,9 @@ export interface CuotaProps {
   customerId: string;
   year: number;
   month: number;
-  amount: number;
+  amount: Price;
   status: CuotaStatus;
+  sequence: number;
   createdAt: Date;
 }
 
@@ -16,8 +18,9 @@ export class Cuota extends Entity {
   private _customerId: string;
   private _year: number;
   private _month: number;
-  private _amount: number;
+  private _amount: Price;
   private _status: CuotaStatus;
+  private _sequence: number;
   private _createdAt: Date;
 
   private constructor(props: CuotaProps) {
@@ -27,6 +30,7 @@ export class Cuota extends Entity {
     this._month = props.month;
     this._year = props.year;
     this._status = props.status;
+    this._sequence = props.sequence;
     this._createdAt = props.createdAt;
   }
 
@@ -36,16 +40,15 @@ export class Cuota extends Entity {
     year,
     month,
     status,
-    facturaId,
+    sequence,
   }: {
     customerId: string;
     amount: number;
     year: number;
     month: number;
     status: CuotaStatus.PENDING | CuotaStatus.NO_SERVICE;
-    facturaId?: string;
+    sequence: number;
   }): Cuota {
-    if (amount <= 0) throw new Error("El monto de la cuota es invalido");
     if (!year || !month) throw new Error("El mes y anio son obligatorios");
 
     return new Cuota({
@@ -53,9 +56,10 @@ export class Cuota extends Entity {
       uuid: EntityId.create(),
       month,
       year,
-      amount,
+      amount: Price.of(amount),
       status,
       createdAt: new Date(),
+      sequence,
     });
   }
 
@@ -65,12 +69,20 @@ export class Cuota extends Entity {
       uuid: EntityId.fromExisting(persisted.uuid),
       month: persisted.month,
       year: persisted.year,
-      amount: persisted.amount,
+      amount: Price.of(persisted.amount),
       status: persisted.status,
       createdAt: persisted.createdAt,
+      sequence: persisted.sequence,
     });
   }
 
+  get sequence(): number {
+    return this._sequence;
+  }
+
+  getSerie(): string {
+    return `CUOTA-${this._sequence.toString().padStart(5, "0")}`;
+  }
   get customerId(): string {
     return this._customerId;
   }
@@ -84,11 +96,15 @@ export class Cuota extends Entity {
   }
 
   get amount(): number {
-    return this._amount;
+    return this._amount.value;
   }
 
   set amount(value: number) {
-    this._amount = value;
+    this._amount = Price.of(value);
+  }
+
+  set sequence(value: number) {
+    this._sequence = value;
   }
 
   get status(): CuotaStatus {
@@ -128,7 +144,7 @@ export class Cuota extends Entity {
   }
 
   reactivate(): void {
-    if (this._status === CuotaStatus.NO_SERVICE)
+    if (this._status !== CuotaStatus.NO_SERVICE)
       throw new Error(
         "Solo se puede reactivar una cuota en estado sin servicio",
       );

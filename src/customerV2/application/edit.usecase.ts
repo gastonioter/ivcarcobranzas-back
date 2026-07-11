@@ -1,3 +1,4 @@
+import { CustomerStatus } from "@/customer/domain/types";
 import { Customer } from "../domain/customer.entity.";
 import { CustomerRepository } from "../domain/customer.repository";
 import { CustomerDTO } from "./list.usecase";
@@ -8,6 +9,8 @@ export interface EditCustomerDTO {
   email?: string;
   phone?: string;
   cuit?: string;
+  type?: string;
+  status?: CustomerStatus;
 }
 
 export class EditCustomerUseCase {
@@ -24,8 +27,8 @@ export class EditCustomerUseCase {
       email: dto.email ?? customer.email,
       phone: dto.phone ?? customer.phone,
       cuit: dto.cuit ?? customer.cuit,
-      status: customer.status,
-      type: customer.type,
+      status: dto.status ?? customer.status,
+      type: dto.type ?? customer.type,
       createdAt: customer.createdAt,
       updatedAt: new Date(),
     });

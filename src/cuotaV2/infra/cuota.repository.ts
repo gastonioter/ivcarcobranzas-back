@@ -32,6 +32,7 @@ export class MongoCuotaRepository implements CuotaRepository {
     return {
       uuid: cuota.getId(),
       customerId: cuota.customerId,
+      sequence: cuota.sequence,
       month: cuota.month,
       year: cuota.year,
       amount: cuota.amount,
@@ -44,6 +45,7 @@ export class MongoCuotaRepository implements CuotaRepository {
     return Cuota.fromPersistence({
       uuid: doc.uuid,
       customerId: doc.customerId,
+      sequence: doc.sequence,
       month: doc.month,
       year: doc.year,
       amount: doc.amount,

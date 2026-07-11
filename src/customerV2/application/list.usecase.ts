@@ -1,5 +1,4 @@
 import { CustomerModalidad } from "@/customer/domain/types";
-import { Customer } from "../domain/customer.entity.";
 import { CustomerRepository } from "../domain/customer.repository";
 
 export interface CustomerDTO {

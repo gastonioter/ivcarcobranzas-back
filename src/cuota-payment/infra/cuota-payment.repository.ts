@@ -17,6 +17,16 @@ export class MongoCuotaPaymentRepository implements CuotaPaymentRepository {
     );
   }
 
+  async findAll(filters: { customerId?: string }): Promise<CuotaPayment[]> {
+    const query: any = {};
+    if (filters.customerId) {
+      query.customerId = filters.customerId;
+    }
+
+    const docs = await CuotaPaymentModel.find(query).lean();
+    return docs.map((doc: ICuotaPayment) => this.toDomain(doc));
+  }
+
   private toPersistence(payment: CuotaPayment): ICuotaPayment {
     return {
       uuid: payment.getId(),

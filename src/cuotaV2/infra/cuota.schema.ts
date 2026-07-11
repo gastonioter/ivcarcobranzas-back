@@ -7,6 +7,7 @@ export const CuotaSchema = new Schema({
   month: { type: Number, required: true },
   year: { type: Number, required: true },
   amount: { type: Number, required: true },
+  sequence: { type: Number, required: true },
   status: { type: String, enum: Object.values(CuotaStatus), required: true },
   createdAt: { type: Date, required: true },
 });

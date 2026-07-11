@@ -1,7 +1,7 @@
 import cors from "cors";
 import express from "express";
 
-import "./config/env";
+import "./boostrap/env";
 import { userRoutes } from "./user";
 
 import morgan from "morgan";
@@ -13,7 +13,7 @@ import { productRoutes } from "./product";
 import { SalesRoutes } from "./transaction/sale";
 
 import { CloudCategoryRoutes } from "./cloudCategory";
-import { MongoDB } from "./config/db";
+import { MongoDB } from "./boostrap/db";
 import { cuotaRoutes } from "./cuota";
 import { cuotaV2Router } from "./cuotaV2/infra/cuota.routes";
 import { metricsRoutes } from "./metrics";
@@ -21,6 +21,7 @@ import { authorizationMiddleware } from "./middlewares/authorizationMiddleware";
 import { PrintRoutes } from "./prints";
 import { BudgetRoutes } from "./transaction/budget";
 import { customerV2Router } from "./customerV2";
+import { cuotaPaymentRouter } from "./cuota-payment";
 
 const app = express();
 
@@ -47,6 +48,7 @@ app.use("/api/cloudcategories", CloudCategoryRoutes);
 app.use("/api/cuotas", cuotaRoutes);
 app.use("/api/v2/cuotas", cuotaV2Router);
 app.use("/api/v2/customers", customerV2Router);
+app.use("/api/cuota-payments", cuotaPaymentRouter);
 app.use("/api/metrics", metricsRoutes);
 app.use(errorHandler);
 

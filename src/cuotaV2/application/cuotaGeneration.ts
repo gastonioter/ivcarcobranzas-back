@@ -1,5 +1,11 @@
-import { Cuota, CuotaMonths, CuotaStatus, mesesMap } from "../domain/cuota.entity";
+import {
+  Cuota,
+  CuotaMonths,
+  CuotaStatus,
+  mesesMap,
+} from "../domain/cuota.entity";
 import { CuotaRepository } from "../domain/cuota.repository";
+import { CuotaDTO, toDTO } from "./cuota.dto";
 
 interface BulkCreateCuotasDTO {
   amount: number;
@@ -12,11 +18,13 @@ interface BulkCreateCuotasDTO {
 export class CuotaGenerationUseCases {
   constructor(private readonly cuotaRepository: CuotaRepository) {}
 
-  async generateCuotasForCustomer(data: BulkCreateCuotasDTO): Promise<Cuota[]> {
+  async generateCuotasForCustomer(
+    data: BulkCreateCuotasDTO,
+  ): Promise<CuotaDTO[]> {
     const { customerId, amount, months, status, year } = data;
 
     const existing = await this.cuotaRepository.findAll({ customerId, year });
-    
+    const count = await this.cuotaRepository.findAll({ customerId });
     const existingMonths = new Set(existing.map((c) => c.month));
 
     const toCreate = months
@@ -28,11 +36,12 @@ export class CuotaGenerationUseCases {
           month: mesesMap[m],
           year,
           status,
+          sequence: count.length + 1,
         }),
       );
 
     await Promise.all(toCreate.map((c) => this.cuotaRepository.save(c.id, c)));
 
-    return toCreate;
+    return toCreate.map((c) => toDTO(c));
   }
 }
