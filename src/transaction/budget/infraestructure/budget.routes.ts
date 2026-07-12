@@ -1,21 +1,21 @@
+import { MongoCustomerRepository } from "../../../customerV2/infra/mongo.repository";
 import { Router } from "express";
-import { BudgetMongoRepository } from "./budget.mongo";
-import { CustomerMongoRepository } from "../../../customer/infraestructure/repository/mongo.repository";
-import { BudgetUseCases } from "../application/budgetUseCases";
-import { BudgetController } from "./budget.ctrl";
 import { asyncHandler } from "../../../middlewares/asyncHandlerMiddleware";
-import { SaleMongoRepository } from "../../sale/infraestructure/sale.mongo";
 import { zodValidator } from "../../../middlewares/zodValidator";
+import { MongoRepository } from "../../../user/infraestructure/repository/mongo.repository";
+import { SaleMongoRepository } from "../../sale/infraestructure/sale.mongo";
 import {
   CreateBudgetSchema,
   EditBudgetSchema,
 } from "../adapters/inputBudgetDTOs";
-import { MongoRepository } from "../../../user/infraestructure/repository/mongo.repository";
+import { BudgetUseCases } from "../application/budgetUseCases";
+import { BudgetController } from "./budget.ctrl";
+import { BudgetMongoRepository } from "./budget.mongo";
 
 export const router = Router();
 
 const budgetrepo = new BudgetMongoRepository();
-const customerrepo = new CustomerMongoRepository();
+const customerrepo = new MongoCustomerRepository();
 const salesrepo = new SaleMongoRepository();
 const userrepo = new MongoRepository();
 const usecases = new BudgetUseCases(

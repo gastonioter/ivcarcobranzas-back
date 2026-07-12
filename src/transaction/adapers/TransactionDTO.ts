@@ -1,10 +1,10 @@
 import { UserEntity } from "../../user/domain/user.entity";
-import { CustomerEntity } from "../../customer/domain/customer.entity";
 import { Detail, Transaction } from "../../transaction/domain/Transaction";
+import { Customer } from "@/customerV2/domain/customer.entity.";
 
 export function mapTransactionDTO(
   t: Transaction,
-  c?: CustomerEntity,
+  c?: Customer,
   u?: UserEntity,
 ): ITransactionDTO {
   return {
@@ -47,11 +47,11 @@ interface SaleCustomerDTO {
   lastName: string;
 }
 
-export function mapCustomer(customer: CustomerEntity): SaleCustomerDTO {
+export function mapCustomer(customer: Customer): SaleCustomerDTO {
   return {
-    firstName: customer.getFirstName(),
-    lastName: customer.getLastName(),
-    uuid: customer.getId(),
+    firstName: customer.firstName,
+    lastName: customer.lastName,
+    uuid: customer.id,
   };
 }
 

@@ -1,4 +1,3 @@
-import { CustomerMongoRepository } from "../../customer/infraestructure/repository/mongo.repository";
 import { SaleMongoRepository } from "../../transaction/sale/infraestructure/sale.mongo";
 import { Router } from "express";
 import { PrintBudgetUseCase } from "../application/print-budget-use-case";
@@ -10,21 +9,31 @@ import { PrintReciboUseCase } from "../application/print-recibo-use-case";
 import { PrintAccountSummaryUseCase } from "../application/print-accountsummary-use-case";
 import { PrintMonitoreoSummaryUseCase } from "../application/print-monitoreosummary-usecase";
 import { PrintReciboMonitoreoUseCase } from "../application/print-recibopago-use-case";
+import { MongoCustomerRepository } from "../../customerV2/infra/mongo.repository";
+import { MongoCuotaRepository } from "../../cuotaV2/infra/cuota.repository";
+import { MongoCuotaPaymentRepository } from "../../cuota-payment/infra/cuota-payment.repository";
 
 export const router = Router();
 
-const customersrepo = new CustomerMongoRepository();
+const customersRepo = new MongoCustomerRepository();
+const cuotasRepo = new MongoCuotaRepository();
+const cuotasPaymentRepo = new MongoCuotaPaymentRepository();
+
 const salesrepo = new SaleMongoRepository();
 const budgetsrepo = new BudgetMongoRepository();
 
-const usecases = new PrintBudgetUseCase(budgetsrepo, customersrepo);
-const sales = new PrintSaleUseCase(salesrepo, customersrepo);
-const reciptuescase = new PrintReciboUseCase(salesrepo, customersrepo);
-const monitusecase = new PrintMonitoreoSummaryUseCase(customersrepo);
-const recibomonitoreo = new PrintReciboMonitoreoUseCase(customersrepo);
+const usecases = new PrintBudgetUseCase(budgetsrepo, customersRepo);
+const sales = new PrintSaleUseCase(salesrepo, customersRepo);
+const reciptuescase = new PrintReciboUseCase(salesrepo, customersRepo);
+const monitusecase = new PrintMonitoreoSummaryUseCase();
+const recibomonitoreo = new PrintReciboMonitoreoUseCase(
+  cuotasPaymentRepo,
+  cuotasRepo,
+  customersRepo,
+);
 const printAccountSummaryUseCase = new PrintAccountSummaryUseCase(
   salesrepo,
-  customersrepo,
+  customersRepo,
 );
 const ctrl = new PrintsController(
   usecases,

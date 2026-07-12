@@ -1,4 +1,3 @@
-import { CustomerEntity } from "../../customer/domain/customer.entity";
 import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
 

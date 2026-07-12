@@ -1,9 +1,11 @@
-import { AccountSummary } from "../../customer/domain/customer.entity";
-import { CustomerRepository } from "../../customer/domain/interfaces/CustomerRepository";
 import { SaleRepository } from "../../transaction/sale/domain/sale.repository";
-import { getCustomerSummaryAccount } from "../../customer/domain/services/AccountSummary";
 import { AccountSummaryCmp } from "../../components/pdfs/AccountSummary";
 import { companyInfo } from "../constants";
+import { CustomerRepository } from "../../customerV2/domain/customer.repository";
+import {
+  AccountSummary,
+  getCustomerSummaryAccount,
+} from "../../customerV2/application/queries/account-summary.usecase";
 
 let renderToStream: any;
 export class PrintAccountSummaryUseCase {
@@ -13,7 +15,7 @@ export class PrintAccountSummaryUseCase {
   ) {}
 
   async print(customerId: string) {
-    const customer = await this.customerRepo.getCustomer(customerId);
+    const customer = await this.customerRepo.findById(customerId);
     if (!customer) {
       throw new Error("Customer not found");
     }
@@ -31,10 +33,10 @@ export class PrintAccountSummaryUseCase {
         company: companyInfo,
         customer: {
           uuid: customer.getId(),
-          firstName: customer.getFirstName(),
-          lastName: customer.getLastName(),
-          email: customer.getEmail(),
-          phone: customer.getPhone(),
+          firstName: customer.firstName,
+          lastName: customer.lastName,
+          email: customer.email,
+          phone: customer.phone,
         },
         details: accountSummary.details,
         summary: {
@@ -46,7 +48,7 @@ export class PrintAccountSummaryUseCase {
     );
     return {
       pdfStream,
-      filename: `RSMCTA-${customer.getFirstName()}-${customer.getLastName()}-${new Date().toISOString()}`,
+      filename: `RSMCTA-${customer.firstName}-${customer.lastName}-${new Date().toISOString()}`,
     };
   }
 }

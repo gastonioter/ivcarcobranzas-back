@@ -1,7 +1,7 @@
 import { SaleRepository } from "../../transaction/sale/domain/sale.repository";
-import { CustomerRepository } from "../../customer/domain/interfaces/CustomerRepository";
 import { companyInfo } from "../constants";
 import { Invoice } from "../../components/pdfs/Invoice";
+import { CustomerRepository } from "@/customerV2/domain/customer.repository";
 
 let renderToStream: any;
 export class PrintSaleUseCase {
@@ -12,7 +12,7 @@ export class PrintSaleUseCase {
 
   async printSale(uuid: string) {
     const sale = await this.saleRepo.findByUuid(uuid);
-    const customer = await this.customerRepo.getCustomer(sale.getCustomerId());
+    const customer = await this.customerRepo.findById(sale.getCustomerId());
     if (!sale) {
       throw new Error("Sale not found");
     }
@@ -29,10 +29,10 @@ export class PrintSaleUseCase {
       await Invoice({
         company: companyInfo,
         customer: {
-          firstName: customer.getFirstName(),
-          lastName: customer.getLastName(),
-          email: customer.getEmail(),
-          phone: customer.getPhone(),
+          firstName: customer.firstName,
+          lastName: customer.lastName,
+          email: customer.email,
+          phone: customer.phone,
         },
         details: sale.getDetails().map((d) => ({
           quantity: d.quantity,

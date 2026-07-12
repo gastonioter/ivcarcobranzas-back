@@ -1,5 +1,5 @@
 import { InferSchemaType, model, Schema } from "mongoose";
-import { CustomerModalidad, CustomerStatus } from "../../customer/domain/types";
+import { CustomerModalidad, CustomerStatus } from "../domain/customer.entity.";
 
 const CustomerSchema = new Schema(
   {
@@ -25,6 +25,7 @@ const CustomerSchema = new Schema(
   { timestamps: true },
 );
 
+CustomerSchema.index({ uuid: 1 }, { unique: true });
 export type CustomerDoc = InferSchemaType<typeof CustomerSchema>;
 
 export const CustomerModel = model<CustomerDoc>("CustomerV2", CustomerSchema);

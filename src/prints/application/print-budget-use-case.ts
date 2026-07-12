@@ -1,7 +1,8 @@
+import { CustomerRepository } from "@/customerV2/domain/customer.repository";
 import { Budget } from "../../components/pdfs/Budget";
-import { CustomerRepository } from "../../customer/domain/interfaces/CustomerRepository";
 import { BudgetRepository } from "../../transaction/budget/domain/budget.repository";
 import { companyInfo } from "../constants";
+
 let renderToStream: any;
 export class PrintBudgetUseCase {
   constructor(
@@ -11,9 +12,8 @@ export class PrintBudgetUseCase {
 
   async printBudget(uuid: string) {
     const budget = await this.budgetRepo.findByUuid(uuid);
-    const customer = await this.customerRepo.getCustomer(
-      budget.getCustomerId(),
-    );
+    const customer = await this.customerRepo.findById(budget.getCustomerId());
+
     if (!budget) {
       throw new Error("Budget not found");
     }
@@ -30,10 +30,10 @@ export class PrintBudgetUseCase {
       await Budget({
         company: companyInfo,
         customer: {
-          firstName: customer.getFirstName(),
-          lastName: customer.getLastName(),
-          email: customer.getEmail(),
-          phone: customer.getPhone(),
+          firstName: customer.firstName,
+          lastName: customer.lastName,
+          email: customer.email,
+          phone: customer.phone,
         },
         details: budget.getDetails().map((d) => ({
           quantity: d.quantity,

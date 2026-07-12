@@ -36,7 +36,7 @@ export class CuotaGenerationUseCases {
           month: mesesMap[m],
           year,
           status,
-          sequence: count.length + 1,
+          sequence: count.length + i,
         }),
       );
 

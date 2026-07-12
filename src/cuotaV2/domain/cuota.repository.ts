@@ -9,7 +9,7 @@ export interface CuotaFilters {
 }
 
 export interface CuotaRepository {
-  findById(uuid: string): Promise<Cuota | null>
-  findAll(filters?: CuotaFilters): Promise<Cuota[]>
-  save(uuid: string, data: Cuota): Promise<void>
+  findById(uuid: string): Promise<Cuota | null>;
+  findAll(filters?: CuotaFilters): Promise<Cuota[]>;
+  save(uuid: string, data: Cuota): Promise<void>;
 }

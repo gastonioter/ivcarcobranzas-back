@@ -1,6 +1,6 @@
 import { Cuota } from "../domain/cuota.entity";
 import { CuotaFilters, CuotaRepository } from "../domain/cuota.repository";
-import { CuotaModel, CuotaDoc } from "./cuota.schema";
+import { CuotaDoc, CuotaModel } from "./cuota.schema";
 
 export class MongoCuotaRepository implements CuotaRepository {
   async findById(uuid: string): Promise<Cuota | null> {

@@ -1,10 +1,10 @@
-import { CustomerEntity } from "../../../customer/domain/customer.entity";
 import { Budget, BudgetStatus } from "../domain/budget.entity";
 import {
   ITransactionDTO,
   mapTransactionDTO,
 } from "../../../transaction/adapers/TransactionDTO";
 import { UserEntity } from "../../../user/domain/user.entity";
+import { Customer } from "@/customerV2/domain/customer.entity.";
 
 interface BudgetDTO extends ITransactionDTO {
   expiresAt?: Date;
@@ -14,7 +14,7 @@ interface BudgetDTO extends ITransactionDTO {
 
 export function BudgetDTO(
   budget: Budget,
-  customer?: CustomerEntity,
+  customer?: Customer,
   user?: UserEntity,
 ): BudgetDTO {
   return {

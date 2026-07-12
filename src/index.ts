@@ -6,7 +6,6 @@ import { userRoutes } from "./user";
 
 import morgan from "morgan";
 import { categoriesRoutes } from "./category";
-import { customerRoutes } from "./customer";
 import errorHandler from "./middlewares/errorHandlerMiddleware";
 import { paymentRoutes } from "./payments";
 import { productRoutes } from "./product";
@@ -14,9 +13,8 @@ import { SalesRoutes } from "./transaction/sale";
 
 import { CloudCategoryRoutes } from "./cloudCategory";
 import { MongoDB } from "./boostrap/db";
-import { cuotaRoutes } from "./cuota";
 import { cuotaV2Router } from "./cuotaV2/infra/cuota.routes";
-import { metricsRoutes } from "./metrics";
+import { dashboardRouter } from "./dashboard";
 import { authorizationMiddleware } from "./middlewares/authorizationMiddleware";
 import { PrintRoutes } from "./prints";
 import { BudgetRoutes } from "./transaction/budget";
@@ -40,16 +38,14 @@ app.use("/api/auth", userRoutes);
 app.use("/api/prints", PrintRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/products", productRoutes);
-app.use("/api/customers", customerRoutes);
 app.use("/api/sales", SalesRoutes);
 app.use("/api/budgets", BudgetRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/cloudcategories", CloudCategoryRoutes);
-app.use("/api/cuotas", cuotaRoutes);
 app.use("/api/v2/cuotas", cuotaV2Router);
 app.use("/api/v2/customers", customerV2Router);
 app.use("/api/cuota-payments", cuotaPaymentRouter);
-app.use("/api/metrics", metricsRoutes);
+app.use("/api/dashboard", dashboardRouter);
 app.use(errorHandler);
 
 MongoDB.getInstance().then(() => {

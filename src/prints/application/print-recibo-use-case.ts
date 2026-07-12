@@ -1,8 +1,8 @@
 import { SalePayment } from "@/transaction/salePayment/salePayment.entity";
 import { Reciept } from "../../components/pdfs/Receipt";
-import { CustomerRepository } from "../../customer/domain/interfaces/CustomerRepository";
 import { SaleRepository } from "../../transaction/sale/domain/sale.repository";
 import { companyInfo } from "../constants";
+import { CustomerRepository } from "@/customerV2/domain/customer.repository";
 
 let renderToStream: any;
 export class PrintReciboUseCase {
@@ -13,7 +13,7 @@ export class PrintReciboUseCase {
 
   async print(saleId: string, paymentId: string) {
     const sale = await this.saleRepo.findByUuid(saleId);
-    const customer = await this.customerRepo.getCustomer(sale.getCustomerId());
+    const customer = await this.customerRepo.findById(sale.getCustomerId());
     if (!sale) {
       throw new Error("Sale not found");
     }
@@ -33,10 +33,10 @@ export class PrintReciboUseCase {
       await Reciept({
         company: companyInfo,
         customer: {
-          firstName: customer.getFirstName(),
-          lastName: customer.getLastName(),
-          email: customer.getEmail(),
-          phone: customer.getPhone(),
+          firstName: customer.firstName,
+          lastName: customer.lastName,
+          email: customer.email,
+          phone: customer.phone,
         },
         receipt: {
           id: payment.getId(),

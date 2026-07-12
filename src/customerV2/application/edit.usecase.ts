@@ -1,5 +1,4 @@
-import { CustomerStatus } from "@/customer/domain/types";
-import { Customer } from "../domain/customer.entity.";
+import { Customer, CustomerStatus } from "../domain/customer.entity.";
 import { CustomerRepository } from "../domain/customer.repository";
 import { CustomerDTO } from "./list.usecase";
 

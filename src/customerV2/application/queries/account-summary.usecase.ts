@@ -1,5 +1,20 @@
-import { Sale } from "../../../transaction/sale/domain/sale.entity";
-import { SummaryDetail } from "../customer.entity";
+import { Sale } from "@/transaction/sale/domain/sale.entity";
+
+export interface AccountSummary {
+  details: SummaryDetail[];
+  debe: number;
+  haber: number;
+  saldo: number;
+}
+
+export interface SummaryDetail {
+  date: Date;
+  saleId: string;
+  saleSerie: string;
+  debe: number;
+  haber: number;
+  saldo: number;
+}
 
 export const getCustomerSummaryAccount = async (sales: Sale[]) => {
   if (!sales.length) {

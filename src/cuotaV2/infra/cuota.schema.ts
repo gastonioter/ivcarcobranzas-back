@@ -12,6 +12,7 @@ export const CuotaSchema = new Schema({
   createdAt: { type: Date, required: true },
 });
 
+CuotaSchema.index({ _status: 1, _customerId: 1 });
 CuotaSchema.index({ customerId: 1, year: 1 });
 CuotaSchema.index({ customerId: 1, month: 1, year: 1 });
 

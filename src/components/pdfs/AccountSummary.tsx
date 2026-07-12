@@ -1,10 +1,10 @@
-import {
-  AccountSummary,
-  SummaryDetail,
-} from "@/customer/domain/customer.entity";
 import { PrintableTransaction } from "@/prints/types";
 import { formattedCurrency } from "../utils/formattedCurrency";
 import { formattedDate } from "../utils/formattedDate";
+import {
+  AccountSummary,
+  SummaryDetail,
+} from "@/customerV2/application/queries/account-summary.usecase";
 
 const loadPDFRenderer = async () => {
   const pdfRenderer = await import("@react-pdf/renderer");

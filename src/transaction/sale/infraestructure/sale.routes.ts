@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { CustomerMongoRepository } from "../../../customer/infraestructure/repository/mongo.repository";
 import { asyncHandler } from "../../../middlewares/asyncHandlerMiddleware";
 import { zodValidator } from "../../../middlewares/zodValidator";
 import { CreateSaleSchema, EditSaleSchema } from "../adapets/inputSaleDTOs";
@@ -8,11 +7,12 @@ import { SaleController } from "./sale.ctrl";
 import { SaleMongoRepository } from "./sale.mongo";
 import { SalePaymentMongoRepository } from "../../../transaction/salePayment/infraestructure/salePayment.mongo";
 import { MongoRepository } from "../../../user/infraestructure/repository/mongo.repository";
+import { MongoCustomerRepository } from "../../../customerV2/infra/mongo.repository";
 
 export const router = Router();
 
 const salesrepo = new SaleMongoRepository();
-const customersrepo = new CustomerMongoRepository();
+const customersrepo = new MongoCustomerRepository();
 const salePaymentRepo = new SalePaymentMongoRepository();
 const usersrepo = new MongoRepository();
 const usecases = new SaleUseCases(

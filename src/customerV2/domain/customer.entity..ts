@@ -1,7 +1,6 @@
 import { Entity } from "../../shared/domain/Entity";
 import { Email } from "../../shared/valueObjects/email.vo";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
-import { CustomerModalidad, CustomerStatus } from "../../customer/domain/types";
 import { CustomerDTO } from "../application/list.usecase";
 
 export interface CustomerProps {
@@ -15,6 +14,16 @@ export interface CustomerProps {
   createdAt: Date;
   updatedAt: Date;
   type: CustomerModalidad;
+}
+
+export enum CustomerModalidad {
+  REGULAR = "Regular",
+  CLOUD = "Cloud",
+}
+
+export enum CustomerStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
 }
 
 export class Customer extends Entity {
