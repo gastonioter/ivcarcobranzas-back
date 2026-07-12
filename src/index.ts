@@ -11,7 +11,6 @@ import { paymentRoutes } from "./payments";
 import { productRoutes } from "./product";
 import { SalesRoutes } from "./transaction/sale";
 
-import { CloudCategoryRoutes } from "./cloudCategory";
 import { MongoDB } from "./boostrap/db";
 import { cuotaV2Router } from "./cuotaV2/infra/cuota.routes";
 import { dashboardRouter } from "./dashboard";
@@ -33,7 +32,10 @@ app.use("/api/auth", userRoutes);
 
 /* private routes */
 
-//app.use(authorizationMiddleware);
+if (process.env.ENV !== "dev") {
+  // Skip auth in dev environment
+  app.use(authorizationMiddleware);
+}
 
 app.use("/api/prints", PrintRoutes);
 app.use("/api/categories", categoriesRoutes);
@@ -41,7 +43,6 @@ app.use("/api/products", productRoutes);
 app.use("/api/sales", SalesRoutes);
 app.use("/api/budgets", BudgetRoutes);
 app.use("/api/payments", paymentRoutes);
-app.use("/api/cloudcategories", CloudCategoryRoutes);
 app.use("/api/v2/cuotas", cuotaV2Router);
 app.use("/api/v2/customers", customerV2Router);
 app.use("/api/cuota-payments", cuotaPaymentRouter);
