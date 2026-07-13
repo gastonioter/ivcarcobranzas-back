@@ -31,13 +31,9 @@ const API_PORT = process.env.API_PORT || 3000;
 app.use("/api/auth", userRoutes);
 
 /* private routes */
+app.use("/api/prints", PrintRoutes); // TODO: make this private too.
 
-if (process.env.ENV !== "dev") {
-  // Skip auth in dev environment
-  app.use(authorizationMiddleware);
-}
-
-app.use("/api/prints", PrintRoutes);
+app.use(authorizationMiddleware);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/sales", SalesRoutes);
