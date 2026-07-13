@@ -27,7 +27,10 @@ export class GenerateDashboardMetricsUseCase {
       totalGeneratedCuotas: 0,
     };
 
-    const deudores = await this.dashboardRepository.findDeudores();
+    const [deudores, revenueByMonth] = await Promise.all([
+      this.dashboardRepository.findDeudores(),
+      this.dashboardRepository.revenueByMonth(),
+    ]);
 
     return {
       actives,
@@ -36,6 +39,7 @@ export class GenerateDashboardMetricsUseCase {
       totalRevenue: reducedCuotas.totalRevenue,
       totalPaidCuotas: reducedCuotas.totalPaidCuotas,
       deudores,
+      revenueByMonth,
     };
   }
 }
