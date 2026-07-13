@@ -1,3 +1,4 @@
+import { Customer } from "@/customerV2/domain/customer.entity.";
 import { CustomerRepository } from "@/customerV2/domain/customer.repository";
 import { SalePaymentRepository } from "@/transaction/salePayment/salePayment.repository";
 import { InvalidOperationError } from "../../../shared/domain/exceptions";
@@ -12,7 +13,6 @@ import { SaleRepository } from "../../sale/domain/sale.repository";
 import { CreateSaleDTO, EditSaleDTO } from "../adapets/inputSaleDTOs";
 import SaleDTO from "../adapets/saleDTO";
 import { Sale } from "../domain/sale.entity";
-import { Customer } from "@/customerV2/domain/customer.entity.";
 
 export class SaleUseCases {
   constructor(
@@ -71,7 +71,7 @@ export class SaleUseCases {
 
   async listSales() {
     const sales = await this.saleRepository.findAll();
-    const customers = await this.customerRepository.findAll();
+    const customers = await this.customerRepository.findAll({});
     const users = await this.userRepository.listUsers();
 
     return sales.map((sale) => {

@@ -33,7 +33,10 @@ app.use("/api/auth", userRoutes);
 /* private routes */
 app.use("/api/prints", PrintRoutes); // TODO: make this private too.
 
-app.use(authorizationMiddleware);
+if (process.env.ENV !== "dev") {
+  app.use(authorizationMiddleware);
+}
+
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/sales", SalesRoutes);

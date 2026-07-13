@@ -18,12 +18,12 @@ export class MongoCuotaPaymentRepository implements CuotaPaymentRepository {
   }
 
   async findAll(filters: { customerId?: string }): Promise<CuotaPayment[]> {
-    const query: any = {};
+    const query: Record<string, string> = {};
     if (filters.customerId) {
       query.customerId = filters.customerId;
     }
 
-    const docs = await CuotaPaymentModel.find(query).lean();
+    const docs = await CuotaPaymentModel.find(query).lean().sort({ _id: -1 }); // sort by most recent
     return docs.map((doc: ICuotaPayment) => this.toDomain(doc));
   }
 

@@ -1,5 +1,15 @@
-import { Customer } from "../domain/customer.entity.";
+import {
+  Customer,
+  CustomerModalidad,
+  CustomerStatus,
+} from "../domain/customer.entity.";
 import { CustomerModel, CustomerDoc } from "./customer.schema";
+
+export interface CustomerFilter {
+  uuid?: string;
+  type?: CustomerModalidad;
+  status?: CustomerStatus;
+}
 
 export interface CustomerRepository {
   findById(uuid: string): Promise<null | Customer>;
@@ -13,8 +23,13 @@ export class MongoCustomerRepository implements CustomerRepository {
     return this.toDomain(doc);
   }
 
-  async findAll(): Promise<Customer[]> {
-    const docs = await CustomerModel.find();
+  async findAll(filters: CustomerFilter): Promise<Customer[]> {
+    const query: Record<string, unknown> = {};
+    if (filters.uuid) query.uuid = filters.uuid;
+    if (filters.status) query.status = filters.status;
+    if (filters.type) query.type = filters.type;
+
+    const docs = await CustomerModel.find(query);
     return docs.map((doc: CustomerDoc) => this.toDomain(doc));
   }
 

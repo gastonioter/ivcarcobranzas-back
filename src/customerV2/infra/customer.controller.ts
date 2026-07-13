@@ -21,8 +21,9 @@ export class CustomerController {
     res.status(200).json(customer);
   };
 
-  list = async (_req: Request, res: Response) => {
-    const customers = await this.listUseCase.execute();
+  list = async (req: Request, res: Response) => {
+    const query = req.query;
+    const customers = await this.listUseCase.execute(query);
     res.status(200).json(customers);
   };
 }

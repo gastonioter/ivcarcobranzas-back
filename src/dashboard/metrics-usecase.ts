@@ -1,4 +1,3 @@
-import { MongoCuotaRepository } from "../cuotaV2/infra/cuota.repository";
 import { CustomerStatus } from "../customerV2/domain/customer.entity.";
 import { MongoCustomerRepository } from "../customerV2/infra/mongo.repository";
 import { DashboardQueriesRepository } from "./dashboard.repository";
@@ -10,7 +9,7 @@ export class GenerateDashboardMetricsUseCase {
   ) {}
 
   async execute() {
-    const customers = await this.customerRepository.findAll();
+    const customers = await this.customerRepository.findAll({});
 
     const actives = customers.filter(
       (c) => c.status === CustomerStatus.ACTIVE,

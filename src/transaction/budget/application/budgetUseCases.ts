@@ -50,7 +50,7 @@ export class BudgetUseCases {
 
   async listBudgets() {
     const budgets = await this.budgetRepository.findAll();
-    const customers = await this.customerRepository.findAll();
+    const customers = await this.customerRepository.findAll({});
     const users = await this.userRepository.listUsers();
     return budgets.map((budget) => {
       const customer = customers.find(
