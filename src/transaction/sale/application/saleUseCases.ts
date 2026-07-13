@@ -1,18 +1,18 @@
+import { CustomerRepository } from "@/customerV2/domain/customer.repository";
 import { SalePaymentRepository } from "@/transaction/salePayment/salePayment.repository";
-import { CustomerEntity } from "../../../customer/domain/customer.entity";
-import { CustomerRepository } from "../../../customer/domain/interfaces/CustomerRepository";
 import { InvalidOperationError } from "../../../shared/domain/exceptions";
+import { SalePaymentDTO } from "../../../transaction/salePayment/adapets/salePaymentDTO";
 import {
   PaymentMethods,
   SalePayment,
   SalePaymentStatus,
 } from "../../../transaction/salePayment/salePayment.entity";
+import { UserRepository } from "../../../user/domain/user.repository";
 import { SaleRepository } from "../../sale/domain/sale.repository";
 import { CreateSaleDTO, EditSaleDTO } from "../adapets/inputSaleDTOs";
 import SaleDTO from "../adapets/saleDTO";
-import { Sale, SaleStatus } from "../domain/sale.entity";
-import { UserRepository } from "../../../user/domain/user.repository";
-import { SalePaymentDTO } from "../../../transaction/salePayment/adapets/salePaymentDTO";
+import { Sale } from "../domain/sale.entity";
+import { Customer } from "@/customerV2/domain/customer.entity.";
 
 export class SaleUseCases {
   constructor(
@@ -56,12 +56,12 @@ export class SaleUseCases {
 
   async getDetails(uuid: string) {
     const sale = await this.saleRepository.findByUuid(uuid);
-    const customer = await this.customerRepository.getCustomer(
+    const customer = await this.customerRepository.findById(
       sale.getCustomerId(),
     );
     const seller = await this.userRepository.getById(sale.getSellerId());
 
-    return SaleDTO(sale, customer, seller);
+    return SaleDTO(sale, customer!, seller);
   }
 
   async getPayments(uuid: string) {
@@ -71,7 +71,7 @@ export class SaleUseCases {
 
   async listSales() {
     const sales = await this.saleRepository.findAll();
-    const customers = await this.customerRepository.getCustomers();
+    const customers = await this.customerRepository.findAll();
     const users = await this.userRepository.listUsers();
 
     return sales.map((sale) => {
@@ -80,7 +80,7 @@ export class SaleUseCases {
       );
       const seller = users.find((user) => user.uuid === sale.getSellerId());
 
-      return SaleDTO(sale, customer as CustomerEntity, seller);
+      return SaleDTO(sale, customer as Customer, seller);
     });
   }
 

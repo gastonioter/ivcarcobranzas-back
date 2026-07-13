@@ -1,1 +1,1 @@
-export { router as categoriesRoutes } from "./infraestructure/routes/category.routes";
+export { router as categoriesRoutes } from "./infraestructure/category.routes";

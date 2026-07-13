@@ -1,7 +1,7 @@
-import { Cuota } from "@/cuota/domain/cuota.entity";
 import { PrintableTransaction } from "@/prints/types";
 import { formattedCurrency } from "../utils/formattedCurrency";
 import { formattedDate } from "../utils/formattedDate";
+import { Cuota } from "@/cuotaV2/domain/cuota.entity";
 
 const loadPDFRenderer = async () => {
   const pdfRenderer = await import("@react-pdf/renderer");
@@ -265,17 +265,17 @@ export const MonitoreoSummaryCmp = async ({
             <View style={tableStyles.tableRow} key={index}>
               <View style={{ ...tableStyles.tableCol, width: "10%" }}>
                 <Text style={tableStyles.tableCell}>
-                  {item.getSerie().split("-")[1]}
+                  {`${item.sequence.toString().padStart(5, "0")}`}
                 </Text>
               </View>
               <View style={tableStyles.tableCol}>
                 <Text style={tableStyles.tableCell}>
-                  {`CUOTA - ${String(item.getMonth()).padStart(2, "0")}/${item.getYear()}`}
+                  {`CUOTA - ${String(item.month).padStart(2, "0")}/${item.year}`}
                 </Text>
               </View>
               <View style={tableStyles.tableCol}>
                 <Text style={tableStyles.tableCell}>
-                  {formattedCurrency(item.getAmount())}
+                  {formattedCurrency(item.amount)}
                 </Text>
               </View>
               <View style={tableStyles.tableCol}>

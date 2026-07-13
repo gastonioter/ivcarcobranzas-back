@@ -1,39 +1,48 @@
 import { Entity } from "../../shared/domain/Entity";
 import { EntityId } from "../../shared/valueObjects/entityId.vo";
-import { CreateCategoryDTO } from "../infraestructure/dto/CategoryValidations";
+import { CreateCategoryDTO } from "../application/create.usecase";
+import { CategoryDoc } from "../infraestructure/category.schema";
 
-interface ICategory {
+export interface CategoryDTO {
+  uuid: string;
+  name: string;
+  description: string;
+  createdAt: Date;
+}
+
+interface CategoryProps {
   uuid: EntityId;
   name: string;
   description: string;
   createdAt: Date;
 }
-export class CategoryEntity extends Entity {
-  private name: string;
-  private description: string;
-  private createdAt: Date;
+export class Category extends Entity {
+  private _name: string;
+  private _description: string;
+  private _createdAt: Date;
 
-  constructor(category: ICategory) {
+  constructor(category: CategoryProps) {
     super(category.uuid);
-    this.name = category.name;
-    this.description = category.description;
-    this.createdAt = category.createdAt;
+    this._name = category.name;
+    this._description = category.description;
+    this._createdAt = category.createdAt;
   }
 
-  public static new({ name, description }: CreateCategoryDTO): CategoryEntity {
+  public static new({ name, description }: CreateCategoryDTO): Category {
+    if (!name) throw new Error("La categoria debe tener nombre");
     const createdAt = new Date();
     description = description || "sin descripción";
 
-    return new CategoryEntity({
+    return new Category({
+      uuid: EntityId.create(),
       name,
       description,
       createdAt,
-      uuid: EntityId.create(),
     });
   }
 
-  static fromPersistence(doc: any): CategoryEntity {
-    return new CategoryEntity({
+  static fromPersistence(doc: CategoryDoc): Category {
+    return new Category({
       name: doc.name,
       description: doc.description,
       createdAt: doc.createdAt,
@@ -41,15 +50,24 @@ export class CategoryEntity extends Entity {
     });
   }
 
-  getName(): string {
-    return this.name;
+  toDTO(): CategoryDTO {
+    return {
+      uuid: this.id,
+      name: this.name,
+      description: this.description,
+      createdAt: this.createdAt,
+    };
   }
 
-  getDescription(): string {
-    return this.description;
+  get name(): string {
+    return this._name;
   }
 
-  getCreatedAt(): Date {
-    return this.createdAt;
+  get description(): string {
+    return this._description;
+  }
+
+  get createdAt(): Date {
+    return this._createdAt;
   }
 }

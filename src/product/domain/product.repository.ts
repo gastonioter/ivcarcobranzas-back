@@ -1,13 +1,14 @@
-import { CreateEditProductDTO } from "../adapters/CreateProductDTO";
-import { ProductEntity } from "./product.entity";
+import { Product } from "./product.entity";
+
+export interface ProductWithCategory extends Product {
+  category: { name: string };
+}
 
 export interface ProductRepository {
-  save(product: ProductEntity): Promise<ProductEntity | null>;
-  findByName(name: string): Promise<ProductEntity | null>;
-  edit(
-    uuid: string,
-    product: Partial<ProductEntity>,
-  ): Promise<ProductEntity | null>;
-  list(): Promise<ProductEntity[]>;
-  getTotalSalesNumber(): Promise<number>;
+  save(uuid: string, product: Product): Promise<void>;
+  findById(uuid: string): Promise<Product | null>;
+  // findAll(): Promise<Product[]>;
+  findAllWithCategory(): Promise<ProductWithCategory[]>;
+  findByName(name: string): Promise<Product | null>;
+  count(): Promise<number>;
 }

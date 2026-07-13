@@ -1,16 +1,12 @@
+import { Cuota } from "@/cuotaV2/domain/cuota.entity";
 import { MonitoreoSummaryCmp } from "../../components/pdfs/MonitoreoSummary";
 import { formattedFullname } from "../../components/utils/formattedFullname";
-import { Cuota } from "../../cuota/domain/cuota.entity";
-import { CustomerRepository } from "../../customer/domain/interfaces/CustomerRepository";
 import { sendDocument } from "../../shared/infraestructure/sendDocument";
 import { base64 } from "../../shared/utils/base64";
 import { generatePdfFile } from "../../shared/utils/generatePdf";
 import { companyInfo } from "../constants";
-
-export interface MonitoreoSummary {
-  cuotas: Cuota[];
-  totalAmount: number;
-}
+import { MongoCustomerQueries } from "../../customerV2/infra/queries.mongo";
+import { execute } from "../../customerV2/application/queries/monitoreo-summary.usecase";
 
 export enum SendMethods {
   WPP = "WPP",
@@ -32,42 +28,29 @@ _¡Gracias por elegirnos!_`;
 
 // TODO: implement Strategy Pattern
 export class PrintMonitoreoSummaryUseCase {
-  constructor(private readonly customerRepo: CustomerRepository) {}
-
   async print(customerId: string, sendMethod?: SendMethods): Result {
-    const customer = await this.customerRepo.getCustomer(customerId);
-
-    if (!customer) {
-      throw new Error("Customer not found");
-    }
-
     // DATA
-    const monitoreoSummary: MonitoreoSummary = {
-      cuotas: customer.getCuotasPtesPago(),
-      totalAmount: customer
-        .getCuotasPtesPago()
-        .reduce((acc, cuota) => acc + cuota.getAmount(), 0),
-    };
-
+    const queriesService = new MongoCustomerQueries();
+    const { cuotasPtePago, customer, totalAmount } = await execute(
+      customerId,
+      queriesService,
+    );
     // HTML
     const document = await MonitoreoSummaryCmp({
       company: companyInfo,
       customer: {
-        email: customer.getEmail(),
-        firstName: customer.getFirstName(),
-        lastName: customer.getLastName(),
-        phone: customer.getPhone(),
-        uuid: customer.getId(),
+        email: customer.email,
+        firstName: customer.firstName,
+        lastName: customer.lastName,
+        phone: customer.phone,
+        uuid: customer.id,
       },
-      cuotas: monitoreoSummary.cuotas,
-      totalAmount: monitoreoSummary.totalAmount,
+      cuotas: cuotasPtePago,
+      totalAmount: totalAmount,
     });
 
     const today = new Date().toLocaleDateString();
-    const fullname = formattedFullname(
-      customer.getFirstName(),
-      customer.getLastName(),
-    );
+    const fullname = formattedFullname(customer.firstName, customer.lastName);
     // SPECIFIC IMPLEMENTATIONS
 
     if (!sendMethod) {
@@ -87,27 +70,12 @@ export class PrintMonitoreoSummaryUseCase {
 
     if (sendMethod === SendMethods.WPP) {
       // send wpp
-      // actualizar CUSTOMER
-      customer.setResumenEnviado(true);
-
-      this.customerRepo.editCustomer(customer.getId(), {
-        email: customer.getEmail(),
-        firstName: customer.getFirstName(),
-        lastName: customer.getLastName(),
-        phone: customer.getPhone(),
-        cuit: customer.getCuit(),
-        modalidadData: {
-          cloudCategoryId: customer.getPriceCategory()?.getId() ?? "",
-          modalidad: customer.getModalidad(),
-          resumenEnviado: customer.getResumenEnviado(),
-        },
-      });
       const { pdfBuffer } = await generatePdfFile("rsm-monit", document);
       const pdfBase64 = base64(pdfBuffer);
 
       await sendDocument({
         pdf: pdfBase64,
-        to: customer.getPhone(),
+        to: customer.phone,
         caption: generateCaption(),
         filename: `RESUMEN_IVCAR-${fullname.trim()}-${today}`.toUpperCase(),
       });

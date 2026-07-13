@@ -1,12 +1,12 @@
+import { CustomerRepository } from "../../../customerV2/domain/customer.repository";
+import { UserRepository } from "../../../user/domain/user.repository";
 import { Sale } from "../../../transaction/sale/domain/sale.entity";
-import { CustomerEntity } from "../../../customer/domain/customer.entity";
-import { CustomerRepository } from "../../../customer/domain/interfaces/CustomerRepository";
+import { SaleRepository } from "../../sale/domain/sale.repository";
 import { CreateBudgetDTO } from "../adapters/inputBudgetDTOs";
 import { BudgetDTO } from "../adapters/outputBudgetDTO";
 import { Budget, BudgetStatus } from "../domain/budget.entity";
 import { BudgetRepository } from "../domain/budget.repository";
-import { SaleRepository } from "../../sale/domain/sale.repository";
-import { UserRepository } from "@/user/domain/user.repository";
+import { Customer } from "../../../customerV2/domain/customer.entity.";
 
 export class BudgetUseCases {
   constructor(
@@ -40,17 +40,17 @@ export class BudgetUseCases {
 
   async getDetails(uuid: string) {
     const budget = await this.budgetRepository.findByUuid(uuid);
-    const customer = await this.customerRepository.getCustomer(
+    const customer = await this.customerRepository.findById(
       budget.getCustomerId(),
     );
 
     const user = await this.userRepository.getById(budget.getSellerId());
-    return BudgetDTO(budget, customer, user);
+    return BudgetDTO(budget, customer as Customer, user);
   }
 
   async listBudgets() {
     const budgets = await this.budgetRepository.findAll();
-    const customers = await this.customerRepository.getCustomers();
+    const customers = await this.customerRepository.findAll();
     const users = await this.userRepository.listUsers();
     return budgets.map((budget) => {
       const customer = customers.find(
@@ -58,7 +58,7 @@ export class BudgetUseCases {
       );
       const user = users.find((user) => user.uuid == budget.getSellerId());
 
-      return BudgetDTO(budget, customer as CustomerEntity, user);
+      return BudgetDTO(budget, customer, user);
     });
   }
 

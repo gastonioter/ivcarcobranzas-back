@@ -1,7 +1,8 @@
-import { Cuota } from "@/cuota/domain/cuota.entity";
 import { PrintableTransaction } from "@/prints/types";
 import { formattedCurrency } from "../utils/formattedCurrency";
 import { formattedDate } from "../utils/formattedDate";
+import { Cuota } from "@/cuotaV2/domain/cuota.entity";
+import { PaymentLine } from "@/cuota-payment/domain/cuota-payment.entity";
 
 const loadPDFRenderer = async () => {
   const pdfRenderer = await import("@react-pdf/renderer");
@@ -12,7 +13,7 @@ type PrintableMonitoreoSummary = Omit<
   PrintableTransaction,
   "details" | "transaction"
 > & {
-  cuotas: Cuota[];
+  cuotas: PaymentLine[];
   reciboData: {
     createdAt: string;
     serie: string;
@@ -30,9 +31,7 @@ export const ReciboMonitoreo = async ({
   const { Document, Page, Text, View, StyleSheet, Image } =
     await loadPDFRenderer();
 
-  const debetotal = cuotasPtes.reduce((acc, item) => acc + item.getAmount(), 0);
-  const { uuid = "" } = customer;
-  const accountId = uuid.split("-")[0];
+  const debetotal = cuotasPtes.reduce((acc, item) => acc + item.amount, 0);
   const styles = StyleSheet.create({
     page: {
       padding: 30,
@@ -273,12 +272,12 @@ export const ReciboMonitoreo = async ({
               </View>
               <View style={tableStyles.tableCol}>
                 <Text style={tableStyles.tableCell}>
-                  {`CUOTA - ${String(item.getMonth()).padStart(2, "0")}/${item.getYear()}`}
+                  {`CUOTA - ${String(item.month).padStart(2, "0")}/${item.year}`}
                 </Text>
               </View>
               <View style={tableStyles.tableCol}>
                 <Text style={tableStyles.tableCell}>
-                  {formattedCurrency(item.getAmount())}
+                  {formattedCurrency(item.amount)}
                 </Text>
               </View>
               <View style={tableStyles.tableCol}>
@@ -343,12 +342,12 @@ export const ReciboMonitoreo = async ({
                   </View>
                   <View style={tableStyles.tableCol}>
                     <Text style={tableStyles.tableCell}>
-                      {`CUOTA - ${String(item.getMonth()).padStart(2, "0")}/${item.getYear()}`}
+                      {`CUOTA - ${String(item.month).padStart(2, "0")}/${item.year}`}
                     </Text>
                   </View>
                   <View style={tableStyles.tableCol}>
                     <Text style={tableStyles.tableCell}>
-                      {formattedCurrency(item.getAmount())}
+                      {formattedCurrency(item.amount)}
                     </Text>
                   </View>
                   <View style={tableStyles.tableCol}>

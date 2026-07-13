@@ -1,14 +1,12 @@
-/* mapper DTO from a entity to be sent to the client */
-
+import { Customer } from "@/customerV2/domain/customer.entity.";
 import { SalePayment } from "@/transaction/salePayment/salePayment.entity";
-import { CustomerEntity } from "../../../customer/domain/customer.entity";
+import { UserEntity } from "@/user/domain/user.entity";
 import {
   ITransactionDTO,
   mapTransactionDTO,
 } from "../../../transaction/adapers/TransactionDTO";
 import { SalePaymentsDTO } from "../../../transaction/salePayment/infraestructure/outputSalePaymentDTO";
 import { Sale, SaleStatus } from "../domain/sale.entity";
-import { UserEntity } from "@/user/domain/user.entity";
 
 interface SaleSummary {
   debe: number;
@@ -24,7 +22,7 @@ interface ISaleDTO extends ITransactionDTO {
 
 export default function SaleDTO(
   sale: Sale,
-  customer?: CustomerEntity,
+  customer?: Customer | undefined,
   seller?: UserEntity,
 ): ISaleDTO {
   return {

@@ -1,6 +1,9 @@
+import { MongoCuotaPaymentRepository } from "../../cuota-payment/infra/cuota-payment.repository";
+import { CuotaStatus } from "../../cuotaV2/domain/cuota.entity";
+import { MongoCuotaRepository } from "../../cuotaV2/infra/cuota.repository";
+import { MongoCustomerRepository } from "../../customerV2/infra/mongo.repository";
 import { ReciboMonitoreo } from "../../components/pdfs/ReciboMonitoreo";
 import { formattedFullname } from "../../components/utils/formattedFullname";
-import { CustomerRepository } from "../../customer/domain/interfaces/CustomerRepository";
 import { sendDocument } from "../../shared/infraestructure/sendDocument";
 import { base64 } from "../../shared/utils/base64";
 import { generatePdfFile } from "../../shared/utils/generatePdf";
@@ -8,52 +11,53 @@ import { companyInfo } from "../constants";
 import { Result, SendMethods } from "./print-monitoreosummary-usecase";
 
 export class PrintReciboMonitoreoUseCase {
-  constructor(private readonly customerRepo: CustomerRepository) {}
+  constructor(
+    private readonly paymentsRepo: MongoCuotaPaymentRepository,
+    private readonly cuotasRepo: MongoCuotaRepository,
+    private readonly customerRepo: MongoCustomerRepository,
+  ) {}
 
   async print(
     customerId: string,
     paymentId: string,
     sendMethod?: SendMethods,
   ): Result {
-    const customer = await this.customerRepo.getCustomer(customerId);
+    const customer = await this.customerRepo.findById(customerId);
+
     if (!customer) {
       throw new Error("Customer not found");
     }
-
-    const payment = customer
-      .getPagos()
-      .find((payment) => payment.getId() == paymentId);
+    const payment = await this.paymentsRepo.findById(paymentId);
 
     if (!payment) {
       throw new Error("Payment not found");
     }
 
-    const fullname = formattedFullname(
-      customer.getFirstName(),
-      customer.getLastName(),
-    );
+    const fullname = formattedFullname(customer.firstName, customer.lastName);
+    const cuotasPtePago = await this.cuotasRepo.findAll({
+      customerId,
+      status: CuotaStatus.PENDING,
+    });
 
     const reciboData = {
-      createdAt: payment.getCreatedAt().toISOString(),
-      cuotas: payment.getCuotas(),
-      serie: payment.getSerie(),
-      totalAmount: payment
-        .getCuotas()
-        .reduce((acc, cuota) => acc + cuota.getAmount(), 0),
+      createdAt: payment.createdAt.toISOString(),
+      cuotas: payment.lines,
+      serie: payment.serie,
+      totalAmount: payment.lines.reduce((acc, cuota) => acc + cuota.amount, 0),
     };
 
     const document = await ReciboMonitoreo({
       company: companyInfo,
       customer: {
-        email: customer.getEmail(),
-        firstName: customer.getFirstName(),
-        lastName: customer.getLastName(),
-        phone: customer.getPhone(),
-        uuid: customer.getId(),
+        email: customer.email,
+        firstName: customer.firstName,
+        lastName: customer.lastName,
+        phone: customer.phone,
+        uuid: customer.id,
       },
-      cuotas: payment.getCuotas(),
+      cuotas: payment.lines,
       reciboData,
-      cuotasPtes: customer.getCuotasPtesPago(),
+      cuotasPtes: cuotasPtePago,
     });
 
     if (!sendMethod) {
@@ -66,8 +70,7 @@ export class PrintReciboMonitoreoUseCase {
         result: "success",
         data: {
           pdfStream,
-          filename:
-            `RECIBO${payment.getSerie()}-${fullname.trim()}`.toUpperCase(),
+          filename: `RECIBO${payment.serie}-${fullname.trim()}`.toUpperCase(),
         },
       };
     }
@@ -78,9 +81,9 @@ export class PrintReciboMonitoreoUseCase {
 
       await sendDocument({
         pdf: pdfBase64,
-        to: customer.getPhone(),
+        to: customer.phone,
         caption: generateCaption(),
-        filename: `${payment.getSerie()}-${fullname.trim()}`.toUpperCase(),
+        filename: `${payment.serie}-${fullname.trim()}`.toUpperCase(),
       });
       return {
         result: "success",
