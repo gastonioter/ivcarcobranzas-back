@@ -1,3 +1,4 @@
+import { CuotaPaymentModel } from "../cuota-payment/infra/cuota-payment.schema";
 import { CuotaModel } from "../cuotaV2/infra/cuota.schema";
 
 export interface DeudoresData {
@@ -14,9 +15,16 @@ export interface CuotasSummary {
   totalGeneratedCuotas: number;
 }
 
+export interface MonthlyRevenue {
+  month: number;
+  year: number;
+  revenue: number;
+}
+
 export interface DashboardQueriesRepository {
   findDeudores(): Promise<DeudoresData[]>;
   aggregateCuotas(): Promise<CuotasSummary[]>;
+  revenueByMonth(): Promise<MonthlyRevenue[]>;
 }
 
 export class MongoDashboardRepository implements DashboardQueriesRepository {
@@ -96,5 +104,33 @@ export class MongoDashboardRepository implements DashboardQueriesRepository {
     ]);
 
     return result;
+  }
+
+  async revenueByMonth(): Promise<MonthlyRevenue[]> {
+    const now = new Date();
+    const from = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+
+    return CuotaPaymentModel.aggregate([
+      { $match: { createdAt: { $gte: from } } },
+      { $unwind: "$lines" },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          revenue: { $sum: "$lines.amount" },
+        },
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } },
+      {
+        $project: {
+          _id: 0,
+          year: "$_id.year",
+          month: "$_id.month",
+          revenue: 1,
+        },
+      },
+    ]);
   }
 }

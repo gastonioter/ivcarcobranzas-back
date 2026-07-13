@@ -82,7 +82,7 @@ const CustomerV2Schema = new Schema(
     createdAt: { type: Date, required: true },
     updatedAt: { type: Date },
   },
-  { timestamps: true },
+  { timestamps: false },
 );
 
 const CuotaV2Schema = new Schema({
@@ -114,7 +114,7 @@ const CuotaPaymentSchema = new Schema(
     serie: { type: String, required: true },
     createdAt: { type: Date, required: true },
   },
-  { timestamps: true },
+  { timestamps: false },
 );
 
 const V1CustomerModel = mongoose.model<V1Customer & mongoose.Document>(
