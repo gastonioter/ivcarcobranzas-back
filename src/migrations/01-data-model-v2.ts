@@ -130,10 +130,7 @@ const CuotaPaymentModel = mongoose.model("CuotaPayment", CuotaPaymentSchema);
 // ---------------------------------------------------------------------------
 
 function buildMongoUri(): string {
-  if (process.env.ENV === "dev") {
-    return `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
-  }
-  return `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
+  return `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
 }
 
 const upsertOpts = { upsert: true, new: true };
