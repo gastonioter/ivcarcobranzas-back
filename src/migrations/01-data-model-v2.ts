@@ -11,13 +11,13 @@
  * Safe to re-run: all inserts use upsert on uuid, so duplicates are skipped.
  *
  * Run:
- *   ENV=dev npx ts-node scripts/migrate-customer-v1-to-v2.ts
+ *   ENV=dev npx ts-node src/migrations/01-data-model-v2.ts 
  */
 
 import * as dotenv from "dotenv";
 dotenv.config();
 
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 // ---------------------------------------------------------------------------
 // V1 types (read-only, we never write back to these collections)
@@ -61,7 +61,7 @@ interface V1Customer {
 // V2 collection schemas (raw, no Mongoose overhead)
 // ---------------------------------------------------------------------------
 
-const CustomerV2Schema = new mongoose.Schema(
+const CustomerV2Schema = new Schema(
   {
     uuid: { type: String, required: true, unique: true },
     firstName: { type: String, required: true },
@@ -69,24 +69,34 @@ const CustomerV2Schema = new mongoose.Schema(
     email: { type: String, required: true },
     phone: { type: String, required: true },
     cuit: { type: String, required: true },
-    status: { type: String, required: true },
-    type: { type: String, required: true },
+    status: {
+      type: String,
+
+      required: true,
+    },
+    type: {
+      type: String,
+
+      required: true,
+    },
     createdAt: { type: Date, required: true },
+    updatedAt: { type: Date },
   },
   { timestamps: true },
 );
 
-const CuotaV2Schema = new mongoose.Schema({
+const CuotaV2Schema = new Schema({
   uuid: { type: String, required: true, unique: true },
   customerId: { type: String, required: true },
   month: { type: Number, required: true },
   year: { type: Number, required: true },
   amount: { type: Number, required: true },
+  sequence: { type: Number, required: true },
   status: { type: String, required: true },
   createdAt: { type: Date, required: true },
 });
 
-const PaymentLineSchema = new mongoose.Schema(
+const PaymentLineSchema = new Schema(
   {
     cuotaId: { type: String, required: true },
     month: { type: Number, required: true },
@@ -96,12 +106,12 @@ const PaymentLineSchema = new mongoose.Schema(
   { _id: false },
 );
 
-const CuotaPaymentSchema = new mongoose.Schema(
+const CuotaPaymentSchema = new Schema(
   {
     uuid: { type: String, required: true, unique: true },
     customerId: { type: String, required: true },
-    serie: { type: String, required: true, unique: true },
     lines: { type: [PaymentLineSchema], required: true },
+    serie: { type: String, required: true },
     createdAt: { type: Date, required: true },
   },
   { timestamps: true },
@@ -155,6 +165,9 @@ async function migrateCustomer(v1: V1Customer): Promise<void> {
   // 2. Extract embedded cuotas → CuotaV2
   const cuotas = v1.cuotas ?? [];
   for (const cuota of cuotas) {
+    const numericPart = cuota.serie.replace(/\D/g, "");
+    const sequenceNumber = Number(numericPart);
+
     await CuotaV2Model.findOneAndUpdate(
       { uuid: cuota.uuid },
       {
@@ -163,6 +176,7 @@ async function migrateCustomer(v1: V1Customer): Promise<void> {
         month: cuota.month,
         year: cuota.year,
         amount: cuota.amount,
+        sequence: sequenceNumber,
         status: cuota.status,
         createdAt: cuota.createdAt,
       },

@@ -36,7 +36,8 @@ export class MongoDashboardRepository implements DashboardQueriesRepository {
       },
       {
         $match: {
-          pendingCount: { $gt: 3 },
+          // TODO: make this limit configurable or dynamic.
+          pendingCount: { $gt: 3 }, //  This counts 3 months plus the current month in PENDING status
         },
       },
       {
