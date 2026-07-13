@@ -2,6 +2,9 @@ import { CuotaPayment } from "../domain/cuota-payment.entity";
 import { CuotaPaymentRepository } from "../domain/cuota-payment.repository";
 import { CuotaPaymentModel, ICuotaPayment } from "./cuota-payment.schema";
 
+export interface CuotaPaymentFilters {
+  customerId?: string;
+}
 export class MongoCuotaPaymentRepository implements CuotaPaymentRepository {
   async findById(uuid: string): Promise<CuotaPayment | null> {
     const doc = await CuotaPaymentModel.findOne({ uuid });
@@ -17,13 +20,15 @@ export class MongoCuotaPaymentRepository implements CuotaPaymentRepository {
     );
   }
 
-  async findAll(filters: { customerId?: string }): Promise<CuotaPayment[]> {
+  async findAll(filters: CuotaPaymentFilters = {}): Promise<CuotaPayment[]> {
     const query: Record<string, string> = {};
     if (filters.customerId) {
       query.customerId = filters.customerId;
     }
 
-    const docs = await CuotaPaymentModel.find(query).lean().sort({ _id: -1 }); // sort by most recent
+    const docs = await CuotaPaymentModel.find(query)
+      .lean()
+      .sort({ createdAt: -1 });
     return docs.map((doc: ICuotaPayment) => this.toDomain(doc));
   }
 
