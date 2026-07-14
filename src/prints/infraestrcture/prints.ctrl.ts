@@ -129,10 +129,9 @@ export class PrintsController {
   }
 
   async printReciboMonitore(req: Request, res: Response) {
-    const { customerId, paymentId } = req.params;
+    const { paymentId } = req.params;
     const { sendMethod } = req.body;
     const { result, data } = await this.printReciboMonitoreUseCase.print(
-      customerId,
       paymentId,
       sendMethod,
     );

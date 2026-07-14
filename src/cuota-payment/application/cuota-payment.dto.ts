@@ -8,6 +8,7 @@ export interface CuotaPaymentDTO {
     year: number;
     amount: number;
   }[];
+  sent: boolean;
   serie: string;
   createdAt: Date;
 }
@@ -21,6 +22,7 @@ export const toDTO = (payment: CuotaPayment): CuotaPaymentDTO => {
       year: line.year,
       amount: line.amount,
     })),
+    sent: payment.sent,
     serie: payment.serie,
     createdAt: payment.createdAt,
   };

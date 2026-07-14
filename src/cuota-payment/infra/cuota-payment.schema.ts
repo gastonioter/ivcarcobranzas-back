@@ -12,6 +12,7 @@ export interface ICuotaPayment {
   customerId: string;
   lines: IPaymentLine[];
   serie: string;
+  sent: boolean;
   createdAt: Date;
 }
 
@@ -31,6 +32,7 @@ const CuotaPaymentSchema = new Schema<ICuotaPayment>(
     customerId: { type: String, required: true },
     lines: { type: [PaymentLineSchema], required: true },
     serie: { type: String, required: true },
+    sent: { type: Boolean, requred: true, default: false },
     createdAt: { type: Date, required: true },
   },
   { timestamps: true },

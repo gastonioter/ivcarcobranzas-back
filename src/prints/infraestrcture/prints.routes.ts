@@ -57,13 +57,13 @@ router.get(
 );
 
 router.get(
-  "/monit-recipt/:customerId/:paymentId",
+  "/monit-recipt/:paymentId",
   asyncHandler(ctrl.printReciboMonitore.bind(ctrl)),
 );
 
 // para enviar wpps
 router.post(
-  "/monit-recipt/:customerId/:paymentId",
+  "/monit-recipt/:paymentId",
   asyncHandler(ctrl.printReciboMonitore.bind(ctrl)),
 );
 

@@ -17,25 +17,21 @@ export class PrintReciboMonitoreoUseCase {
     private readonly customerRepo: MongoCustomerRepository,
   ) {}
 
-  async print(
-    customerId: string,
-    paymentId: string,
-    sendMethod?: SendMethods,
-  ): Result {
-    const customer = await this.customerRepo.findById(customerId);
-
-    if (!customer) {
-      throw new Error("Customer not found");
-    }
+  async print(paymentId: string, sendMethod?: SendMethods): Result {
     const payment = await this.paymentsRepo.findById(paymentId);
 
     if (!payment) {
       throw new Error("Payment not found");
     }
+    const customer = await this.customerRepo.findById(payment.customerId);
+
+    if (!customer) {
+      throw new Error("Customer not found");
+    }
 
     const fullname = formattedFullname(customer.firstName, customer.lastName);
     const cuotasPtePago = await this.cuotasRepo.findAll({
-      customerId,
+      customerId: payment.customerId,
       status: CuotaStatus.PENDING,
     });
 
@@ -85,6 +81,8 @@ export class PrintReciboMonitoreoUseCase {
         caption: generateCaption(),
         filename: `${payment.serie}-${fullname.trim()}`.toUpperCase(),
       });
+      payment.sent = true;
+      await this.paymentsRepo.save(payment.id, payment);
       return {
         result: "success",
       };

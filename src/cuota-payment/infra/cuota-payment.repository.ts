@@ -37,6 +37,7 @@ export class MongoCuotaPaymentRepository implements CuotaPaymentRepository {
       uuid: payment.getId(),
       customerId: payment.customerId,
       lines: payment.lines,
+      sent: payment.sent,
       serie: payment.serie,
       createdAt: payment.createdAt,
     };
@@ -48,6 +49,7 @@ export class MongoCuotaPaymentRepository implements CuotaPaymentRepository {
       customerId: doc.customerId,
       lines: doc.lines,
       serie: doc.serie,
+      sent: doc.sent,
       createdAt: doc.createdAt,
     });
   }
