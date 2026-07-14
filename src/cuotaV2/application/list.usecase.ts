@@ -1,17 +1,11 @@
-import { CuotaRepository } from "../domain/cuota.repository";
+import { CuotaFilters, CuotaRepository } from "../domain/cuota.repository";
 import { CuotaDTO, toDTO } from "./cuota.dto";
-
-export interface CuotasFilters {
-  customerId?: string;
-}
 
 export class ListUseCase {
   constructor(private readonly cuotaRepository: CuotaRepository) {}
 
-  async listAll(filters: CuotasFilters): Promise<CuotaDTO[]> {
-    const cuotas = await this.cuotaRepository.findAll({
-      customerId: filters.customerId,
-    });
+  async listAll(filters: CuotaFilters): Promise<CuotaDTO[]> {
+    const cuotas = await this.cuotaRepository.findAll(filters);
 
     return cuotas
       .sort((c1, c2) => {

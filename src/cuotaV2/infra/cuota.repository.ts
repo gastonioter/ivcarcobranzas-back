@@ -10,17 +10,31 @@ export class MongoCuotaRepository implements CuotaRepository {
   }
 
   async findAll(filters: CuotaFilters = {}): Promise<Cuota[]> {
-    const query: Record<string, unknown> = {};
+    const query: Record<string, any> = {};
+
+    // Filtros exactos y básicos
     if (filters.customerId) query.customerId = filters.customerId;
-    if (filters.uuids) query.uuid = { $in: filters.uuids };
-    if (filters.month) query.month = filters.month;
     if (filters.year) query.year = filters.year;
     if (filters.status) query.status = filters.status;
+    if (filters.uuids) query.uuid = { $in: filters.uuids };
+
+    // Filtro de rango de meses dinámico
+    if (filters.monthStart || filters.monthEnd) {
+      const monthQuery: Record<string, number> = {};
+
+      if (filters.monthStart) {
+        monthQuery["$gte"] = filters.monthStart; // Mayor o igual a "mes desde"
+      }
+      if (filters.monthEnd) {
+        monthQuery["$lte"] = filters.monthEnd; // Menor o igual a "mes hasta"
+      }
+
+      query.month = monthQuery;
+    }
 
     const docs = await CuotaModel.find(query);
     return docs.map((doc: CuotaDoc) => this.toDomain(doc));
   }
-
   async save(uuid: string, data: Cuota): Promise<void> {
     await CuotaModel.findOneAndUpdate({ uuid }, this.toPersistence(data), {
       upsert: true,

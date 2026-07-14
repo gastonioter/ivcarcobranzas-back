@@ -17,12 +17,9 @@ export class CuotaController {
   ) {}
 
   list = async (req: Request, res: Response) => {
-    // TODO: implement pagination and filtering
-    const { customerId } = req.query;
-
-    const cuotas = await this.listUseCase.listAll({
-      customerId: customerId as string,
-    });
+    // TODO: implement pagination
+    const query = req.query;
+    const cuotas = await this.listUseCase.listAll(query);
     res.status(200).json(cuotas);
   };
 
