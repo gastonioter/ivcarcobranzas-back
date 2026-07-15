@@ -2,8 +2,12 @@ services:
   backend:
     build: .
     container_name: backend
+    env_file:
+      - .env
     ports:
       - "${API_PORT}:3001"
+    networks:
+      - openwa-network
     environment:
       - ULTRAMSG_TOKEN=${ULTRAMSG_TOKEN}
       - ULTRAMSG_INSTANCE_ID=${ULTRAMSG_INSTANCE_ID}
@@ -20,6 +24,8 @@ services:
   mongodb:
     image: mongo:latest
     container_name: mongodb
+    networks:
+      - openwa-network
     volumes:
       - mongo_data:/data/db
 
@@ -27,3 +33,8 @@ volumes:
   mongo_data:
     external: true
     name: ivcarcobranzas-back_mongo_data
+
+networks:
+  openwa-network:
+    name: openwa-network
+    external: true
