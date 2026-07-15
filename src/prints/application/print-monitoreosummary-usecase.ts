@@ -1,12 +1,11 @@
-import { Cuota } from "@/cuotaV2/domain/cuota.entity";
 import { MonitoreoSummaryCmp } from "../../components/pdfs/MonitoreoSummary";
 import { formattedFullname } from "../../components/utils/formattedFullname";
+import { execute } from "../../customerV2/application/queries/monitoreo-summary.usecase";
+import { MongoCustomerQueries } from "../../customerV2/infra/queries.mongo";
 import { sendDocument } from "../../shared/infraestructure/sendDocument";
 import { base64 } from "../../shared/utils/base64";
 import { generatePdfFile } from "../../shared/utils/generatePdf";
 import { companyInfo } from "../constants";
-import { MongoCustomerQueries } from "../../customerV2/infra/queries.mongo";
-import { execute } from "../../customerV2/application/queries/monitoreo-summary.usecase";
 
 export enum SendMethods {
   WPP = "WPP",
