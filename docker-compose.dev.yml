@@ -1,9 +1,15 @@
 services:
   backend:
+    image: node:20
     build: .
     container_name: backend
+    links:
+      - mongodb
+    volumes:
+      - ./src:/home/node/app/src # Solo montar el código fuente, no sobrescribir todo
     ports:
       - "${API_PORT}:3001"
+    command: npm run start
     environment:
       - ULTRAMSG_TOKEN=${ULTRAMSG_TOKEN}
       - ULTRAMSG_INSTANCE_ID=${ULTRAMSG_INSTANCE_ID}
@@ -20,10 +26,10 @@ services:
   mongodb:
     image: mongo:latest
     container_name: mongodb
+    ports:
+      - "27017:27017"
     volumes:
       - mongo_data:/data/db
 
 volumes:
   mongo_data:
-    external: true
-    name: ivcarcobranzas-back_mongo_data
