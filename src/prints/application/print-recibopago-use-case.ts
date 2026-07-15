@@ -75,21 +75,18 @@ export class PrintReciboMonitoreoUseCase {
 
     if (sendMethod == SendMethods.WPP) {
       const { pdfBuffer } = await generatePdfFile("recibo-cuotas", document);
-      const filename = `${payment.serie}-${fullname.trim()}.pdf`.toUpperCase();
+      const filename = `${payment.serie}-${fullname.trim()}.pdf`.toUpperCase().replace(/[^A-Z0-9.\-_]/g, "_");
       const tempPath = path.join(process.cwd(), "temp", filename);
       fs.writeFileSync(tempPath, pdfBuffer);
       const fileUrl = `${process.env.APP_URL}/app/temp/${encodeURIComponent(filename)}`;
       console.log("PDF temp URL:", fileUrl);
-      try {
-        await this.openWAService.sendFile({
-          chatId: customer.phone,
-          fileUrl,
-          filename,
-          caption: generateCaption(),
-        });
-      } finally {
-        fs.unlinkSync(tempPath);
-      }
+      await this.openWAService.sendFile({
+        chatId: customer.phone,
+        fileUrl,
+        filename,
+        caption: generateCaption(),
+      });
+      setTimeout(() => { try { fs.unlinkSync(tempPath); } catch {} }, 60_000);
       payment.sent = true;
       await this.paymentsRepo.save(payment.id, payment);
       return {

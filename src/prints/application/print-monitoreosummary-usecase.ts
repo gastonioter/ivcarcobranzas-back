@@ -72,20 +72,17 @@ export class PrintMonitoreoSummaryUseCase {
 
     if (sendMethod === SendMethods.WPP) {
       const { pdfBuffer } = await generatePdfFile("rsm-monit", document);
-      const filename = `RESUMEN_IVCAR-${fullname.trim()}-${today}.pdf`.toUpperCase();
+      const filename = `RESUMEN_IVCAR-${fullname.trim()}-${today}.pdf`.toUpperCase().replace(/[^A-Z0-9.\-_]/g, "_");
       const tempPath = path.join(process.cwd(), "temp", filename);
       fs.writeFileSync(tempPath, pdfBuffer);
       const fileUrl = `${process.env.APP_URL}/app/temp/${encodeURIComponent(filename)}`;
-      try {
-        await this.openWAService.sendFile({
-          chatId: customer.phone,
-          fileUrl,
-          filename,
-          caption: generateCaption(),
-        });
-      } finally {
-        fs.unlinkSync(tempPath);
-      }
+      await this.openWAService.sendFile({
+        chatId: customer.phone,
+        fileUrl,
+        filename,
+        caption: generateCaption(),
+      });
+      setTimeout(() => { try { fs.unlinkSync(tempPath); } catch {} }, 60_000);
       return {
         result: "success",
       };
