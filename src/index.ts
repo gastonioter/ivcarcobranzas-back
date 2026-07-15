@@ -26,7 +26,7 @@ const app = express();
 
 const tempDir = path.join(process.cwd(), "temp");
 if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir);
-app.use("/temp", express.static(tempDir));
+app.use("/api/temp", express.static(tempDir));
 
 app.use(express.json());
 app.use(morgan("dev"));

@@ -78,7 +78,8 @@ export class PrintReciboMonitoreoUseCase {
       const filename = `${payment.serie}-${fullname.trim()}.pdf`.toUpperCase();
       const tempPath = path.join(process.cwd(), "temp", filename);
       fs.writeFileSync(tempPath, pdfBuffer);
-      const fileUrl = `${process.env.APP_URL}/temp/${encodeURIComponent(filename)}`;
+      const fileUrl = `${process.env.APP_URL}/api/temp/${encodeURIComponent(filename)}`;
+      console.log("PDF temp URL:", fileUrl);
       try {
         await this.openWAService.sendFile({
           chatId: customer.phone,

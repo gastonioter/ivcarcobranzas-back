@@ -75,7 +75,7 @@ export class PrintMonitoreoSummaryUseCase {
       const filename = `RESUMEN_IVCAR-${fullname.trim()}-${today}.pdf`.toUpperCase();
       const tempPath = path.join(process.cwd(), "temp", filename);
       fs.writeFileSync(tempPath, pdfBuffer);
-      const fileUrl = `${process.env.APP_URL}/temp/${encodeURIComponent(filename)}`;
+      const fileUrl = `${process.env.APP_URL}/api/temp/${encodeURIComponent(filename)}`;
       try {
         await this.openWAService.sendFile({
           chatId: customer.phone,
