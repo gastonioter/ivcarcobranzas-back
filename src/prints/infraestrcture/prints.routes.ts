@@ -12,6 +12,7 @@ import { PrintReciboMonitoreoUseCase } from "../application/print-recibopago-use
 import { MongoCustomerRepository } from "../../customerV2/infra/mongo.repository";
 import { MongoCuotaRepository } from "../../cuotaV2/infra/cuota.repository";
 import { MongoCuotaPaymentRepository } from "../../cuota-payment/infra/cuota-payment.repository";
+import { OpenWaService } from "../../shared/infraestructure/OpenWaService";
 
 export const router = Router();
 
@@ -25,11 +26,13 @@ const budgetsrepo = new BudgetMongoRepository();
 const usecases = new PrintBudgetUseCase(budgetsrepo, customersRepo);
 const sales = new PrintSaleUseCase(salesrepo, customersRepo);
 const reciptuescase = new PrintReciboUseCase(salesrepo, customersRepo);
-const monitusecase = new PrintMonitoreoSummaryUseCase();
+const openWAService = new OpenWaService();
+const monitusecase = new PrintMonitoreoSummaryUseCase(openWAService);
 const recibomonitoreo = new PrintReciboMonitoreoUseCase(
   cuotasPaymentRepo,
   cuotasRepo,
   customersRepo,
+  openWAService,
 );
 const printAccountSummaryUseCase = new PrintAccountSummaryUseCase(
   salesrepo,
