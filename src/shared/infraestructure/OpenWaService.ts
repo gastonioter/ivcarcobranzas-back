@@ -76,7 +76,8 @@ export class OpenWaService implements IOpenWaService {
         },
         body: JSON.stringify({
           chatId: this.formatArgentinaPhone(dto.chatId),
-          file: base64Data, // Pasamos el base64 limpio
+          base64: base64Data,
+          mimetype: "application/pdf",
           filename: dto.filename,
           caption: dto.caption || "",
         }),

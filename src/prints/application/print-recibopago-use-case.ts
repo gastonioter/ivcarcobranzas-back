@@ -78,7 +78,7 @@ export class PrintReciboMonitoreoUseCase {
       await this.openWAService.sendFile({
         chatId: customer.phone,
         fileUrl: pdfBase64,
-        filename: `${payment.serie}-${fullname.trim()}`.toUpperCase(),
+        filename: `${payment.serie}-${fullname.trim()}.pdf`.toUpperCase(),
         caption: generateCaption(),
       });
       payment.sent = true;
