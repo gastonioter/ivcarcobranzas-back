@@ -26,8 +26,16 @@ const app = express();
 
 const tempDir = path.join(process.cwd(), "temp");
 if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir);
-app.use("/api/temp", express.static(tempDir));
-app.use("/api/temp", (_req: express.Request, res: express.Response, _next: express.NextFunction) => { res.status(404).send("Not found"); });
+app.get("/api/temp/:filename", (req: express.Request, res: express.Response) => {
+  const filePath = path.join(tempDir, req.params.filename);
+  console.log("Temp file request:", filePath, "exists:", fs.existsSync(filePath));
+  if (!fs.existsSync(filePath)) {
+    res.status(404).send("Not found");
+    return;
+  }
+  res.setHeader("Content-Type", "application/pdf");
+  res.sendFile(filePath);
+});
 
 app.use(express.json());
 app.use(morgan("dev"));
