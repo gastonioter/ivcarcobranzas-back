@@ -26,7 +26,7 @@ const app = express();
 
 const tempDir = path.join(process.cwd(), "temp");
 if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir);
-app.get("/api/temp/:filename", (req: express.Request, res: express.Response) => {
+app.get("/temp/:filename", (req: express.Request, res: express.Response) => {
   const filePath = path.join(tempDir, req.params.filename);
   console.log("Temp file request:", filePath, "exists:", fs.existsSync(filePath));
   if (!fs.existsSync(filePath)) {
