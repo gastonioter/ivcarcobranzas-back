@@ -60,12 +60,12 @@ export class OpenWaService implements IOpenWaService {
   async sendFile(dto: SendFileDto): Promise<any> {
     const url = `${this.baseUrl}/sessions/${this.sessionId}/messages/send-document`;
 
-    // 1. Limpiamos el encabezado data URI en caso de que venga incluido
     let base64Data = dto.fileUrl;
     if (base64Data.includes(";base64,")) {
-      // Esto remueve "data:application/pdf;base64," y nos deja el Base64 puro
       base64Data = base64Data.split(";base64,")[1];
     }
+
+    const formattedChatId = this.formatArgentinaPhone(dto.chatId);
 
     try {
       const response = await fetch(url, {
@@ -75,7 +75,7 @@ export class OpenWaService implements IOpenWaService {
           "X-API-Key": this.apiKey,
         },
         body: JSON.stringify({
-          chatId: this.formatArgentinaPhone(dto.chatId),
+          chatId: formattedChatId,
           base64: base64Data,
           mimetype: "application/pdf",
           filename: dto.filename,
@@ -85,6 +85,7 @@ export class OpenWaService implements IOpenWaService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        console.error("OpenWA send-document error response:", JSON.stringify(errorData));
         throw new Error(
           errorData.message || `HTTP error! status: ${response.status}`,
         );

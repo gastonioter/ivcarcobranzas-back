@@ -26,8 +26,8 @@ const budgetsrepo = new BudgetMongoRepository();
 const usecases = new PrintBudgetUseCase(budgetsrepo, customersRepo);
 const sales = new PrintSaleUseCase(salesrepo, customersRepo);
 const reciptuescase = new PrintReciboUseCase(salesrepo, customersRepo);
-const monitusecase = new PrintMonitoreoSummaryUseCase();
 const openWAService = new OpenWaService();
+const monitusecase = new PrintMonitoreoSummaryUseCase(openWAService);
 const recibomonitoreo = new PrintReciboMonitoreoUseCase(
   cuotasPaymentRepo,
   cuotasRepo,
