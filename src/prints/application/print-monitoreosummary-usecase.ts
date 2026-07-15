@@ -1,9 +1,10 @@
+import fs from "fs";
+import path from "path";
 import { MonitoreoSummaryCmp } from "../../components/pdfs/MonitoreoSummary";
 import { formattedFullname } from "../../components/utils/formattedFullname";
 import { execute } from "../../customerV2/application/queries/monitoreo-summary.usecase";
 import { MongoCustomerQueries } from "../../customerV2/infra/queries.mongo";
 import { IOpenWaService } from "../../shared/infraestructure/OpenWaService";
-import { base64 } from "../../shared/utils/base64";
 import { generatePdfFile } from "../../shared/utils/generatePdf";
 import { companyInfo } from "../constants";
 
@@ -70,16 +71,21 @@ export class PrintMonitoreoSummaryUseCase {
     }
 
     if (sendMethod === SendMethods.WPP) {
-      // send wpp
       const { pdfBuffer } = await generatePdfFile("rsm-monit", document);
-      const pdfBase64 = base64(pdfBuffer);
-
-      await this.openWAService.sendFile({
-        chatId: customer.phone,
-        fileUrl: pdfBase64,
-        caption: generateCaption(),
-        filename: `RESUMEN_IVCAR-${fullname.trim()}-${today}.pdf`.toUpperCase(),
-      });
+      const filename = `RESUMEN_IVCAR-${fullname.trim()}-${today}.pdf`.toUpperCase();
+      const tempPath = path.join(process.cwd(), "temp", filename);
+      fs.writeFileSync(tempPath, pdfBuffer);
+      const fileUrl = `${process.env.APP_URL}/temp/${encodeURIComponent(filename)}`;
+      try {
+        await this.openWAService.sendFile({
+          chatId: customer.phone,
+          fileUrl,
+          filename,
+          caption: generateCaption(),
+        });
+      } finally {
+        fs.unlinkSync(tempPath);
+      }
       return {
         result: "success",
       };

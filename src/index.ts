@@ -1,5 +1,7 @@
 import cors from "cors";
 import express from "express";
+import fs from "fs";
+import path from "path";
 
 import "./boostrap/env";
 import { userRoutes } from "./user";
@@ -21,6 +23,10 @@ import { customerV2Router } from "./customerV2";
 import { cuotaPaymentRouter } from "./cuota-payment";
 
 const app = express();
+
+const tempDir = path.join(process.cwd(), "temp");
+if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir);
+app.use("/temp", express.static(tempDir));
 
 app.use(express.json());
 app.use(morgan("dev"));

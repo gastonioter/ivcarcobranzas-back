@@ -60,11 +60,6 @@ export class OpenWaService implements IOpenWaService {
   async sendFile(dto: SendFileDto): Promise<any> {
     const url = `${this.baseUrl}/sessions/${this.sessionId}/messages/send-document`;
 
-    let base64Data = dto.fileUrl;
-    if (base64Data.includes(";base64,")) {
-      base64Data = base64Data.split(";base64,")[1];
-    }
-
     const formattedChatId = this.formatArgentinaPhone(dto.chatId);
 
     try {
@@ -76,7 +71,7 @@ export class OpenWaService implements IOpenWaService {
         },
         body: JSON.stringify({
           chatId: formattedChatId,
-          base64: base64Data,
+          url: dto.fileUrl,
           mimetype: "application/pdf",
           filename: dto.filename,
           caption: dto.caption || "",
