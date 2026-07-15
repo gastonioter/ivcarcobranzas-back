@@ -75,7 +75,7 @@ export class PrintReciboMonitoreoUseCase {
     if (sendMethod == SendMethods.WPP) {
       const { pdfBuffer } = await generatePdfFile("recibo-cuotas", document);
       const pdfBase64 = base64(pdfBuffer);
-      await this.openWAService.sendPdf({
+      await this.openWAService.sendFile({
         chatId: customer.phone,
         fileUrl: pdfBase64,
         filename: `${payment.serie}-${fullname.trim()}`.toUpperCase(),

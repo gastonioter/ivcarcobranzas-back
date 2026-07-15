@@ -1,12 +1,13 @@
 export interface IOpenWaService {
   sendText(dto: SendTextDto): Promise<any>;
-  sendPdf(dto: SendFileDto): Promise<any>;
+  sendFile(dto: SendFileDto): Promise<any>;
 }
 
 interface SendTextDto {
   chatId: string;
   text: string;
 }
+
 
 interface SendFileDto {
   chatId: string;
@@ -56,7 +57,7 @@ export class OpenWaService implements IOpenWaService {
   /**
    * Envía un PDF (soporta URL o Base64 directamente en 'fileUrl')
    */
-  async sendPdf(dto: SendFileDto): Promise<any> {
+  async sendFile(dto: SendFileDto): Promise<any> {
     const url = `${this.baseUrl}/sessions/${this.sessionId}/messages/send-document`;
 
     // 1. Limpiamos el encabezado data URI en caso de que venga incluido
