@@ -12,6 +12,10 @@ export class MongoConfigRepository implements ConfigRepository {
   }
 
   async save(config: Config): Promise<void> {
-    await ConfigModel.findOneAndUpdate({}, config, { new: true });
+    await ConfigModel.findOneAndUpdate(
+      {},
+      { $set: { globalCuotaPrice: config.globalCuotaPrice.value } },
+      { upsert: true }
+    );
   }
 }
