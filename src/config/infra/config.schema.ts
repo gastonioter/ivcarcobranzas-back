@@ -3,7 +3,6 @@ import { Schema, InferSchemaType, model } from "mongoose";
 const ConfigSchema = new Schema(
   {
     globalCuotaPrice: { type: Number, required: true },
-    pricePolicy: { type: Map, of: Number, required: false },
   },
   { _id: false },
 );

@@ -19,6 +19,7 @@ import { PrintRoutes } from "./prints";
 import { BudgetRoutes } from "./transaction/budget";
 import { customerV2Router } from "./customerV2";
 import { cuotaPaymentRouter } from "./cuota-payment";
+import { ConfigRoutes } from "./config";
 
 const app = express();
 
@@ -46,6 +47,8 @@ app.use("/api/v2/cuotas", cuotaV2Router);
 app.use("/api/v2/customers", customerV2Router);
 app.use("/api/cuota-payments", cuotaPaymentRouter);
 app.use("/api/dashboard", dashboardRouter);
+app.use("/api/settings", ConfigRoutes);
+
 app.use(errorHandler);
 
 MongoDB.getInstance().then(() => {

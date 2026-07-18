@@ -1,14 +1,14 @@
-import { Config, PricePolicy } from "./config";
+import { Config } from "../domain/config.entity";
 
 export interface ConfigDTO {
   globalCuotaPrice: number;
-  pricePolicy?: PricePolicy;
 }
+
+export type PricePolicy = Record<number, number>;
 
 export const toDTO = (config: Config): ConfigDTO => {
   return {
     globalCuotaPrice: config.globalCuotaPrice.value,
-    pricePolicy: config.pricePolicy,
   };
 };
 export type CreateConfigDTO = ConfigDTO;
