@@ -1,3 +1,4 @@
+import { ResourceNotFoundException } from "../../shared/domain/exceptions";
 import { Customer, CustomerStatus } from "../domain/customer.entity.";
 import { CustomerRepository } from "../domain/customer.repository";
 import { CustomerDTO } from "./list.usecase";
@@ -17,7 +18,7 @@ export class EditCustomerUseCase {
 
   async execute(uuid: string, dto: EditCustomerDTO): Promise<CustomerDTO> {
     const customer = await this.customerRepository.findById(uuid);
-    if (!customer) throw new Error("Customer not found");
+    if (!customer) throw new ResourceNotFoundException("CUSTOMER", uuid);
 
     const updated = Customer.fromPersistence({
       uuid: customer.getId(),

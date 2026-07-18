@@ -5,3 +5,13 @@ export class InvalidOperationError extends CustomError {
     super(message, 400);
   }
 }
+
+export class ResourceNotFoundException extends Error {
+  constructor(
+    public readonly resourceName: string,
+    public readonly id: string,
+  ) {
+    super(`${resourceName} with ID ${id} was not found.`);
+    this.name = "ResourceNotFoundException";
+  }
+}

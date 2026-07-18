@@ -1,3 +1,4 @@
+import { ResourceNotFoundException } from "../shared/domain/exceptions";
 import { CustomError } from "@/types";
 import { NextFunction, Request, Response } from "express";
 
@@ -8,9 +9,11 @@ export default function errorHandler(
   next: NextFunction,
 ) {
   console.error(err);
-
   let status = err.statusCode || 500;
   let message = err.message || "Internal server error";
+  if (err instanceof ResourceNotFoundException) {
+    status = 404;
+  }
 
   res.status(status).json({ error: message });
 }
