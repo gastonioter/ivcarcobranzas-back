@@ -9,16 +9,12 @@ export interface CustomerQueries {
 export class MongoCustomerQueries implements CustomerQueries {
   async monitoreoSummary(customerId: string): Promise<MonitoreoSummary> {
     const result = await CuotaModel.aggregate([
-      // Step 1: Filtrar por el cliente específico Y que estén pendientes
       {
         $match: {
-          // The order matters to use the proper index
-          customerId: customerId,
+          customerId: "ddcc9de4-aacf-4df2-8f81-bdeeb1ab730d",
           status: "PENDIENTE",
         },
       },
-
-      // Step 2
       {
         $group: {
           _id: "$customerId",
@@ -27,22 +23,19 @@ export class MongoCustomerQueries implements CustomerQueries {
         },
       },
 
-      // Step 3: Traer los datos del cliente
       {
         $lookup: {
-          from: "customers",
+          from: "customerv2",
           localField: "_id",
           foreignField: "uuid",
           as: "customerDetails",
         },
       },
 
-      // Step 4: Aplanar el array del cliente
       {
         $unwind: "$customerDetails",
       },
 
-      // Step 5: Moldear la salida exacta de la interfaz
       {
         $project: {
           _id: 0,
