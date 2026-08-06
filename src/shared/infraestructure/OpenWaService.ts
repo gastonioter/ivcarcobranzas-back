@@ -8,7 +8,6 @@ interface SendTextDto {
   text: string;
 }
 
-
 interface SendFileDto {
   chatId: string;
   fileUrl: string;
@@ -17,16 +16,61 @@ interface SendFileDto {
 }
 
 export class OpenWaService implements IOpenWaService {
+  private isRestarting = false;
+
   constructor(
     private readonly baseUrl: string = process.env.OPENWA_BASE_URL,
     private readonly apiKey: string = process.env.OPENWA_API_KEY,
     private readonly sessionId: string = process.env.OPENWA_SESSION_ID,
-  ) {}
+  ) {
+    this.schedulePeriodicRestart();
+  }
 
-  /**
-   * Envía un mensaje de texto simple
-   */
+  private schedulePeriodicRestart(): void {
+    const FIVE_HOURS = 5 * 60 * 60 * 1000;
+    setInterval(() => this.restartSession(), FIVE_HOURS);
+  }
+
+  async restartSession(): Promise<void> {
+    console.log("OpenWA: iniciando reinicio de sesión...");
+    this.isRestarting = true;
+    try {
+      const headers = { "X-API-Key": this.apiKey };
+      const stopUrl = `${this.baseUrl}/sessions/${this.sessionId}/stop`;
+      const stopRes = await fetch(stopUrl, { method: "POST", headers });
+      if (!stopRes.ok) {
+        const err = await stopRes.json().catch(() => ({}));
+        throw new Error(
+          `Stop failed: ${stopRes.status} — ${err.message ?? ""}`,
+        );
+      }
+
+      await new Promise((res) => setTimeout(res, 3000));
+
+      const startUrl = `${this.baseUrl}/sessions/${this.sessionId}/start`;
+      const startRes = await fetch(startUrl, { method: "POST", headers });
+      if (!startRes.ok) {
+        const err = await startRes.json().catch(() => ({}));
+        throw new Error(
+          `Start failed: ${startRes.status} — ${err.message ?? ""}`,
+        );
+      }
+
+      console.log("OpenWA: sesión reiniciada correctamente.");
+    } catch (error) {
+      console.error("OpenWA: error al reiniciar sesión:", error);
+    } finally {
+      this.isRestarting = false;
+    }
+  }
+
   async sendText(dto: SendTextDto): Promise<any> {
+    if (this.isRestarting) {
+      throw new Error(
+        "OpenWA: sesión en reinicio, intente nuevamente en unos segundos.",
+      );
+    }
+
     const url = `${this.baseUrl}/sessions/${this.sessionId}/messages/send-text`;
 
     try {
@@ -54,10 +98,11 @@ export class OpenWaService implements IOpenWaService {
     }
   }
 
-  /**
-   * Envía un PDF (soporta URL o Base64 directamente en 'fileUrl')
-   */
   async sendFile(dto: SendFileDto): Promise<any> {
+    if (this.isRestarting) {
+      throw new Error("Intenta de nuevo en unos segundos.");
+    }
+
     const url = `${this.baseUrl}/sessions/${this.sessionId}/messages/send-document`;
 
     let base64Data = dto.fileUrl;
@@ -85,7 +130,10 @@ export class OpenWaService implements IOpenWaService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error("OpenWA send-document error response:", JSON.stringify(errorData));
+        console.error(
+          "OpenWA send-document error response:",
+          JSON.stringify(errorData),
+        );
         throw new Error(
           errorData.message || `HTTP error! status: ${response.status}`,
         );
