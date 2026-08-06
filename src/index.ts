@@ -20,6 +20,7 @@ import { BudgetRoutes } from "./transaction/budget";
 import { customerV2Router } from "./customerV2";
 import { cuotaPaymentRouter } from "./cuota-payment";
 import { ConfigRoutes } from "./config";
+import { downloadsRouter } from "./downloads";
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use("/api/auth", userRoutes);
 
 /* private routes */
 app.use("/api/prints", PrintRoutes); // TODO: make this private too.
+app.use("/downloads", downloadsRouter);
 
 if (process.env.ENV !== "dev") {
   app.use(authorizationMiddleware);

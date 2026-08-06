@@ -13,6 +13,7 @@ import { MongoCustomerRepository } from "../../customerV2/infra/mongo.repository
 import { MongoCuotaRepository } from "../../cuotaV2/infra/cuota.repository";
 import { MongoCuotaPaymentRepository } from "../../cuota-payment/infra/cuota-payment.repository";
 import { OpenWaService } from "../../shared/infraestructure/OpenWaService";
+import { PdfStorageService } from "../../shared/infraestructure/PdfStorageService";
 
 export const router = Router();
 
@@ -27,12 +28,14 @@ const usecases = new PrintBudgetUseCase(budgetsrepo, customersRepo);
 const sales = new PrintSaleUseCase(salesrepo, customersRepo);
 const reciptuescase = new PrintReciboUseCase(salesrepo, customersRepo);
 const openWAService = new OpenWaService();
-const monitusecase = new PrintMonitoreoSummaryUseCase(openWAService);
+const pdfStorage = new PdfStorageService();
+const monitusecase = new PrintMonitoreoSummaryUseCase(openWAService, pdfStorage);
 const recibomonitoreo = new PrintReciboMonitoreoUseCase(
   cuotasPaymentRepo,
   cuotasRepo,
   customersRepo,
   openWAService,
+  pdfStorage,
 );
 const printAccountSummaryUseCase = new PrintAccountSummaryUseCase(
   salesrepo,

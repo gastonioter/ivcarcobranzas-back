@@ -3,8 +3,9 @@ import { formattedFullname } from "../../components/utils/formattedFullname";
 import { execute } from "../../customerV2/application/queries/monitoreo-summary.usecase";
 import { MongoCustomerQueries } from "../../customerV2/infra/queries.mongo";
 import { IOpenWaService } from "../../shared/infraestructure/OpenWaService";
-import { base64 } from "../../shared/utils/base64";
+import { PdfStorageService } from "../../shared/infraestructure/PdfStorageService";
 import { generatePdfFile } from "../../shared/utils/generatePdf";
+
 import { companyInfo } from "../constants";
 
 export enum SendMethods {
@@ -27,7 +28,10 @@ _¡Gracias por elegirnos!_`;
 
 // TODO: implement Strategy Pattern
 export class PrintMonitoreoSummaryUseCase {
-  constructor(private readonly openWAService: IOpenWaService) {}
+  constructor(
+    private readonly openWAService: IOpenWaService,
+    private readonly pdfStorage: PdfStorageService,
+  ) {}
 
   async print(customerId: string, sendMethod?: SendMethods): Result {
     // DATA
@@ -72,13 +76,11 @@ export class PrintMonitoreoSummaryUseCase {
     if (sendMethod === SendMethods.WPP) {
       // send wpp
       const { pdfBuffer } = await generatePdfFile("rsm-monit", document);
-      const pdfBase64 = base64(pdfBuffer);
+      const downloadUrl = this.pdfStorage.save(pdfBuffer);
 
-      await this.openWAService.sendFile({
+      await this.openWAService.sendText({
         chatId: customer.phone,
-        fileUrl: pdfBase64,
-        caption: generateCaption(),
-        filename: `RESUMEN_IVCAR-${fullname.trim()}-${today}.pdf`.toUpperCase(),
+        text: `${generateCaption()}\n\n📄 Descargar resumen: ${downloadUrl}`,
       });
       return {
         result: "success",

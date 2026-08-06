@@ -23,6 +23,8 @@ const EnvVariablesSchema = z.object({
 
   ULTRAMSG_TOKEN: z.string(),
   ULTRAMSG_INSTANCE_ID: z.string(),
+
+  PUBLIC_BASE_URL: z.string(),
 });
 
 EnvVariablesSchema.parse(process.env);
