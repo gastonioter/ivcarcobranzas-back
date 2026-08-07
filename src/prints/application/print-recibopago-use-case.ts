@@ -1,10 +1,10 @@
-import { ReciboMonitoreo } from "../../components/pdfs/ReciboMonitoreo";
-import { formattedFullname } from "../../components/utils/formattedFullname";
 import { MongoCuotaPaymentRepository } from "../../cuota-payment/infra/cuota-payment.repository";
 import { CuotaStatus } from "../../cuotaV2/domain/cuota.entity";
 import { MongoCuotaRepository } from "../../cuotaV2/infra/cuota.repository";
 import { MongoCustomerRepository } from "../../customerV2/infra/mongo.repository";
-import { IOpenWaService } from "../../shared/infraestructure/OpenWaService";
+import { ReciboMonitoreo } from "../../components/pdfs/ReciboMonitoreo";
+import { formattedFullname } from "../../components/utils/formattedFullname";
+import { sendDocument } from "../../shared/infraestructure/sendDocument";
 import { base64 } from "../../shared/utils/base64";
 import { generatePdfFile } from "../../shared/utils/generatePdf";
 import { companyInfo } from "../constants";
@@ -15,7 +15,6 @@ export class PrintReciboMonitoreoUseCase {
     private readonly paymentsRepo: MongoCuotaPaymentRepository,
     private readonly cuotasRepo: MongoCuotaRepository,
     private readonly customerRepo: MongoCustomerRepository,
-    private readonly openWAService: IOpenWaService,
   ) {}
 
   async print(paymentId: string, sendMethod?: SendMethods): Result {
@@ -75,11 +74,12 @@ export class PrintReciboMonitoreoUseCase {
     if (sendMethod == SendMethods.WPP) {
       const { pdfBuffer } = await generatePdfFile("recibo-cuotas", document);
       const pdfBase64 = base64(pdfBuffer);
-      await this.openWAService.sendFile({
-        chatId: customer.phone,
-        fileUrl: pdfBase64,
-        filename: `${payment.serie}-${fullname.trim()}.pdf`.toUpperCase(),
+
+      await sendDocument({
+        pdf: pdfBase64,
+        to: customer.phone,
         caption: generateCaption(),
+        filename: `${payment.serie}-${fullname.trim()}`.toUpperCase(),
       });
       payment.sent = true;
       await this.paymentsRepo.save(payment.id, payment);
