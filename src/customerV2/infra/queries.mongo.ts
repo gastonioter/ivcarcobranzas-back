@@ -11,7 +11,7 @@ export class MongoCustomerQueries implements CustomerQueries {
     const result = await CuotaModel.aggregate([
       {
         $match: {
-          customerId: "ddcc9de4-aacf-4df2-8f81-bdeeb1ab730d",
+          customerId,
           status: "PENDIENTE",
         },
       },
