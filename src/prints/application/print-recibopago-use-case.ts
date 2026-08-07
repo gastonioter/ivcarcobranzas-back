@@ -5,7 +5,7 @@ import { CuotaStatus } from "../../cuotaV2/domain/cuota.entity";
 import { MongoCuotaRepository } from "../../cuotaV2/infra/cuota.repository";
 import { MongoCustomerRepository } from "../../customerV2/infra/mongo.repository";
 import { IOpenWaService } from "../../shared/infraestructure/OpenWaService";
-import { PdfStorageService } from "../../shared/infraestructure/PdfStorageService";
+import { base64 } from "../../shared/utils/base64";
 import { generatePdfFile } from "../../shared/utils/generatePdf";
 import { companyInfo } from "../constants";
 import { Result, SendMethods } from "./print-monitoreosummary-usecase";
@@ -16,7 +16,6 @@ export class PrintReciboMonitoreoUseCase {
     private readonly cuotasRepo: MongoCuotaRepository,
     private readonly customerRepo: MongoCustomerRepository,
     private readonly openWAService: IOpenWaService,
-    private readonly pdfStorage: PdfStorageService,
   ) {}
 
   async print(paymentId: string, sendMethod?: SendMethods): Result {
@@ -75,11 +74,12 @@ export class PrintReciboMonitoreoUseCase {
 
     if (sendMethod == SendMethods.WPP) {
       const { pdfBuffer } = await generatePdfFile("recibo-cuotas", document);
-      const downloadUrl = this.pdfStorage.save(pdfBuffer);
-
-      await this.openWAService.sendText({
+      const pdfBase64 = base64(pdfBuffer);
+      await this.openWAService.sendFile({
         chatId: customer.phone,
-        text: `${generateCaption()}\n\n📄 Descargar recibo: ${downloadUrl}`,
+        fileUrl: pdfBase64,
+        filename: `${payment.serie}-${fullname.trim()}.pdf`.toUpperCase(),
+        caption: generateCaption(),
       });
       payment.sent = true;
       await this.paymentsRepo.save(payment.id, payment);

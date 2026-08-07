@@ -17,13 +17,7 @@ services:
       - MONGO_DB=${MONGO_DB}
       - JWT_SECRET=${JWT_SECRET}
       - RESEND_API_KEY=${RESEND_API_KEY}
-      - PUBLIC_BASE_URL=${PUBLIC_BASE_URL}
-      - OPENWA_BASE_URL=${OPENWA_BASE_URL}
-      - OPENWA_API_KEY=${OPENWA_API_KEY}
-      - OPENWA_SESSION_ID=${OPENWA_SESSION_ID}
 
-    volumes:
-      - pdf_storage:/home/node/app/storage
     depends_on:
       - mongodb
 
@@ -39,7 +33,6 @@ volumes:
   mongo_data:
     external: true
     name: ivcarcobranzas-back_mongo_data
-  pdf_storage:
 
 networks:
   openwa-network:
