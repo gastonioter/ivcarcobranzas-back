@@ -103,6 +103,7 @@ export class PrintsController {
   async printMonitoreoSummary(req: Request, res: Response) {
     const { uuid } = req.params;
     const { sendMethod } = req.body;
+    console.log("[PrintsController] printMonitoreoSummary — uuid:", uuid, "sendMethod:", sendMethod);
 
     const { data, result } = await this.printMonitoreoSummaryUseCase.print(
       uuid,

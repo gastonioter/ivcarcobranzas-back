@@ -29,12 +29,15 @@ _¡Gracias por elegirnos!_`;
 // TODO: implement Strategy Pattern
 export class PrintMonitoreoSummaryUseCase {
   async print(customerId: string, sendMethod?: SendMethods): Result {
+    console.log("[PrintMonitoreoSummary] print called — customerId:", customerId, "sendMethod:", sendMethod);
+
     // DATA
     const queriesService = new MongoCustomerQueries();
     const { cuotasPtePago, customer, totalAmount } = await execute(
       customerId,
       queriesService,
     );
+    console.log("[PrintMonitoreoSummary] customer fetched from DB:", { id: customer.id, firstName: customer.firstName, lastName: customer.lastName, phone: customer.phone });
     // HTML
     const document = await MonitoreoSummaryCmp({
       company: companyInfo,
@@ -70,15 +73,20 @@ export class PrintMonitoreoSummaryUseCase {
 
     if (sendMethod === SendMethods.WPP) {
       // send wpp
+      console.log("[PrintMonitoreoSummary] customerId:", customerId);
+      console.log("[PrintMonitoreoSummary] customer:", { id: customer.id, firstName: customer.firstName, lastName: customer.lastName, phone: customer.phone });
+
       const { pdfBuffer } = await generatePdfFile("rsm-monit", document);
       const pdfBase64 = base64(pdfBuffer);
 
+      console.log("[PrintMonitoreoSummary] sending to:", customer.phone);
       await sendDocument({
         pdf: pdfBase64,
         to: customer.phone,
         caption: generateCaption(),
         filename: `RESUMEN_IVCAR-${fullname.trim()}-${today}`.toUpperCase(),
       });
+      console.log("[PrintMonitoreoSummary] sent successfully to:", customer.phone);
       return {
         result: "success",
       };
